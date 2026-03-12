@@ -19,6 +19,21 @@
             mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 20%, transparent 100%);
         }
 
+        /* NÚT CHẾ ĐỘ XEM TRƯỚC (PREVIEW MODE) */
+        .preview-btn {
+            position: absolute; top: 20px; right: 20px; z-index: 100;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #a5b4fc; padding: 0.5rem 1rem; border-radius: 8px;
+            font-size: 0.85rem; font-weight: 600; cursor: pointer;
+            backdrop-filter: blur(10px); transition: all 0.3s;
+            display: flex; align-items: center; gap: 0.5rem;
+            text-decoration: none;
+        }
+        .preview-btn:hover {
+            background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4);
+            color: #fff; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(99, 102, 241, 0.2);
+        }
+
         /* LAYOUT */
         .auth-wrap {
             min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr;
@@ -156,6 +171,10 @@
 <body>
 <div class="grid-bg"></div>
 
+<button onclick="enterPreviewMode()" class="preview-btn">
+    👁️ Chế độ xem trước
+</button>
+
 <div class="auth-wrap">
     <div class="panel-left">
         <div class="panel-glow"></div>
@@ -214,6 +233,29 @@
 
 <script src="assets/js/auth.js"></script>
 
+<script>
+    // Hàm tạo tài khoản giả để xem trước trang Dashboard Học viên
+    function enterPreviewMode() {
+        const mockUser = {
+            id: 999,
+            fullname: "Học viên (Xem trước)",
+            email: "preview@eanh.com",
+            role: "user",
+            avatar: "https://ui-avatars.com/api/?name=User&background=6366f1&color=fff"
+        };
+        localStorage.setItem('user', JSON.stringify(mockUser));
+        localStorage.setItem('token', 'preview-token-12345');
+        
+        const successDiv = document.getElementById('successMessage');
+        successDiv.textContent = 'Đang vào chế độ xem trước...';
+        successDiv.style.display = 'block';
+        
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 800);
+    }
+</script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
@@ -241,7 +283,6 @@
                 .then((result) => {
                     const user = result.user;
                     console.log("Đăng nhập Google thành công:", user);
-                    // Gọi API lưu vào Database thông qua hàm toàn cục trong auth.js
                     if (typeof window.loginWithGoogle === "function") {
                         window.loginWithGoogle(user.email, user.displayName, user.photoURL, user.uid);
                     } else {
