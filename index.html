@@ -8,17 +8,12 @@
     :root {
       --primary-glow: #00f2fe;
       --secondary-glow: #4facfe;
-      --card-bg: rgba(255, 255, 255, 0.05);
+      --card-bg: rgba(255,255,255,0.05);
       --text-main: #ffffff;
       --text-muted: #b3b3b3;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
 
     body {
       background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -32,6 +27,7 @@
       margin: 0 auto;
     }
 
+    /* HEADER */
     header {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -64,106 +60,11 @@
       padding: 10px 20px;
       border-radius: 8px;
       font-weight: bold;
-    }
-
-    /* ---- CARD HIỂN THỊ MỤC HIỆN TẠI ---- */
-    .log-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 24px;
-      border-left: 5px solid var(--primary-glow);
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      min-height: 160px;
-      margin-bottom: 20px;
-    }
-
-    .log-card .log-date {
-      font-size: 14px;
-      color: var(--secondary-glow);
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-
-    .log-card .log-content {
-      font-size: 16px;
-      line-height: 1.7;
-      white-space: pre-wrap;
-    }
-
-    /* ---- PHÂN TRANG ---- */
-    .pagination {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 24px;
-    }
-
-    .page-btn {
-      flex: 1;
-      padding: 14px 10px;
-      border: none;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.2s;
-      color: #000;
-      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
-    }
-
-    .page-btn:disabled {
-      background: rgba(255,255,255,0.1);
-      color: rgba(255,255,255,0.3);
-      cursor: default;
-    }
-
-    .page-indicator {
-      font-size: 14px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      text-align: center;
-      min-width: 70px;
-    }
-
-    /* ---- DANH SÁCH THU GỌN (xem tất cả) ---- */
-    .toggle-list-btn {
-      width: 100%;
-      padding: 12px;
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 10px;
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-      margin-bottom: 16px;
       transition: 0.2s;
     }
-    .toggle-list-btn:hover { background: rgba(255,255,255,0.13); }
+    .eanh-btn:hover { transform: translateY(-2px); }
 
-    .all-logs {
-      display: none;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .all-logs.open { display: flex; }
-
-    .mini-log {
-      background: var(--card-bg);
-      border-left: 4px solid var(--secondary-glow);
-      border-radius: 10px;
-      padding: 14px 16px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .mini-log:hover { background: rgba(255,255,255,0.1); }
-    .mini-log .mini-date { font-size: 12px; color: var(--secondary-glow); margin-bottom: 4px; }
-    .mini-log .mini-preview { font-size: 14px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* ---- ADMIN ---- */
+    /* ADMIN PANEL */
     .admin-panel, .log-actions { display: none; }
 
     body.is-admin .admin-panel {
@@ -177,7 +78,7 @@
       gap: 15px;
     }
 
-    body.is-admin .log-actions { display: flex; gap: 10px; margin-top: 16px; }
+    body.is-admin .log-actions { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
 
     input[type="date"], textarea {
       width: 100%; padding: 12px; border-radius: 8px;
@@ -186,22 +87,103 @@
     }
     textarea { resize: vertical; min-height: 80px; }
 
-    .action-btn { background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
-    .log-actions button { border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-    .edit-btn { background: #ffc107; color: #000 !important; }
-    .delete-btn { background: #dc3545; }
+    .save-btn { background: #28a745; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .edit-btn { background: #ffc107; color: #000; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+    .delete-btn { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
+    /* LOG ITEMS */
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .log-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      border-left: 5px solid var(--primary-glow);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .log-date {
+      font-size: 14px;
+      color: var(--secondary-glow);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+
+    .log-content {
+      font-size: 15px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-bottom: 40px;
+    }
+
+    .page-btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      transition: 0.2s;
+      min-width: 44px;
+    }
+
+    .page-btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,242,254,0.4); }
+
+    .page-btn:disabled {
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.3);
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .page-btn.active {
+      background: linear-gradient(45deg, #fff, #ccc);
+      color: #000;
+      box-shadow: 0 4px 12px rgba(255,255,255,0.3);
+    }
+
+    .page-info {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    /* MOBILE */
     @media (max-width: 600px) {
       h1 { font-size: 20px; }
       .eanh-btn { position: relative; display: inline-block; top: 0; right: 0; margin-top: 15px; }
+      .page-btn { padding: 10px 14px; font-size: 13px; }
     }
   </style>
 </head>
 <body>
-
 <div class="container">
+
   <header>
-    <h1>Chi tiết bảo trì - EAnh<br><span style="font-size:14px;color:#b3b3b3;">(Bấm EAnh để quay về)</span></h1>
+    <h1>Chi tiết bảo trì - EAnh<br>
+      <span style="font-size:14px;color:#b3b3b3;">(Bấm EAnh để quay về)</span>
+    </h1>
     <div class="credits">
       <p>Developer: Nguyen Hoang Anh</p>
       <p>Tester: Nguyen Hoang Anh</p>
@@ -211,45 +193,40 @@
     <a href="https://zn29.ct.ws/" class="eanh-btn">EAnh</a>
   </header>
 
-  <!-- ADMIN PANEL -->
+  <!-- ADMIN -->
   <div class="admin-panel">
     <h3 style="font-size:18px;color:#ffc107;">⚙️ Chế độ Quản trị viên</h3>
     <input type="hidden" id="edit-id">
     <input type="date" id="log-date">
     <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
-    <button class="action-btn" onclick="saveLog()">Lưu thông tin</button>
+    <button class="save-btn" onclick="saveLog()">💾 Lưu thông tin</button>
   </div>
 
-  <!-- CARD MỤC HIỆN TẠI -->
-  <div class="log-card" id="current-card">
-    <div class="log-date" id="card-date"></div>
-    <div class="log-content" id="card-content"></div>
-    <div class="log-actions">
-      <button class="edit-btn" onclick="editCurrent()">✏️ Sửa</button>
-      <button class="delete-btn" onclick="deleteCurrent()">🗑️ Xóa</button>
-    </div>
-  </div>
+  <!-- DANH SÁCH -->
+  <div class="log-list" id="log-list"></div>
 
-  <!-- ĐIỀU HƯỚNG TRANG -->
-  <div class="pagination">
-    <button class="page-btn" id="btn-prev" onclick="changePage(-1)">⬅ Mới hơn</button>
-    <div class="page-indicator" id="page-indicator">1 / 1</div>
-    <button class="page-btn" id="btn-next" onclick="changePage(1)">Cũ hơn ➡</button>
-  </div>
+  <!-- PHÂN TRANG -->
+  <div class="pagination" id="pagination"></div>
 
-  <!-- NÚT XEM TẤT CẢ -->
-  <button class="toggle-list-btn" onclick="toggleList()">📋 Xem tất cả cập nhật ▼</button>
-  <div class="all-logs" id="all-logs"></div>
 </div>
 
 <script>
+  // ===== ADMIN =====
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.get('pass') === 'eanh') document.body.classList.add('is-admin');
+  const isAdmin = document.body.classList.contains('is-admin');
 
+  // ===== DỮ LIỆU MẶC ĐỊNH (9 mục để demo đầy đủ) =====
   const defaultData = [
     { id: 1710320000000, date: "2026-03-13", content: "Sửa lỗi giao diện trên Mobile các phím không hoạt động, kiểm lỗi và kiểm tra hệ thống\nTình trạng: Đang bảo trì" },
     { id: 1709974400000, date: "2026-03-09", content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong" },
-    { id: 1709628800000, date: "2026-03-05", content: "Tối ưu hóa cơ sở dữ liệu bị mất chữ và bài viết trong 1 số thiết bị.\nTình trạng: Đã xong" }
+    { id: 1709628800000, date: "2026-03-05", content: "Tối ưu hóa cơ sở dữ liệu bị mất chữ và bài viết trong 1 số thiết bị.\nTình trạng: Đã xong" },
+    { id: 1709283200000, date: "2026-03-01", content: "Cập nhật giao diện trang chủ, thay đổi màu sắc và font chữ.\nTình trạng: Đã xong" },
+    { id: 1708937600000, date: "2026-02-25", content: "Sửa lỗi tải ảnh chậm trên một số trình duyệt.\nTình trạng: Đã xong" },
+    { id: 1708592000000, date: "2026-02-21", content: "Thêm tính năng tìm kiếm nội dung.\nTình trạng: Đã xong" },
+    { id: 1708246400000, date: "2026-02-17", content: "Nâng cấp server, tăng tốc độ tải trang.\nTình trạng: Đã xong" },
+    { id: 1707900800000, date: "2026-02-13", content: "Sửa lỗi đăng nhập trên Safari iOS.\nTình trạng: Đã xong" },
+    { id: 1707555200000, date: "2026-02-09", content: "Ra mắt phiên bản EAnh v1.0\nTình trạng: Đã xong" }
   ];
 
   let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
@@ -258,8 +235,8 @@
     localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
   }
 
-  let currentIndex = 0; // 0 = mới nhất
-  let listOpen = false;
+  const PER_PAGE = 3;
+  let currentPage = 1;
 
   function getSorted() {
     return [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -270,76 +247,78 @@
     return isNaN(obj) ? 'Chưa có ngày' : obj.toLocaleDateString('vi-VN');
   }
 
-  function renderCard() {
-    const sorted = getSorted();
-    if (sorted.length === 0) {
-      document.getElementById('card-date').textContent = '';
-      document.getElementById('card-content').textContent = 'Chưa có dữ liệu bảo trì.';
-      document.getElementById('page-indicator').textContent = '0 / 0';
-      document.getElementById('btn-prev').disabled = true;
-      document.getElementById('btn-next').disabled = true;
-      return;
-    }
-
-    if (currentIndex >= sorted.length) currentIndex = sorted.length - 1;
-    const log = sorted[currentIndex];
-
-    document.getElementById('card-date').textContent = '🕒 Ngày: ' + fmtDate(log.date);
-    document.getElementById('card-content').textContent = log.content;
-    document.getElementById('page-indicator').textContent = (currentIndex + 1) + ' / ' + sorted.length;
-    document.getElementById('btn-prev').disabled = currentIndex === 0;
-    document.getElementById('btn-next').disabled = currentIndex === sorted.length - 1;
+  function totalPages() {
+    return Math.max(1, Math.ceil(getSorted().length / PER_PAGE));
   }
 
-  function renderAllLogs() {
+  function render() {
     const sorted = getSorted();
-    const container = document.getElementById('all-logs');
-    container.innerHTML = '';
-    sorted.forEach((log, i) => {
-      const div = document.createElement('div');
-      div.className = 'mini-log';
-      div.innerHTML = `<div class="mini-date">🕒 ${fmtDate(log.date)}</div><div class="mini-preview">${log.content.replace(/\n/g,' ')}</div>`;
-      div.onclick = () => { currentIndex = i; renderCard(); container.classList.remove('open'); listOpen = false; document.querySelector('.toggle-list-btn').textContent = '📋 Xem tất cả cập nhật ▼'; };
-      container.appendChild(div);
-    });
-  }
+    const total = totalPages();
+    if (currentPage > total) currentPage = total;
 
-  function changePage(dir) {
-    const sorted = getSorted();
-    currentIndex = Math.max(0, Math.min(sorted.length - 1, currentIndex + dir));
-    renderCard();
-  }
+    const start = (currentPage - 1) * PER_PAGE;
+    const pageItems = sorted.slice(start, start + PER_PAGE);
 
-  function toggleList() {
-    listOpen = !listOpen;
-    const el = document.getElementById('all-logs');
-    const btn = document.querySelector('.toggle-list-btn');
-    if (listOpen) {
-      renderAllLogs();
-      el.classList.add('open');
-      btn.textContent = '📋 Ẩn danh sách ▲';
+    // Render danh sách
+    const list = document.getElementById('log-list');
+    list.innerHTML = '';
+
+    if (pageItems.length === 0) {
+      list.innerHTML = '<p style="color:var(--text-muted);text-align:center;">Chưa có dữ liệu bảo trì.</p>';
     } else {
-      el.classList.remove('open');
-      btn.textContent = '📋 Xem tất cả cập nhật ▼';
+      pageItems.forEach(log => {
+        const div = document.createElement('div');
+        div.className = 'log-item';
+        div.innerHTML = `
+          <div class="log-date">🕒 Ngày: ${fmtDate(log.date)}</div>
+          <div class="log-content">${escHtml(log.content)}</div>
+          ${isAdmin ? `<div class="log-actions">
+            <button class="edit-btn" onclick="editLog(${log.id})">✏️ Sửa</button>
+            <button class="delete-btn" onclick="deleteLog(${log.id})">🗑️ Xóa</button>
+          </div>` : ''}
+        `;
+        list.appendChild(div);
+      });
     }
+
+    // Render pagination
+    const pg = document.getElementById('pagination');
+    pg.innerHTML = '';
+
+    // Nút Trước
+    const btnPrev = document.createElement('button');
+    btnPrev.className = 'page-btn';
+    btnPrev.textContent = '◀ Trước';
+    btnPrev.disabled = currentPage === 1;
+    btnPrev.onclick = () => { currentPage--; render(); };
+    pg.appendChild(btnPrev);
+
+    // Số trang
+    for (let i = 1; i <= total; i++) {
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+      btn.textContent = i;
+      btn.onclick = (function(p) { return () => { currentPage = p; render(); }; })(i);
+      pg.appendChild(btn);
+    }
+
+    // Nút Sau
+    const btnNext = document.createElement('button');
+    btnNext.className = 'page-btn';
+    btnNext.textContent = 'Sau ▶';
+    btnNext.disabled = currentPage === total;
+    btnNext.onclick = () => { currentPage++; render(); };
+    pg.appendChild(btnNext);
+
+    // Thông tin trang
+    const info = document.createElement('div');
+    info.className = 'page-info';
+    info.textContent = `Trang ${currentPage} / ${total} — Tổng ${sorted.length} cập nhật`;
+    pg.appendChild(info);
   }
 
-  function editCurrent() {
-    const log = getSorted()[currentIndex];
-    document.getElementById('log-date').value = log.date;
-    document.getElementById('log-content').value = log.content;
-    document.getElementById('edit-id').value = log.id;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  function deleteCurrent() {
-    const log = getSorted()[currentIndex];
-    if (confirm("Bạn có chắc muốn xóa mục này không?")) {
-      logs = logs.filter(l => l.id != log.id);
-      localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-      if (currentIndex > 0) currentIndex--;
-      renderCard();
-    }
+  function escHtml(str) {
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
   }
 
   function saveLog() {
@@ -350,21 +329,39 @@
     if (!dateInput || !contentInput.trim()) { alert("Vui lòng nhập đầy đủ ngày và nội dung!"); return; }
 
     if (editId) {
-      const index = logs.findIndex(l => l.id == editId);
-      if (index !== -1) { logs[index].date = dateInput; logs[index].content = contentInput; }
+      const i = logs.findIndex(l => l.id == editId);
+      if (i !== -1) { logs[i].date = dateInput; logs[i].content = contentInput; }
       document.getElementById('edit-id').value = '';
     } else {
       logs.push({ id: Date.now(), date: dateInput, content: contentInput });
-      currentIndex = 0;
+      currentPage = 1;
     }
 
     localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
     document.getElementById('log-date').value = '';
     document.getElementById('log-content').value = '';
-    renderCard();
+    render();
   }
 
-  renderCard();
+  function editLog(id) {
+    const log = logs.find(l => l.id == id);
+    if (log) {
+      document.getElementById('log-date').value = log.date;
+      document.getElementById('log-content').value = log.content;
+      document.getElementById('edit-id').value = log.id;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function deleteLog(id) {
+    if (confirm("Bạn có chắc muốn xóa mục này không?")) {
+      logs = logs.filter(l => l.id != id);
+      localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+      render();
+    }
+  }
+
+  render();
 </script>
 </body>
 </html>
