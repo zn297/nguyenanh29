@@ -3,352 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EAnh - Học Tiếng Anh Hiệu Quả</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <title>Chi tiết bảo trì - EAnh</title>
     <style>
-        *, body { font-family: 'Outfit', sans-serif; }
-
         :root {
-            --ink: #05080f;
-            --ink2: #090d18;
-            --glow: rgba(99,102,241,0.18);
-            --line: rgba(255,255,255,0.055);
+            --primary-glow: #00f2fe;
+            --secondary-glow: #4facfe;
+            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #b3b3b3;
         }
 
-        body { background: var(--ink); overflow-x: hidden; }
-
-        /* ── GRID BACKGROUND ── */
-        .grid-bg {
-            position: fixed; inset: 0; z-index: 0; pointer-events: none;
-            background-image:
-                linear-gradient(var(--line) 1px, transparent 1px),
-                linear-gradient(90deg, var(--line) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* ── NAV ── */
-        .site-nav {
-            position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1.2rem 6%;
-            background: rgba(5,8,15,0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--line);
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .nav-logo {
-            font-size: 1.6rem; font-weight: 900; letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 40%, #a5b4fc);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-        }
-        .nav-links { display: flex; align-items: center; gap: 0.5rem; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; padding: 0.5rem 1rem; font-size: 1rem; border-radius: 8px; transition: color 0.2s; }
-        .nav-links a:hover { color: var(--text); }
 
-        /* Ghost button */
-        .btn-ghost {
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.15);
-            color: var(--text) !important;
-            padding: 0.55rem 1.4rem !important;
-            border-radius: 10px;
-            font-size: 1rem; font-weight: 600;
+        .container {
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* Header & Info */
+        header {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            background: -webkit-linear-gradient(var(--primary-glow), var(--secondary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .credits p {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .eanh-btn {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+            color: #000;
             text-decoration: none;
-            transition: all 0.25s;
-        }
-        .btn-ghost:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.3); }
-
-        /* Glow button */
-        .btn-glow {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff !important; border: none;
-            padding: 0.6rem 1.6rem !important;
-            border-radius: 10px; font-size: 1rem; font-weight: 700;
-            text-decoration: none; cursor: pointer;
-            box-shadow: 0 0 20px rgba(99,102,241,0.35), 0 4px 15px rgba(0,0,0,0.4);
-            transition: all 0.3s;
-        }
-        .btn-glow::after {
-            content: '';
-            position: absolute; inset: 0;
-            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-        .btn-glow:hover { box-shadow: 0 0 35px rgba(99,102,241,0.55), 0 8px 25px rgba(0,0,0,0.4); transform: translateY(-1px); }
-        .btn-glow:hover::after { transform: translateX(100%); }
-
-        /* ── HERO ── */
-        .hero {
-            position: relative; z-index: 1;
-            min-height: 92vh; display: flex; align-items: center; justify-content: center;
-            text-align: center; padding: 6rem 6% 5rem;
-        }
-        .hero-glow {
-            position: absolute; width: 700px; height: 700px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(99,102,241,0.13) 0%, transparent 65%);
-            top: 50%; left: 50%; transform: translate(-50%, -60%);
-            pointer-events: none;
-        }
-        .hero-inner { position: relative; z-index: 2; }
-
-        .hero-tag {
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            border: 1px solid rgba(165,180,252,0.25);
-            background: rgba(99,102,241,0.1);
-            color: #a5b4fc; font-size: 0.9rem; font-weight: 600;
-            padding: 0.4rem 1.1rem; border-radius: 50px;
-            margin-bottom: 2rem; letter-spacing: 0.3px;
-            animation: fadeUp 0.6s ease both;
-        }
-        .hero-tag span { width: 6px; height: 6px; background: #818cf8; border-radius: 50%; display: inline-block; }
-
-        .hero h1 {
-            font-size: clamp(3rem, 7vw, 5.5rem); font-weight: 900;
-            line-height: 1.05; letter-spacing: -3px; color: var(--text);
-            margin-bottom: 1.5rem;
-            animation: fadeUp 0.6s 0.1s ease both;
-        }
-        .hero h1 em {
-            font-style: normal;
-            background: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #818cf8 100%);
-            background-size: 200%;
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            animation: shimmerText 4s linear infinite;
-        }
-        @keyframes shimmerText { 0% { background-position: 0% } 100% { background-position: 200% } }
-
-        .hero p {
-            font-size: 1.25rem; color: var(--text-muted); max-width: 500px;
-            margin: 0 auto 2.8rem; line-height: 1.8; font-weight: 400;
-            animation: fadeUp 0.6s 0.2s ease both;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
-        .hero-cta {
-            display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
-            margin-bottom: 5rem;
-            animation: fadeUp 0.6s 0.3s ease both;
-        }
-        .btn-hero {
-            position: relative; overflow: hidden;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: #fff; border: none;
-            padding: 1rem 2.5rem; border-radius: 12px;
-            font-size: 1.1rem; font-weight: 700; font-family: 'Outfit', sans-serif;
-            cursor: pointer; text-decoration: none;
-            box-shadow: 0 0 30px rgba(99,102,241,0.4), 0 8px 30px rgba(0,0,0,0.5);
-            transition: all 0.3s;
-        }
-        .btn-hero::after {
-            content: ''; position: absolute; inset: 0;
-            background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.2) 50%, transparent 60%);
-            transform: translateX(-100%); transition: transform 0.7s ease;
-        }
-        .btn-hero:hover { box-shadow: 0 0 50px rgba(99,102,241,0.6), 0 12px 40px rgba(0,0,0,0.5); transform: translateY(-3px); }
-        .btn-hero:hover::after { transform: translateX(100%); }
-
-        .btn-hero-out {
-            background: transparent; border: 1px solid rgba(255,255,255,0.18);
-            color: var(--text); padding: 1rem 2.5rem; border-radius: 12px;
-            font-size: 1.1rem; font-weight: 600; font-family: 'Outfit', sans-serif;
-            cursor: pointer; text-decoration: none; transition: all 0.3s;
-        }
-        .btn-hero-out:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.35); }
-
-        /* Stats bar */
-        .stats-bar {
-            display: flex; max-width: 680px; width: 100%; margin: 0 auto;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 18px; overflow: hidden;
-            animation: fadeUp 0.6s 0.4s ease both;
-        }
-        .sb-item { flex: 1; padding: 1.8rem 1rem; text-align: center; position: relative; }
-        .sb-item:not(:last-child)::after {
-            content: ''; position: absolute; right: 0; top: 20%; height: 60%;
-            width: 1px; background: rgba(255,255,255,0.07);
-        }
-        .sb-num { font-size: 2.4rem; font-weight: 800; color: var(--text); letter-spacing: -1px; }
-        .sb-lbl { font-size: 0.95rem; color: var(--text-muted); margin-top: 0.2rem; }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(22px); }
-            to   { opacity: 1; transform: translateY(0); }
+        .eanh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
         }
 
-        /* ── FEATURES ── */
-        .features {
-            position: relative; z-index: 1;
-            padding: 7rem 6%; border-top: 1px solid var(--line);
-            background: linear-gradient(180deg, var(--ink) 0%, var(--ink2) 100%);
+        /* Admin Panel (Form thêm/sửa) */
+        .admin-panel {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
         }
-        .features-head { text-align: center; margin-bottom: 4rem; }
-        .section-eyebrow {
-            display: inline-block; font-size: 0.8rem; font-weight: 700;
-            letter-spacing: 2px; text-transform: uppercase;
-            color: #818cf8; margin-bottom: 1rem;
-        }
-        .features-head h2 {
-            font-size: clamp(2rem, 4vw, 3rem); font-weight: 800;
-            color: var(--text); letter-spacing: -1px; margin-bottom: 0.75rem;
-        }
-        .features-head p { font-size: 1.1rem; color: var(--text-muted); }
 
-        .feat-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-            gap: 1.5rem; max-width: 1100px; margin: 0 auto;
+        input[type="date"], textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.2);
+            color: white;
+            outline: none;
         }
-        .feat-card {
-            position: relative; overflow: hidden;
-            background: rgba(255,255,255,0.025);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 18px; padding: 2.2rem;
-            transition: all 0.35s;
-        }
-        .feat-card::before {
-            content: ''; position: absolute; inset: 0; border-radius: 18px;
-            background: linear-gradient(135deg, rgba(99,102,241,0.07), transparent 60%);
-            opacity: 0; transition: opacity 0.35s;
-        }
-        .feat-card:hover { border-color: rgba(99,102,241,0.35); transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(99,102,241,0.1); }
-        .feat-card:hover::before { opacity: 1; }
 
-        .feat-icon {
-            font-size: 2.4rem; margin-bottom: 1.2rem;
-            width: 56px; height: 56px;
-            background: rgba(99,102,241,0.12);
-            border: 1px solid rgba(99,102,241,0.2);
-            border-radius: 14px; display: flex; align-items: center; justify-content: center;
+        textarea {
+            resize: vertical;
+            min-height: 80px;
         }
-        .feat-card h3 { font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 0.6rem; }
-        .feat-card p { font-size: 1rem; color: var(--text-muted); line-height: 1.7; }
 
-        /* ── CTA ── */
-        .cta-section {
-            position: relative; z-index: 1;
-            padding: 7rem 6%; text-align: center;
-            border-top: 1px solid var(--line);
-            overflow: hidden;
+        .action-btn {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
         }
-        .cta-glow {
-            position: absolute; width: 800px; height: 400px;
-            background: radial-gradient(ellipse, rgba(99,102,241,0.12) 0%, transparent 70%);
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-        .cta-section h2 {
-            position: relative; font-size: clamp(2rem, 4vw, 3.2rem);
-            font-weight: 900; color: var(--text);
-            letter-spacing: -1.5px; margin-bottom: 1rem;
-        }
-        .cta-section p { position: relative; font-size: 1.15rem; color: var(--text-muted); margin-bottom: 2.5rem; }
 
-        /* ── FOOTER ── */
-        .site-footer {
-            position: relative; z-index: 1;
-            padding: 2.5rem 6%; background: #030508;
-            border-top: 1px solid var(--line); text-align: center;
-        }
-        .footer-logo {
-            font-size: 1.9rem; font-weight: 900; letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #fff 40%, #a5b4fc);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-            margin-bottom: 0.6rem;
-        }
-        .site-footer .footer-links { justify-content: center; margin-top: 0.75rem; }
+        .action-btn:hover { background: #218838; }
 
+        /* Changelog List */
+        .changelog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .log-item {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            border-left: 5px solid var(--primary-glow);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .log-date {
+            font-size: 14px;
+            color: var(--secondary-glow);
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .log-content {
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+        }
+
+        .log-actions button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+
+        .log-actions button.edit-btn:hover { background: #ffc107; color: #000; }
+        .log-actions button.delete-btn:hover { background: #dc3545; }
+
+        /* Mobile Optimization */
         @media (max-width: 600px) {
-            .nav-links a:not(.btn-ghost):not(.btn-glow) { display: none; }
-            .stats-bar { flex-direction: column; }
-            .sb-item:not(:last-child)::after { display: none; }
+            .eanh-btn {
+                position: relative;
+                display: inline-block;
+                top: 0;
+                right: 0;
+                margin-top: 15px;
+            }
         }
     </style>
 </head>
 <body>
-<div class="grid-bg"></div>
 
-<!-- NAV -->
-<nav class="site-nav">
-    <div class="nav-logo">🎓 EAnh</div>
-    <div class="nav-links">
-        <a href="index.html">Trang chủ</a>
-        <a href="#features">Tính năng</a>
-        <a href="login.html" class="btn-ghost">Đăng nhập</a>
-        <a href="register.html" class="btn-glow">Đăng ký</a>
-    </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-    <div class="hero-glow"></div>
-    <div class="hero-inner">
-        <div class="hero-tag"><span></span> Nền tảng học tiếng Anh toàn diện</div>
-        <h1>Chinh phục<br>Tiếng Anh<br><em>cùng EAnh</em></h1>
-        <p>Hệ thống học từ <strong style="color:var(--text);">A1 đến C2</strong> — từ vựng, ngữ pháp, nghe, nói, đọc, viết trong một nơi duy nhất.</p>
-        <div class="hero-cta">
-            <a href="register.html" class="btn-hero">🚀 Bắt đầu miễn phí</a>
-            <a href="#features" class="btn-hero-out">Tìm hiểu thêm →</a>
+<div class="container">
+    <header>
+        <h1>Chi tiết bảo trì - EAnh</h1>
+        <div class="credits">
+            <p>Developer: Nguyen Hoang Anh</p>
+            <p>Tester: Nguyen Hoang Anh</p>
+            <p>Design: Nguyen Hoang Anh</p>
+            <p>Nickname: Zn</p>
         </div>
-        <div class="stats-bar">
-            <div class="sb-item"><div class="sb-num">1,000+</div><div class="sb-lbl">Từ vựng</div></div>
-            <div class="sb-item"><div class="sb-num">4</div><div class="sb-lbl">Kỹ năng</div></div>
-            <div class="sb-item"><div class="sb-num">100+</div><div class="sb-lbl">Đề thi thử</div></div>
-            <div class="sb-item"><div class="sb-num">A1–C2</div><div class="sb-lbl">6 cấp độ</div></div>
+        <a href="https://zn29.ct.ws/" target="_blank" class="eanh-btn">EAnh</a>
+    </header>
+
+    <div class="admin-panel">
+        <h3 style="margin-bottom: 10px; font-size: 18px;">Thêm / Cập nhật bảo trì</h3>
+        <input type="hidden" id="edit-id">
+        <input type="date" id="log-date">
+        <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
+        <button class="action-btn" onclick="saveLog()">Lưu thông tin</button>
+    </div>
+
+    <div class="changelog-list" id="logs-container">
         </div>
-    </div>
-</section>
+</div>
 
-<!-- FEATURES -->
-<section id="features" class="features">
-    <div class="features-head">
-        <div class="section-eyebrow">✦ Tính năng</div>
-        <h2>Mọi kỹ năng bạn cần</h2>
-        <p>Hệ thống bài học thiết kế bởi chuyên gia ngôn ngữ</p>
-    </div>
-    <div class="feat-grid">
-        <div class="feat-card"><div class="feat-icon">📚</div><h3>Từ vựng phong phú</h3><p>Phân loại theo chủ đề và cấp độ, giúp ghi nhớ hiệu quả và bền vững.</p></div>
-        <div class="feat-card"><div class="feat-icon">✏️</div><h3>Ngữ pháp chi tiết</h3><p>Lý thuyết rõ ràng kèm bài tập thực hành từ cơ bản đến nâng cao.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎧</div><h3>Luyện nghe hiệu quả</h3><p>Bài nghe đa dạng với nhiều giọng đọc, luyện phản xạ tự nhiên.</p></div>
-        <div class="feat-card"><div class="feat-icon">📖</div><h3>Đọc hiểu chuyên sâu</h3><p>Bài đọc đa chủ đề kèm câu hỏi kiểm tra kỹ năng phân tích văn bản.</p></div>
-        <div class="feat-card"><div class="feat-icon">✍️</div><h3>Luyện viết nâng cao</h3><p>Hướng dẫn viết từ cơ bản đến học thuật, có mẫu và phản hồi chi tiết.</p></div>
-        <div class="feat-card"><div class="feat-icon">🎤</div><h3>Thực hành nói</h3><p>Luyện phát âm và giao tiếp theo chủ đề với phản hồi thông minh tức thì.</p></div>
-    </div>
-</section>
-
-<!-- CTA -->
-<section class="cta-section">
-    <div class="cta-glow"></div>
-    <h2>Sẵn sàng bắt đầu<br>hành trình của bạn?</h2>
-    <p>Tham gia cùng hàng nghìn học viên đã thành công với EAnh</p>
-    <a href="register.html" class="btn-hero">🎓 Đăng ký ngay miễn phí</a>
-</section>
-
-<!-- FOOTER -->
-<footer class="site-footer">
-    <div class="footer-logo">🎓 EAnh</div>
-    <p style="color:var(--text-muted); font-size:1rem;">© 2024 EAnh. All rights reserved.</p>
-    <div class="footer-links">
-        <a href="#" class="link">Điều khoản</a>
-        <a href="#" class="link">Chính sách</a>
-        <a href="#" class="link">Liên hệ</a>
-    </div>
-</footer>
-
-<script src="assets/js/main.js"></script>
 <script>
-    // Scroll reveal
-    const cards = document.querySelectorAll('.feat-card');
-    const io = new IntersectionObserver((entries) => {
-        entries.forEach((e, i) => {
-            if (e.isIntersecting) {
-                e.target.style.animation = `fadeUp 0.5s ${i * 0.08}s ease both`;
-                io.unobserve(e.target);
-            }
+    // Khởi tạo mảng dữ liệu từ LocalStorage hoặc mảng rỗng
+    let logs = JSON.parse(localStorage.getItem('eanh_changelogs')) || [];
+
+    function renderLogs() {
+        const container = document.getElementById('logs-container');
+        container.innerHTML = '';
+
+        // Sắp xếp ngày mới nhất lên đầu
+        logs.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+        logs.forEach(log => {
+            const div = document.createElement('div');
+            div.className = 'log-item';
+            
+            // Format lại ngày cho dễ nhìn (DD/MM/YYYY)
+            const dateObj = new Date(log.date);
+            const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('vi-VN') : 'Chưa có ngày';
+
+            div.innerHTML = `
+                <div class="log-date">🕒 Ngày: ${formattedDate}</div>
+                <div class="log-content">${log.content}</div>
+                <div class="log-actions">
+                    <button class="edit-btn" onclick="editLog(${log.id})">Sửa</button>
+                    <button class="delete-btn" onclick="deleteLog(${log.id})">Xóa</button>
+                </div>
+            `;
+            container.appendChild(div);
         });
-    }, { threshold: 0.1 });
-    cards.forEach(c => { c.style.opacity = '0'; io.observe(c); });
+    }
+
+    function saveLog() {
+        const dateInput = document.getElementById('log-date').value;
+        const contentInput = document.getElementById('log-content').value;
+        const editId = document.getElementById('edit-id').value;
+
+        if (!dateInput || !contentInput.trim()) {
+            alert("Vui lòng nhập đầy đủ ngày và nội dung!");
+            return;
+        }
+
+        if (editId) {
+            // Chế độ sửa
+            const index = logs.findIndex(l => l.id == editId);
+            if(index !== -1) {
+                logs[index].date = dateInput;
+                logs[index].content = contentInput;
+            }
+            document.getElementById('edit-id').value = '';
+        } else {
+            // Chế độ thêm mới
+            const newLog = {
+                id: Date.now(), // Tạo ID ngẫu nhiên bằng timestamp
+                date: dateInput,
+                content: contentInput
+            };
+            logs.push(newLog);
+        }
+
+        // Lưu vào LocalStorage và render lại
+        localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+        
+        // Reset form
+        document.getElementById('log-date').value = '';
+        document.getElementById('log-content').value = '';
+        
+        renderLogs();
+    }
+
+    function editLog(id) {
+        const log = logs.find(l => l.id == id);
+        if(log) {
+            document.getElementById('log-date').value = log.date;
+            document.getElementById('log-content').value = log.content;
+            document.getElementById('edit-id').value = log.id;
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên form
+        }
+    }
+
+    function deleteLog(id) {
+        if(confirm("Bạn có chắc chắn muốn xóa nhật ký bảo trì này không?")) {
+            logs = logs.filter(l => l.id != id);
+            localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+            renderLogs();
+        }
+    }
+
+    // Hiển thị dữ liệu khi vừa load trang
+    renderLogs();
 </script>
+
 </body>
 </html>
