@@ -2,13 +2,12 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <title>Chi tiết bảo trì - EAnh.</title>
   <style>
     :root {
       --primary-glow: #00f2fe;
       --secondary-glow: #4facfe;
-      --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
       --card-bg: rgba(255, 255, 255, 0.05);
       --text-main: #ffffff;
       --text-muted: #b3b3b3;
@@ -21,31 +20,30 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    /* FIX MOBILE SCROLL: đảm bảo html và body cho phép cuộn */
-    html, body {
-      height: auto;
-      min-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+    /* ===== CỐT LÕI FIX CUỘN MOBILE ===== */
+    html {
+      height: 100%;
+      overflow-y: scroll; /* Luôn bật thanh cuộn dọc */
+      -webkit-overflow-scrolling: touch;
     }
 
     body {
-      background: var(--bg-gradient);
-      background-attachment: fixed; /* Giữ nền cố định khi cuộn */
+      /* KHÔNG dùng display:flex ở đây — đây là nguyên nhân gốc rễ gây lỗi */
+      min-height: 100%;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      background-attachment: fixed;
       color: var(--text-main);
       padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
+    /* ===================================== */
 
     .container {
       width: 100%;
       max-width: 800px;
+      margin: 0 auto; /* Căn giữa thay cho flex */
+      padding-bottom: 60px;
     }
 
-    /* Header & Info */
     header {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
@@ -138,21 +136,19 @@
       transition: 0.2s;
     }
 
-    .action-btn:hover {
-      background: #218838;
-    }
+    .action-btn:hover { background: #218838; }
 
     /* Changelog List */
     .changelog-list {
       display: flex;
       flex-direction: column;
       gap: 20px;
-      padding-bottom: 40px; /* Khoảng trống cuối trang trên mobile */
     }
 
     .log-item {
       background: var(--card-bg);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 20px;
       border-left: 5px solid var(--primary-glow);
@@ -187,7 +183,7 @@
     .log-actions button.edit-btn:hover { background: #ffc107; color: #000; }
     .log-actions button.delete-btn:hover { background: #dc3545; }
 
-    /* Mobile Optimization */
+    /* Mobile */
     @media (max-width: 600px) {
       h1 { font-size: 22px; }
 
