@@ -55,6 +55,7 @@
             background: -webkit-linear-gradient(var(--primary-glow), var(--secondary-glow));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            line-height: 1.4;
         }
 
         .credits p {
@@ -85,10 +86,9 @@
            CÁC PHẦN DÀNH RIÊNG CHO ADMIN (MẶC ĐỊNH ẨN) 
            ----------------------------------------- */
         .admin-panel, .log-actions {
-            display: none; /* Ẩn đi với người dùng bình thường */
+            display: none; 
         }
 
-        /* Khi body có class 'is-admin', mới hiện ra */
         body.is-admin .admin-panel {
             background: var(--card-bg);
             border-radius: 15px;
@@ -179,6 +179,7 @@
 
         /* Mobile Optimization */
         @media (max-width: 600px) {
+            h1 { font-size: 22px; }
             .eanh-btn {
                 position: relative;
                 display: inline-block;
@@ -193,14 +194,14 @@
 
 <div class="container">
     <header>
-        <h1>Chi tiết bảo trì - EAnh - Bấm vào chữ EAnh bên phải để quay về</h1>
+        <h1>Chi tiết bảo trì - EAnh <br><span style="font-size: 16px; color: #b3b3b3;">(Bấm vào chữ EAnh để quay về)</span></h1>
         <div class="credits">
             <p>Developer: Nguyen Hoang Anh</p>
             <p>Tester: Nguyen Hoang Anh</p>
             <p>Design: Nguyen Hoang Anh</p>
             <p>Nickname: Zn</p>
         </div>
-        <a href="https://zn29.ct.ws/" target="_blank" class="eanh-btn">EAnh</a>
+        <a href="https://zn29.ct.ws/" class="eanh-btn">EAnh</a>
     </header>
 
     <div class="admin-panel">
@@ -216,15 +217,36 @@
 </div>
 
 <script>
-    // --- BƯỚC 1: KIỂM TRA XEM CÓ PHẢI LÀ ADMIN KHÔNG ---
-    // Ví dụ: Nếu link là domain.com/index.html?pass=eanh thì mới hiện form
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('pass') === 'eanh') {
         document.body.classList.add('is-admin');
     }
 
-    // --- BƯỚC 2: QUẢN LÝ DỮ LIỆU ---
-    let logs = JSON.parse(localStorage.getItem('eanh_changelogs')) || [];
+    // KHỞI TẠO DỮ LIỆU MẶC ĐỊNH (Lấy từ hình ảnh của bạn)
+    const defaultData = [
+        {
+            id: 1710320000000,
+            date: "2026-03-13",
+            content: "Sửa lỗi giao diện trên Mobile các phím không hoạt động, kiểm lỗi và kiểm tra hệ thống\nTình trạng: Đang bảo trì"
+        },
+        {
+            id: 1709974400000,
+            date: "2026-03-09",
+            content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong"
+        },
+        {
+            id: 1709628800000,
+            date: "2026-03-05",
+            content: "Tối ưu hóa cơ sở dữ liệu bị mất chữ và bài viết trong 1 số thiết bị.\nTình trạng: Đã xong"
+        }
+    ];
+
+    // Kiểm tra xem LocalStorage đã có dữ liệu chưa, nếu chưa thì lấy dữ liệu mặc định ở trên
+    let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
+    if (!logs || logs.length === 0) {
+        logs = defaultData;
+        localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+    }
 
     function renderLogs() {
         const container = document.getElementById('logs-container');
@@ -306,5 +328,3 @@
 
 </body>
 </html>
-
-
