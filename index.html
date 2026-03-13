@@ -91,6 +91,29 @@
     .edit-btn { background: #ffc107; color: #000; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
     .delete-btn { background: #dc3545; color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
+    /* ADMIN COPY BOX */
+    .copy-box {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,193,7,0.4);
+      border-radius: 10px;
+      padding: 16px;
+      margin-top: 6px;
+    }
+    .copy-box p { font-size: 13px; color: #ffc107; margin-bottom: 10px; }
+    .copy-box textarea {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      background: rgba(0,0,0,0.4);
+      color: #aef;
+      min-height: 140px;
+      border-color: rgba(255,255,255,0.1);
+    }
+    .copy-code-btn {
+      background: #17a2b8; color: white; border: none;
+      padding: 8px 16px; border-radius: 8px; cursor: pointer;
+      font-weight: bold; margin-top: 8px;
+    }
+
     /* LOG ITEMS */
     .log-list {
       display: flex;
@@ -169,31 +192,6 @@
       margin-top: 4px;
     }
 
-    /* MOBILE NOTICE - chỉ hiện trên điện thoại */
-    .mobile-notice { display: none; }
-
-    @media (max-width: 768px) {
-      .mobile-notice {
-        display: block;
-        margin-bottom: 16px;
-      }
-      .mobile-section-title {
-        font-size: 17px;
-        font-weight: bold;
-        color: var(--primary-glow);
-        margin-bottom: 8px;
-      }
-      .mobile-hint {
-        font-size: 13px;
-        color: var(--text-muted);
-        background: rgba(255,255,255,0.05);
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 8px;
-        padding: 10px 14px;
-        line-height: 1.5;
-      }
-    }
-
     /* MOBILE */
     @media (max-width: 600px) {
       h1 { font-size: 20px; }
@@ -221,16 +219,18 @@
   <!-- ADMIN -->
   <div class="admin-panel">
     <h3 style="font-size:18px;color:#ffc107;">⚙️ Chế độ Quản trị viên</h3>
+    <p style="font-size:13px;color:#b3b3b3;">Sau khi lưu, hãy copy đoạn code bên dưới và thay vào file HTML để mọi thiết bị đều thấy.</p>
     <input type="hidden" id="edit-id">
     <input type="date" id="log-date">
     <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
-    <button class="save-btn" onclick="saveLog()">💾 Lưu thông tin</button>
-  </div>
+    <button class="save-btn" onclick="saveLog()">💾 Lưu & Tạo code mới</button>
 
-  <!-- CHỈ HIỆN TRÊN MOBILE -->
-  <div class="mobile-notice">
-    <div class="mobile-section-title">📋 Các cập nhật gần nhất</div>
-    <div class="mobile-hint">💻 Để xem toàn bộ cập nhật hãy xem trên trình duyệt của PC của bạn</div>
+    <!-- Hộp copy code -->
+    <div class="copy-box" id="copy-box" style="display:none;">
+      <p>📋 Copy đoạn <code>defaultData</code> này, thay vào file HTML của bạn (dòng <code>const defaultData = [...]</code>):</p>
+      <textarea id="generated-code" readonly></textarea>
+      <button class="copy-code-btn" onclick="copyCode()">📋 Copy code</button>
+    </div>
   </div>
 
   <!-- DANH SÁCH -->
@@ -247,7 +247,9 @@
   if (urlParams.get('pass') === 'eanh') document.body.classList.add('is-admin');
   const isAdmin = document.body.classList.contains('is-admin');
 
-  // ===== DỮ LIỆU MẶC ĐỊNH (9 mục để demo đầy đủ) =====
+  // ===================================================
+  // ✅ DỮ LIỆU CHÍNH - Thêm/sửa bài ở đây để mọi thiết bị thấy
+  // ===================================================
   const defaultData = [
     { id: 1710320000000, date: "2026-03-13", content: "Sửa lỗi giao diện trên Mobile các phím không hoạt động, kiểm lỗi và kiểm tra hệ thống\nTình trạng: Đang bảo trì" },
     { id: 1709974400000, date: "2026-03-09", content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong" },
@@ -259,12 +261,11 @@
     { id: 1707900800000, date: "2026-02-13", content: "Sửa lỗi đăng nhập trên Safari iOS.\nTình trạng: Đã xong" },
     { id: 1707555200000, date: "2026-02-09", content: "Ra mắt phiên bản EAnh v1.0\nTình trạng: Đã xong" }
   ];
+  // ===================================================
 
-  let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
-  if (!logs || logs.length === 0) {
-    logs = defaultData;
-    localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-  }
+  // ✅ Luôn dùng defaultData, KHÔNG dùng localStorage
+  // Vì localStorage chỉ lưu trên máy đó, mobile sẽ không thấy
+  let logs = JSON.parse(JSON.stringify(defaultData));
 
   const PER_PAGE = 3;
   let currentPage = 1;
@@ -290,7 +291,6 @@
     const start = (currentPage - 1) * PER_PAGE;
     const pageItems = sorted.slice(start, start + PER_PAGE);
 
-    // Render danh sách
     const list = document.getElementById('log-list');
     list.innerHTML = '';
 
@@ -316,7 +316,6 @@
     const pg = document.getElementById('pagination');
     pg.innerHTML = '';
 
-    // Nút Trước
     const btnPrev = document.createElement('button');
     btnPrev.className = 'page-btn';
     btnPrev.textContent = '◀ Trước';
@@ -324,7 +323,6 @@
     btnPrev.onclick = () => { currentPage--; render(); };
     pg.appendChild(btnPrev);
 
-    // Số trang
     for (let i = 1; i <= total; i++) {
       const btn = document.createElement('button');
       btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
@@ -333,7 +331,6 @@
       pg.appendChild(btn);
     }
 
-    // Nút Sau
     const btnNext = document.createElement('button');
     btnNext.className = 'page-btn';
     btnNext.textContent = 'Sau ▶';
@@ -341,7 +338,6 @@
     btnNext.onclick = () => { currentPage++; render(); };
     pg.appendChild(btnNext);
 
-    // Thông tin trang
     const info = document.createElement('div');
     info.className = 'page-info';
     info.textContent = `Trang ${currentPage} / ${total} — Tổng ${sorted.length} cập nhật`;
@@ -368,10 +364,30 @@
       currentPage = 1;
     }
 
-    localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
     document.getElementById('log-date').value = '';
     document.getElementById('log-content').value = '';
+
+    // Tạo code mới để admin copy vào file HTML
+    generateCode();
     render();
+  }
+
+  function generateCode() {
+    const sorted = [...logs].sort((a, b) => new Date(b.date) - new Date(a.date));
+    const lines = sorted.map(l => {
+      const escaped = l.content.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+      return `    { id: ${l.id}, date: "${l.date}", content: "${escaped}" }`;
+    });
+    const code = `const defaultData = [\n${lines.join(',\n')}\n];`;
+    document.getElementById('generated-code').value = code;
+    document.getElementById('copy-box').style.display = 'block';
+  }
+
+  function copyCode() {
+    const ta = document.getElementById('generated-code');
+    ta.select();
+    document.execCommand('copy');
+    alert('✅ Đã copy! Hãy dán vào file HTML thay thế đoạn const defaultData = [...]');
   }
 
   function editLog(id) {
@@ -387,7 +403,7 @@
   function deleteLog(id) {
     if (confirm("Bạn có chắc muốn xóa mục này không?")) {
       logs = logs.filter(l => l.id != id);
-      localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+      generateCode();
       render();
     }
   }
