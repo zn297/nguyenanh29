@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chi tiết bảo trì - EAnh.</title>
     <style>
         :root {
@@ -12,6 +12,11 @@
             --card-bg: rgba(255, 255, 255, 0.05);
             --text-main: #ffffff;
             --text-muted: #b3b3b3;
+        }
+
+        /* đảm bảo chiều cao đầy đủ để cuộn hoạt động trên mobile */
+        html, body {
+            height: 100%;
         }
 
         * {
@@ -25,15 +30,20 @@
             background: var(--bg-gradient);
             color: var(--text-main);
             min-height: 100vh;
+            /* cho phép cuộn dọc nếu nội dung vượt */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch; /* mượt trên iOS */
             padding: 20px;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: center; /* giữ container giữa trang trên desktop */
         }
 
+        /* container trung tâm, dùng margin auto để responsive ổn */
         .container {
             width: 100%;
             max-width: 800px;
+            margin: 0 auto;
         }
 
         /* Header & Info */
@@ -83,10 +93,10 @@
         }
 
         /* -----------------------------------------
-           CÁC PHẦN DÀNH RIÊNG CHO ADMIN (MẶC ĐỊNH ẨN) 
+           CÁC PHẦN DÀNH RIÊNG CHO ADMIN (MẶC ĐỊNH ẨN)
            ----------------------------------------- */
         .admin-panel, .log-actions {
-            display: none; 
+            display: none;
         }
 
         body.is-admin .admin-panel {
@@ -129,6 +139,7 @@
             cursor: pointer;
             font-weight: bold;
             transition: 0.2s;
+            align-self: flex-start;
         }
 
         .action-btn:hover { background: #218838; }
@@ -138,6 +149,11 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            /* cho phép cuộn nội bộ nếu danh sách quá dài */
+            max-height: calc(100vh - 260px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 4px; /* tránh che thanh cuộn */
         }
 
         .log-item {
@@ -187,6 +203,30 @@
                 right: 0;
                 margin-top: 15px;
             }
+
+            /* Trên màn nhỏ, đảm bảo body không giới hạn chiều rộng/căn giữa gây vấn đề cuộn */
+            body {
+                align-items: stretch;
+                padding: 14px;
+            }
+
+            .container {
+                padding: 0 8px;
+            }
+
+            /* bỏ giới hạn chiều cao cố định cho danh sách khi màn nhỏ (để dễ cuộn trang) */
+            .changelog-list {
+                max-height: none;
+                overflow-y: visible;
+                padding-right: 0;
+            }
+        }
+
+        /* small improvements for very long content on small screens */
+        @media (max-height: 520px) {
+            .changelog-list {
+                max-height: calc(100vh - 220px);
+            }
         }
     </style>
 </head>
@@ -213,7 +253,7 @@
     </div>
 
     <div class="changelog-list" id="logs-container">
-        </div>
+    </div>
 </div>
 
 <script>
@@ -222,7 +262,7 @@
         document.body.classList.add('is-admin');
     }
 
-    // KHỞI TẠO DỮ LIỆU MẶC ĐỊNH (Lấy từ hình ảnh của bạn)
+    // KHỞI TẠO DỮ LIỆU MẶC ĐỊNH
     const defaultData = [
         {
             id: 1710320000000,
@@ -241,7 +281,6 @@
         }
     ];
 
-    // Kiểm tra xem LocalStorage đã có dữ liệu chưa, nếu chưa thì lấy dữ liệu mặc định ở trên
     let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
     if (!logs || logs.length === 0) {
         logs = defaultData;
@@ -257,13 +296,13 @@
         logs.forEach(log => {
             const div = document.createElement('div');
             div.className = 'log-item';
-            
+
             const dateObj = new Date(log.date);
             const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('vi-VN') : 'Chưa có ngày';
 
             div.innerHTML = `
                 <div class="log-date">🕒 Ngày: ${formattedDate}</div>
-                <div class="log-content">${log.content}</div>
+                <div class="log-content">${escapeHtml(log.content)}</div>
                 <div class="log-actions">
                     <button class="edit-btn" onclick="editLog(${log.id})">Sửa</button>
                     <button class="delete-btn" onclick="deleteLog(${log.id})">Xóa</button>
@@ -271,6 +310,16 @@
             `;
             container.appendChild(div);
         });
+    }
+
+    // phòng trường hợp nội dung có ký tự HTML
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
     }
 
     function saveLog() {
@@ -285,7 +334,7 @@
 
         if (editId) {
             const index = logs.findIndex(l => l.id == editId);
-            if(index !== -1) {
+            if (index !== -1) {
                 logs[index].date = dateInput;
                 logs[index].content = contentInput;
             }
@@ -303,11 +352,16 @@
         document.getElementById('log-date').value = '';
         document.getElementById('log-content').value = '';
         renderLogs();
+
+        /* trên mobile, cuộn nhẹ tới màn hình mới tạo (nếu có) để người dùng thấy kết quả */
+        setTimeout(() => {
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }, 120);
     }
 
     function editLog(id) {
         const log = logs.find(l => l.id == id);
-        if(log) {
+        if (log) {
             document.getElementById('log-date').value = log.date;
             document.getElementById('log-content').value = log.content;
             document.getElementById('edit-id').value = log.id;
@@ -316,7 +370,7 @@
     }
 
     function deleteLog(id) {
-        if(confirm("Bạn có chắc chắn muốn xóa nhật ký bảo trì này không?")) {
+        if (confirm("Bạn có chắc chắn muốn xóa nhật ký bảo trì này không?")) {
             logs = logs.filter(l => l.id != id);
             localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
             renderLogs();
