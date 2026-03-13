@@ -81,8 +81,15 @@
             box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
         }
 
-        /* Admin Panel (Form thêm/sửa) */
-        .admin-panel {
+        /* -----------------------------------------
+           CÁC PHẦN DÀNH RIÊNG CHO ADMIN (MẶC ĐỊNH ẨN) 
+           ----------------------------------------- */
+        .admin-panel, .log-actions {
+            display: none; /* Ẩn đi với người dùng bình thường */
+        }
+
+        /* Khi body có class 'is-admin', mới hiện ra */
+        body.is-admin .admin-panel {
             background: var(--card-bg);
             border-radius: 15px;
             padding: 20px;
@@ -91,6 +98,11 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
+        }
+
+        body.is-admin .log-actions {
+            display: block;
+            margin-top: 10px;
         }
 
         input[type="date"], textarea {
@@ -148,7 +160,6 @@
             font-size: 16px;
             line-height: 1.6;
             white-space: pre-wrap;
-            margin-bottom: 15px;
         }
 
         .log-actions button {
@@ -193,7 +204,7 @@
     </header>
 
     <div class="admin-panel">
-        <h3 style="margin-bottom: 10px; font-size: 18px;">Thêm / Cập nhật bảo trì</h3>
+        <h3 style="margin-bottom: 10px; font-size: 18px; color: #ffc107;">⚙️ Chế độ Quản trị viên</h3>
         <input type="hidden" id="edit-id">
         <input type="date" id="log-date">
         <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
@@ -205,21 +216,26 @@
 </div>
 
 <script>
-    // Khởi tạo mảng dữ liệu từ LocalStorage hoặc mảng rỗng
+    // --- BƯỚC 1: KIỂM TRA XEM CÓ PHẢI LÀ ADMIN KHÔNG ---
+    // Ví dụ: Nếu link là domain.com/index.html?pass=eanh thì mới hiện form
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('pass') === 'eanh') {
+        document.body.classList.add('is-admin');
+    }
+
+    // --- BƯỚC 2: QUẢN LÝ DỮ LIỆU ---
     let logs = JSON.parse(localStorage.getItem('eanh_changelogs')) || [];
 
     function renderLogs() {
         const container = document.getElementById('logs-container');
         container.innerHTML = '';
 
-        // Sắp xếp ngày mới nhất lên đầu
         logs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
         logs.forEach(log => {
             const div = document.createElement('div');
             div.className = 'log-item';
             
-            // Format lại ngày cho dễ nhìn (DD/MM/YYYY)
             const dateObj = new Date(log.date);
             const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('vi-VN') : 'Chưa có ngày';
 
@@ -246,7 +262,6 @@
         }
 
         if (editId) {
-            // Chế độ sửa
             const index = logs.findIndex(l => l.id == editId);
             if(index !== -1) {
                 logs[index].date = dateInput;
@@ -254,22 +269,17 @@
             }
             document.getElementById('edit-id').value = '';
         } else {
-            // Chế độ thêm mới
             const newLog = {
-                id: Date.now(), // Tạo ID ngẫu nhiên bằng timestamp
+                id: Date.now(),
                 date: dateInput,
                 content: contentInput
             };
             logs.push(newLog);
         }
 
-        // Lưu vào LocalStorage và render lại
         localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-        
-        // Reset form
         document.getElementById('log-date').value = '';
         document.getElementById('log-content').value = '';
-        
         renderLogs();
     }
 
@@ -279,7 +289,7 @@
             document.getElementById('log-date').value = log.date;
             document.getElementById('log-content').value = log.content;
             document.getElementById('edit-id').value = log.id;
-            window.scrollTo({ top: 0, behavior: 'smooth' }); // Cuộn lên form
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
 
@@ -291,7 +301,6 @@
         }
     }
 
-    // Hiển thị dữ liệu khi vừa load trang
     renderLogs();
 </script>
 
