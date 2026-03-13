@@ -1,346 +1,329 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chi tiết bảo trì - EAnh.</title>
-    <style>
-        :root {
-            --primary-glow: #00f2fe;
-            --secondary-glow: #4facfe;
-            --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --text-main: #ffffff;
-            --text-muted: #b3b3b3;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết bảo trì - EAnh.</title>
+  <style>
+    :root {
+      --primary-glow: #00f2fe;
+      --secondary-glow: #4facfe;
+      --bg-gradient: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      --card-bg: rgba(255, 255, 255, 0.05);
+      --text-main: #ffffff;
+      --text-muted: #b3b3b3;
+    }
 
-        /* FIX SCROLL MOBILE */
-        html {
-            height: 100%;
-            overflow-y: auto;
-        }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    /* FIX MOBILE SCROLL: đảm bảo html và body cho phép cuộn */
+    html, body {
+      height: auto;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+    }
 
-        body {
-            background: var(--bg-gradient);
-            color: var(--text-main);
-            min-height: 100vh;
-            min-height: 100dvh; /* FIX CHÍNH: Dùng dynamic viewport để mobile không bị cắt scroll */
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-y: auto; /* Đảm bảo body luôn có thể cuộn */
-            -webkit-overflow-scrolling: touch; /* Scroll mượt trên iOS/Android */
-        }
+    body {
+      background: var(--bg-gradient);
+      background-attachment: fixed; /* Giữ nền cố định khi cuộn */
+      color: var(--text-main);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-        .container {
-            width: 100%;
-            max-width: 800px;
-        }
+    .container {
+      width: 100%;
+      max-width: 800px;
+    }
 
-        /* Header & Info */
-        header {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            position: relative;
-        }
+    /* Header & Info */
+    header {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      position: relative;
+    }
 
-        h1 {
-            font-size: 28px;
-            margin-bottom: 15px;
-            background: -webkit-linear-gradient(var(--primary-glow), var(--secondary-glow));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.4;
-        }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 15px;
+      background: -webkit-linear-gradient(var(--primary-glow), var(--secondary-glow));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.4;
+    }
 
-        .credits p {
-            font-size: 14px;
-            color: var(--text-muted);
-            margin-bottom: 5px;
-        }
+    .credits p {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 5px;
+    }
 
-        .eanh-btn {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
-            color: #000;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+    .eanh-btn {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      background: linear-gradient(45deg, var(--primary-glow), var(--secondary-glow));
+      color: #000;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
 
-        .eanh-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
-        }
+    .eanh-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 242, 254, 0.4);
+    }
 
-        /* ----------------------------------------- CÁC PHẦN DÀNH RIÊNG CHO ADMIN (MẶC ĐỊNH ẨN) ----------------------------------------- */
-        .admin-panel, .log-actions {
-            display: none;
-        }
+    /* Admin Panel */
+    .admin-panel, .log-actions {
+      display: none;
+    }
 
-        body.is-admin .admin-panel {
-            background: var(--card-bg);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    body.is-admin .admin-panel {
+      background: var(--card-bg);
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
 
-        body.is-admin .log-actions {
-            display: block;
-            margin-top: 10px;
-        }
+    body.is-admin .log-actions {
+      display: block;
+      margin-top: 10px;
+    }
 
-        input[type="date"], textarea {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
-            outline: none;
-        }
+    input[type="date"], textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(0, 0, 0, 0.2);
+      color: white;
+      outline: none;
+    }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
 
-        .action-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.2s;
-        }
+    .action-btn {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
 
-        .action-btn:hover {
-            background: #218838;
-        }
+    .action-btn:hover {
+      background: #218838;
+    }
 
-        /* Changelog List */
-        .changelog-list {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+    /* Changelog List */
+    .changelog-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      padding-bottom: 40px; /* Khoảng trống cuối trang trên mobile */
+    }
 
-        .log-item {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            border-left: 5px solid var(--primary-glow);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+    .log-item {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 20px;
+      border-left: 5px solid var(--primary-glow);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
 
-        .log-date {
-            font-size: 14px;
-            color: var(--secondary-glow);
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
+    .log-date {
+      font-size: 14px;
+      color: var(--secondary-glow);
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
 
-        .log-content {
-            font-size: 16px;
-            line-height: 1.6;
-            white-space: pre-wrap;
-        }
+    .log-content {
+      font-size: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
 
-        .log-actions button {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            font-size: 13px;
-            transition: 0.2s;
-        }
+    .log-actions button {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 13px;
+      transition: 0.2s;
+    }
 
-        .log-actions button.edit-btn:hover {
-            background: #ffc107;
-            color: #000;
-        }
+    .log-actions button.edit-btn:hover { background: #ffc107; color: #000; }
+    .log-actions button.delete-btn:hover { background: #dc3545; }
 
-        .log-actions button.delete-btn:hover {
-            background: #dc3545;
-        }
+    /* Mobile Optimization */
+    @media (max-width: 600px) {
+      h1 { font-size: 22px; }
 
-        /* Mobile Optimization */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 22px;
-            }
-            .eanh-btn {
-                position: relative;
-                display: inline-block;
-                top: 0;
-                right: 0;
-                margin-top: 15px;
-            }
-        }
-    </style>
+      .eanh-btn {
+        position: relative;
+        display: inline-block;
+        top: 0;
+        right: 0;
+        margin-top: 15px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Chi tiết bảo trì - EAnh <br><span style="font-size: 16px; color: #b3b3b3;">(Bấm vào chữ EAnh để quay về)</span></h1>
-            <div class="credits">
-                <p>Developer: Nguyen Hoang Anh</p>
-                <p>Tester: Nguyen Hoang Anh</p>
-                <p>Design: Nguyen Hoang Anh</p>
-                <p>Nickname: Zn</p>
-            </div>
-            <a href="https://zn29.ct.ws/" class="eanh-btn">EAnh</a>
-        </header>
 
-        <div class="admin-panel">
-            <h3 style="margin-bottom: 10px; font-size: 18px; color: #ffc107;">⚙️ Chế độ Quản trị viên</h3>
-            <input type="hidden" id="edit-id">
-            <input type="date" id="log-date">
-            <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
-            <button class="action-btn" onclick="saveLog()">Lưu thông tin</button>
-        </div>
-
-        <div class="changelog-list" id="logs-container"></div>
+<div class="container">
+  <header>
+    <h1>Chi tiết bảo trì - EAnh <br><span style="font-size: 16px; color: #b3b3b3;">(Bấm vào chữ EAnh để quay về)</span></h1>
+    <div class="credits">
+      <p>Developer: Nguyen Hoang Anh</p>
+      <p>Tester: Nguyen Hoang Anh</p>
+      <p>Design: Nguyen Hoang Anh</p>
+      <p>Nickname: Zn</p>
     </div>
+    <a href="https://zn29.ct.ws/" class="eanh-btn">EAnh</a>
+  </header>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('pass') === 'eanh') {
-            document.body.classList.add('is-admin');
-        }
+  <div class="admin-panel">
+    <h3 style="margin-bottom: 10px; font-size: 18px; color: #ffc107;">⚙️ Chế độ Quản trị viên</h3>
+    <input type="hidden" id="edit-id">
+    <input type="date" id="log-date">
+    <textarea id="log-content" placeholder="Nhập nội dung bảo trì..."></textarea>
+    <button class="action-btn" onclick="saveLog()">Lưu thông tin</button>
+  </div>
 
-        // KHỞI TẠO DỮ LIỆU MẶC ĐỊNH
-        const defaultData = [
-            { 
-                id: 1710320000000, 
-                date: "2026-03-13", 
-                content: "Sửa lỗi giao diện trên Mobile các phím không hoạt động, kiểm lỗi và kiểm tra hệ thống\nTình trạng: Đang bảo trì" 
-            },
-            { 
-                id: 1709974400000, 
-                date: "2026-03-09", 
-                content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong" 
-            },
-            { 
-                id: 1709628800000, 
-                date: "2026-03-05", 
-                content: "Tối ưu hóa cơ sở dữ liệu bị mất chữ và bài viết trong 1 số thiết bị.\nTình trạng: Đã xong" 
-            }
-        ];
+  <div class="changelog-list" id="logs-container"></div>
+</div>
 
-        let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
-        if (!logs || logs.length === 0) {
-            logs = defaultData;
-            localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-        }
+<script>
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('pass') === 'eanh') {
+    document.body.classList.add('is-admin');
+  }
 
-        function renderLogs() {
-            const container = document.getElementById('logs-container');
-            container.innerHTML = '';
-            
-            logs.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            logs.forEach(log => {
-                const div = document.createElement('div');
-                div.className = 'log-item';
-                
-                const dateObj = new Date(log.date);
-                const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('vi-VN') : 'Chưa có ngày';
-                
-                // ĐÃ SỬA: Dùng template literal đúng cách (trước bị mất dấu ` khi paste)
-                div.innerHTML = `
-                    <div class="log-date">🕒 Ngày: ${formattedDate}</div>
-                    <div class="log-content">${log.content}</div>
-                    <div class="log-actions">
-                        <button class="edit-btn" onclick="editLog(${log.id})">Sửa</button>
-                        <button class="delete-btn" onclick="deleteLog(${log.id})">Xóa</button>
-                    </div>
-                `;
-                
-                container.appendChild(div);
-            });
-        }
+  const defaultData = [
+    {
+      id: 1710320000000,
+      date: "2026-03-13",
+      content: "Sửa lỗi giao diện trên Mobile các phím không hoạt động, kiểm lỗi và kiểm tra hệ thống\nTình trạng: Đang bảo trì"
+    },
+    {
+      id: 1709974400000,
+      date: "2026-03-09",
+      content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong"
+    },
+    {
+      id: 1709628800000,
+      date: "2026-03-05",
+      content: "Tối ưu hóa cơ sở dữ liệu bị mất chữ và bài viết trong 1 số thiết bị.\nTình trạng: Đã xong"
+    }
+  ];
 
-        function saveLog() {
-            const dateInput = document.getElementById('log-date').value;
-            const contentInput = document.getElementById('log-content').value;
-            const editId = document.getElementById('edit-id').value;
+  let logs = JSON.parse(localStorage.getItem('eanh_changelogs'));
+  if (!logs || logs.length === 0) {
+    logs = defaultData;
+    localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+  }
 
-            if (!dateInput || !contentInput.trim()) {
-                alert("Vui lòng nhập đầy đủ ngày và nội dung!");
-                return;
-            }
+  function renderLogs() {
+    const container = document.getElementById('logs-container');
+    container.innerHTML = '';
+    logs.sort((a, b) => new Date(b.date) - new Date(a.date));
+    logs.forEach(log => {
+      const div = document.createElement('div');
+      div.className = 'log-item';
+      const dateObj = new Date(log.date);
+      const formattedDate = !isNaN(dateObj) ? dateObj.toLocaleDateString('vi-VN') : 'Chưa có ngày';
+      div.innerHTML = `
+        <div class="log-date">🕒 Ngày: ${formattedDate}</div>
+        <div class="log-content">${log.content}</div>
+        <div class="log-actions">
+          <button class="edit-btn" onclick="editLog(${log.id})">Sửa</button>
+          <button class="delete-btn" onclick="deleteLog(${log.id})">Xóa</button>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+  }
 
-            if (editId) {
-                const index = logs.findIndex(l => l.id == editId);
-                if (index !== -1) {
-                    logs[index].date = dateInput;
-                    logs[index].content = contentInput;
-                }
-                document.getElementById('edit-id').value = '';
-            } else {
-                const newLog = { 
-                    id: Date.now(), 
-                    date: dateInput, 
-                    content: contentInput 
-                };
-                logs.push(newLog);
-            }
+  function saveLog() {
+    const dateInput = document.getElementById('log-date').value;
+    const contentInput = document.getElementById('log-content').value;
+    const editId = document.getElementById('edit-id').value;
 
-            localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-            document.getElementById('log-date').value = '';
-            document.getElementById('log-content').value = '';
-            renderLogs();
-        }
+    if (!dateInput || !contentInput.trim()) {
+      alert("Vui lòng nhập đầy đủ ngày và nội dung!");
+      return;
+    }
 
-        function editLog(id) {
-            const log = logs.find(l => l.id == id);
-            if (log) {
-                document.getElementById('log-date').value = log.date;
-                document.getElementById('log-content').value = log.content;
-                document.getElementById('edit-id').value = log.id;
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
+    if (editId) {
+      const index = logs.findIndex(l => l.id == editId);
+      if (index !== -1) {
+        logs[index].date = dateInput;
+        logs[index].content = contentInput;
+      }
+      document.getElementById('edit-id').value = '';
+    } else {
+      logs.push({ id: Date.now(), date: dateInput, content: contentInput });
+    }
 
-        function deleteLog(id) {
-            if (confirm("Bạn có chắc chắn muốn xóa nhật ký bảo trì này không?")) {
-                logs = logs.filter(l => l.id != id);
-                localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
-                renderLogs();
-            }
-        }
+    localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+    document.getElementById('log-date').value = '';
+    document.getElementById('log-content').value = '';
+    renderLogs();
+  }
 
-        // Khởi chạy
-        renderLogs();
-    </script>
+  function editLog(id) {
+    const log = logs.find(l => l.id == id);
+    if (log) {
+      document.getElementById('log-date').value = log.date;
+      document.getElementById('log-content').value = log.content;
+      document.getElementById('edit-id').value = log.id;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function deleteLog(id) {
+    if (confirm("Bạn có chắc chắn muốn xóa nhật ký bảo trì này không?")) {
+      logs = logs.filter(l => l.id != id);
+      localStorage.setItem('eanh_changelogs', JSON.stringify(logs));
+      renderLogs();
+    }
+  }
+
+  renderLogs();
+</script>
+
 </body>
 </html>
