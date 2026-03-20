@@ -149,14 +149,13 @@ if (urlParams.get('pass') === 'eanh') document.body.classList.add('is-admin');
 const isAdmin = document.body.classList.contains('is-admin');
 
 const defaultData = [
-    { id: 1773989885184, date: "2026-03-19", content: "V1.1_19326.TEST\n- Thêm chức năng đổi ảnh đại diện đồng bộ" },
-    { id: 1773909012435, date: "2026-03-18", content: "Cập nhật phiên bản: \n- V1.1_19326_TEST\nThêm mới:\n- Cập nhật chức năng đọc từ vựng\n- Giờ đây bạn có thể kiểm tra từ khóa đã học\n- Các từ đã học sẽ được lưu vào mục ưu tiên nếu bạn đã đúng 5 lần kiểm tra \n- Thêm chức năng xóa sạch dữ liệu đã học của mục từ vựng \n- Giờ đây bạn có thể xem phiên bản cập nhật tại: Hồ sơ" },
-    { id: 1773760989511, date: "2026-03-17", content: "Bảo trì hoàn tất ( 14:24 - 18/3/26 ) | v1.0_Test Phiên bản 17326_PRE.ST\n- Đổi tên miền thành https://anh29.ct.ws/\n- Tăng cường bảo mật hệ thống\n- Thời gian bảo trì có thể lâu hơn dự kiến." },
-    { id: 1773576758754, date: "2026-03-15", content: "\nThêm mới:\n- Cập nhật tính năng chấm điểm cho hệ thống Speaking và Writing\n- Tăng cường bảo mật hệ thống, đồng bộ dữ liệu giữa các trang. \n- Cập nhật giao diện Thống kê đồng bộ cho cả Laptop và Mobile." },
-    { id: 1773577732793, date: "2026-03-14", content: "Sửa lỗi :\n- Một số mẫu Mobile không hiển thị giao diện\nThêm mới:\n- Giờ đây bạn có thể xem cập nhật tại trang hồ sơ " },
-    { id: 1710320000000, date: "2026-03-13", content: "Bảo trì Website tối ưu từ vựng và lỗi giao diện hiển thị trên Mobile\nTình trạng: Đang bảo trì" },
-    { id: 1709974400000, date: "2026-03-09", content: "Cập nhật Đăng nhập Admin\nTình trạng: Đã xong" },
-    { id: 1707555200000, date: "2026-02-09", content: "Ra mắt phiên bản EAnh v1.0\nTình trạng: Đã xong" }
+    { id: 1774025223174, date: "2026-03-20", content: "Version V1.1_20326.TEST\nSửa lỗi:\n- Ảnh đại diện bị mất sau khi người dùng đăng xuất\n- Phân lại quyền Admin tại trang người dùng\nThêm mới:\n- Người dùng không cần phải đăng nhập lại sau khi đã ghi nhớ đăng nhập ( Lưu ý 1 phiên đăng nhập sẽ kéo dài đến 23:59 nếu người dùng không đăng xuất ) \n- Bạn có thể yêu cầu lấy lại mật khẩu bảo mật hơn qua xác thực Email chính chủ." },
+    { id: 1773989885184, date: "2026-03-19", content: "Version V1.1_19326.TEST\n- Thêm chức năng đổi ảnh đại diện đồng bộ" },
+    { id: 1773909012435, date: "2026-03-18", content: "Cập nhật phiên bản: \nVersion V1.1_19326.TEST\nThêm mới:\n- Cập nhật chức năng đọc từ vựng\n- Giờ đây bạn có thể kiểm tra từ khóa đã học\n- Các từ đã học sẽ được lưu vào mục ưu tiên nếu bạn đã đúng 5 lần kiểm tra \n- Thêm chức năng xóa sạch dữ liệu đã học của mục từ vựng \n- Giờ đây bạn có thể xem phiên bản cập nhật tại: Hồ sơ" },
+    { id: 1773760989511, date: "2026-03-17", content: "Version V1.0_17326.DEMO.TEST\nBảo trì hoàn tất ( 14:24 - 18/3/26 )\n- Đổi tên miền thành https://anh29.ct.ws/\n- Tăng cường bảo mật hệ thống\n- Thời gian bảo trì có thể lâu hơn dự kiến." },
+    { id: 1773576758754, date: "2026-03-15", content: "Version V1.0_15326.DEMO.TEST\nThêm mới:\n- Cập nhật tính năng chấm điểm cho hệ thống Speaking và Writing\n- Tăng cường bảo mật hệ thống, đồng bộ dữ liệu giữa các trang. \n- Cập nhật giao diện Thống kê đồng bộ cho cả Laptop và Mobile." },
+    { id: 1773577732793, date: "2026-03-14", content: "Version V1.0_14326.DEMO.TEST\nSửa lỗi :\n- Một số mẫu Mobile không hiển thị giao diện\nThêm mới:\n- Giờ đây bạn có thể xem cập nhật tại trang hồ sơ" },
+    { id: 1707555200000, date: "2026-02-09", content: "Version V1.0\nRa mắt phiên bản EAnh v1.0\nTình trạng: Đã xong" }
 ];
 
 let logs = JSON.parse(JSON.stringify(defaultData));
