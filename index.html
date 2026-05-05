@@ -26,7 +26,7 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home">
-        <div class="hero-content">
+        <div class="hero-content container">
             <div class="profile-image">
                 <img src="profile.jpg" alt="NguyenHoangAnh">
             </div>
@@ -51,55 +51,94 @@
         </div>
     </section>
 
-    <!-- Sections kept from original code -->
-    <section id="about" class="about">
+    <!-- About Section -->
+    <section class="about" id="about">
         <div class="container">
             <h2 class="section-title">Về Tôi</h2>
-            <p>Mình là Nguyễn Hoàng Anh (Ju), sinh năm 2004, sinh viên ngành IT. Năng động, sáng tạo & luôn sẵn sàng học hỏi.</p>
+            <div class="about-content">
+                <p>Là một kỹ thuật viên phần mềm chăm chỉ với niềm đam mê công nghệ, mình luôn hứng thú với việc tìm hiểu và cập nhật công nghệ mới. Hiện tại, mình là sinh viên ngành Kỹ thuật phần mềm tại Đại học Thủ Dầu Một.</p>
+            </div>
         </div>
     </section>
 
-    <section id="contact" class="contact">
-        <h1>Longin Build>>"Full-Off EasiyEquipmentCompablt"
-Dưới đây là phần còn lại và toàn bộ tệp HTML đã được cải tiến, tập trung vào giao diện thân thiện với điện thoại di động:
-
-```html name="index.html"
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <!-- Education Section -->
+    <section class="education" id="education">
         <div class="container">
-            <h2 class="section-title">Liên Hệ</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h4>Điện thoại</h4>
-                            <p><a href="tel:0388486348">0388486348</a></p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <h4>Email</h4>
-                            <p><a href="mailto:giaa32087@gmail.com">giaa32087@gmail.com</a></p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <h4>Địa chỉ</h4>
-                            <p>Đại học Thủ Dầu Một, Việt Nam</p>
-                        </div>
+            <h2 class="section-title">Trình Độ Học Vấn</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2022-2024</div>
+                    <div class="timeline-content">
+                        <h3>Đại học Thủ Dầu Một</h3>
+                        <p>Học ngành Kỹ thuật phần mềm, chuyên về tùy chỉnh và cài đặt hệ điều hành Android, xử lý phần mềm và phát triển hệ thống.</p>
                     </div>
                 </div>
-                <form class="contact-form" method="POST">
-                    <input type="text" name="name" placeholder="Tên của bạn" required>
-                    <input type="email" name="email" placeholder="Email của bạn" required>
-                    <textarea name="message" placeholder="Tin nhắn" rows="5" required></textarea>
-                    <button type="submit" class="btn btn-primary">Gửi tin nhắn</button>
-                </form>
+                <div class="timeline-item">
+                    <div class="timeline-date">2024-2026</div>
+                    <div class="timeline-content">
+                        <h3>Đại học Thủ Dầu Một</h3>
+                        <p>Phát triển ứng dụng di động và web (bằng Flutter và công nghệ web). Dự án mẫu: <a href="https://anh29.ct.ws" target="_blank">anh29.ct.ws</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section class="experience" id="experience">
+        <div class="container">
+            <h2 class="section-title">Kinh Nghiệm Thực Hành</h2>
+            <div class="experience-grid">
+                <div class="experience-card">
+                    <h3>Phát triển ứng dụng Flutter</h3>
+                    <p>Tạo ứng dụng di động, giao diện thân thiện, hiệu năng cao.</p>
+                </div>
+                <div class="experience-card">
+                    <h3>Tùy chỉnh hệ thống</h3>
+                    <p>Lập trình và tùy chỉnh hệ thống Android ROM & Firmware.</p>
+                </div>
+                <div class="experience-card">
+                    <h3>Ứng dụng AI</h3>
+                    <p>Ứng dụng công nghệ trí tuệ nhân tạo để hỗ trợ các dự án phần mềm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="skills" id="skills">
+        <div class="container">
+            <h2 class="section-title">Các Kỹ Năng</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Lập trình</h3>
+                    <span class="skill-tag">Flutter</span>
+                    <span class="skill-tag">HTML</span>
+                    <span class="skill-tag">JavaScript</span>
+                </div>
+                <div class="skill-category">
+                    <h3>Công cụ kỹ thuật</h3>
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">ADB/Fastboot</span>
+                    <span class="skill-tag">MySQL</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <h2 class="section-title">Dự Án</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <h3>Website EAnh</h3>
+                    <p>Trang quản lý dữ liệu sinh viên nâng cao với AI.</p>
+                </div>
+                <div class="project-card">
+                    <h3>Ứng dụng Ghi chú</h3>
+                    <p>Ứng dụng quản lý ghi chú cá nhân viết bằng Flutter.</p>
+                </div>
             </div>
         </div>
     </section>
@@ -107,39 +146,12 @@ Dưới đây là phần còn lại và toàn bộ tệp HTML đã được cả
     <!-- Footer -->
     <footer class="footer">
         <div class="container">
-            <p>&copy; 2026 Nguyễn Hoàng Anh (Ju). All Rights Reserved.</p>
+            <p>&copy; 2026 Nguyễn Hoàng Anh (Ju)</p>
             <div class="social-links">
-                <a href="https://www.facebook.com/Ju2974" class="social-link fb" target="_blank">
-                    <i class="fab fa-facebook"></i>
-                </a>
-                <a href="https://www.instagram.com/ng_ju29/" class="social-link insta" target="_blank">
-                    <i class="fab fa-instagram"></i>
-                </a>
+                <a href="https://www.facebook.com/Ju2974" class="social-link fb"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ng_ju29/" class="social-link insta"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
     </footer>
-
-    <!-- Script -->
-    <script>
-        // Smooth scrolling for links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', event => {
-                event.preventDefault();
-                const targetId = anchor.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: "smooth" });
-                }
-            });
-        });
-
-        // Contact form submission handler
-        const contactForm = document.querySelector('.contact-form');
-        contactForm.addEventListener('submit', event => {
-            event.preventDefault();
-            alert("Cảm ơn bạn đã liên hệ! Tôi sẽ phản hồi lại trong thời gian sớm nhất.");
-            contactForm.reset();
-        });
-    </script>
 </body>
 </html>
