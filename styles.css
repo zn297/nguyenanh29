@@ -19,8 +19,9 @@
     --text: #e8edf5;
     --muted: #6b7a90;
     --white: #fff;
-    --font-display: 'Syne', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    /* Font với fallback system an toàn nếu Google Fonts bị block */
+    --font-display: 'Syne', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
     --nav-h: 64px;
     --radius: 12px;
     --radius-sm: 6px;
@@ -38,8 +39,10 @@ body {
     font-family: var(--font-display);
     line-height: 1.7;
     overflow-x: hidden;
-    cursor: none;
+    cursor: auto;
 }
+/* cursor: none chỉ kích hoạt sau khi JS gán class .cursor-ready */
+body.cursor-ready { cursor: none; }
 a { text-decoration: none; color: inherit; }
 img { display: block; max-width: 100%; }
 
@@ -72,8 +75,8 @@ img { display: block; max-width: 100%; }
     z-index: 9998; transform: translate(-50%, -50%);
     transition: transform 0.18s ease, width 0.22s, height 0.22s, opacity 0.2s;
 }
-body:has(a:hover) .cursor { background: var(--accent); transform: translate(-50%,-50%) scale(1.5);}
-body:has(a:hover) .cursor-follower { width: 48px; height: 48px; border-color: rgba(255,45,120,0.4);}
+body.cursor-ready:has(a:hover) .cursor { background: var(--accent); transform: translate(-50%,-50%) scale(1.5);}
+body.cursor-ready:has(a:hover) .cursor-follower { width: 48px; height: 48px; border-color: rgba(255,45,120,0.4);}
 
 /* ── Navbar ── */
 .navbar {
