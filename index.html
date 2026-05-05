@@ -1,516 +1,285 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nhật ký cập nhật – EAnh</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-:root {
-  --bg: #0f172a;         /* Slate 900 */
-  --surface: #1e293b;    /* Slate 800 */
-  --surface2: #334155;   /* Slate 700 */
-  --border: #334155;
-  --border-hover: #475569;
-  --text: #f8fafc;       /* Slate 50 */
-  --muted: #94a3b8;      /* Slate 400 */
-  --dim: #64748b;        /* Slate 500 */
-  --accent: #38bdf8;     /* Sky 400 */
-  --accent-hover: #0ea5e9;
-  --green: #22c55e;
-  --red: #f87171;
-  --yellow: #fbbf24;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', sans-serif;
-  font-size: 15px;
-  min-height: 100vh;
-  line-height: 1.6;
-}
-
-/* TOPBAR */
-.topbar {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(15, 23, 42, 0.85);
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(12px);
-  padding: 0 24px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.topbar-left { display: flex; align-items: center; gap: 12px; }
-.logo {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--accent);
-  letter-spacing: -0.5px;
-}
-.logo span { color: var(--muted); font-weight: 400; }
-.topbar-badge {
-  font-size: 11px;
-  font-weight: 600;
-  background: rgba(56, 189, 248, 0.1);
-  color: var(--accent);
-  border: 1px solid rgba(56, 189, 248, 0.2);
-  border-radius: 6px;
-  padding: 3px 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-.back-btn {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--muted);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-.back-btn:hover {
-  color: var(--text);
-  border-color: var(--muted);
-  background: var(--surface2);
-}
-
-/* HERO */
-.hero {
-  padding: 60px 24px 40px;
-  max-width: 800px;
-  margin: 0 auto;
-}
-.hero-eyebrow {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-.hero-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.5px;
-  line-height: 1.2;
-  margin-bottom: 12px;
-}
-.hero-sub {
-  font-size: 15px;
-  color: var(--muted);
-  max-width: 600px;
-}
-.current-version-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--green);
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 14px;
-  margin-top: 20px;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-.current-version-badge strong { font-weight: 700; color: #fff; }
-.hero-meta {
-  display: flex;
-  gap: 20px;
-  margin-top: 24px;
-  flex-wrap: wrap;
-}
-.meta-item {
-  font-size: 13px;
-  color: var(--dim);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.meta-dot { width: 6px; height: 6px; background: var(--border-hover); border-radius: 50%; }
-
-/* ADMIN PANEL */
-.admin-panel { display: none; max-width: 800px; margin: 0 auto; padding: 0 24px 30px; }
-body.is-admin .admin-panel { display: block; }
-.admin-box {
-  background: var(--surface);
-  border: 1px solid var(--yellow);
-  border-radius: 12px;
-  padding: 24px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-}
-.admin-title {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--yellow);
-  margin-bottom: 20px;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.admin-title::before { content:'⚡'; }
-.form-row { display: grid; grid-template-columns: 200px 1fr; gap: 16px; margin-bottom: 16px; }
-.form-input {
-  width: 100%; padding: 12px 16px; background: var(--bg);
-  border: 1px solid var(--border); border-radius: 8px;
-  color: var(--text); font-size: 14px; font-family: 'Inter', sans-serif;
-  outline: none; transition: border-color 0.2s, box-shadow 0.2s;
-}
-.form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.1); }
-textarea.form-input { resize: vertical; min-height: 100px; line-height: 1.6; }
-.btn-save {
-  padding: 12px 24px; background: var(--green); color: #000;
-  border: none; border-radius: 8px; font-weight: 600; font-size: 14px;
-  cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
-}
-.btn-save:hover { background: #16a34a; transform: translateY(-1px); }
-.copy-box {
-  background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-  padding: 16px; margin-top: 20px; display: none;
-}
-.copy-label { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; margin-bottom: 12px; }
-.copy-textarea {
-  width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 12px;
-  background: transparent; color: var(--accent); border: none; outline: none;
-  resize: none; min-height: 120px; line-height: 1.5;
-}
-.btn-copy {
-  padding: 8px 16px; background: rgba(56, 189, 248, 0.1); color: var(--accent);
-  border: 1px solid rgba(56, 189, 248, 0.2); border-radius: 6px;
-  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; margin-top: 10px;
-}
-.btn-copy:hover { background: rgba(56, 189, 248, 0.2); }
-
-/* LOG LIST */
-.log-wrap { max-width: 800px; margin: 0 auto; padding: 0 24px 80px; }
-.log-count {
-  font-size: 13px; color: var(--muted); font-family: 'JetBrains Mono', monospace;
-  margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-}
-
-.log-item {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 16px;
-  position: relative;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-.log-item:hover { border-color: var(--border-hover); transform: translateY(-2px); }
-.log-item::before {
-  content: ''; position: absolute; left: -1px; top: 24px; bottom: 24px;
-  width: 4px; background: var(--accent); border-radius: 0 4px 4px 0;
-}
-.log-date {
-  font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent);
-  font-weight: 600; letter-spacing: 0.05em; margin-bottom: 12px;
-  background: rgba(56, 189, 248, 0.1); display: inline-block;
-  padding: 4px 10px; border-radius: 6px;
-}
-.log-content { font-size: 14.5px; line-height: 1.8; color: var(--text); white-space: pre-wrap; }
-.log-actions {
-  display: none; gap: 8px; margin-top: 20px; padding-top: 16px;
-  border-top: 1px solid var(--border);
-}
-body.is-admin .log-actions { display: flex; }
-.btn-edit, .btn-del {
-  padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;
-  cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
-}
-.btn-edit { background: rgba(251, 191, 36, 0.1); color: var(--yellow); border: 1px solid rgba(251, 191, 36, 0.2); }
-.btn-edit:hover { background: rgba(251, 191, 36, 0.2); }
-.btn-del { background: rgba(248, 113, 113, 0.1); color: var(--red); border: 1px solid rgba(248, 113, 113, 0.2); }
-.btn-del:hover { background: rgba(248, 113, 113, 0.2); }
-
-/* PAGINATION */
-.pagination { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; padding-top: 30px; }
-.page-btn {
-  padding: 8px 16px; border: 1px solid var(--border); border-radius: 8px;
-  font-size: 14px; font-weight: 500; cursor: pointer; color: var(--muted);
-  background: var(--surface); font-family: 'Inter', sans-serif; transition: all 0.2s;
-}
-.page-btn:hover:not(:disabled) { color: var(--text); border-color: var(--muted); background: var(--surface2); }
-.page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.page-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 600; }
-.page-info { font-size: 12px; color: var(--dim); text-align: center; width: 100%; margin-top: 12px; font-family: 'JetBrains Mono', monospace; }
-
-/* EMPTY */
-.empty { text-align: center; padding: 60px 20px; color: var(--dim); font-size: 15px; background: var(--surface); border-radius: 12px; border: 1px dashed var(--border); }
-
-@media(max-width: 640px) {
-  .hero { padding: 40px 16px 30px; }
-  .hero-title { font-size: 26px; }
-  .log-wrap { padding: 0 16px 60px; }
-  .admin-panel { padding: 0 16px 20px; }
-  .form-row { grid-template-columns: 1fr; gap: 10px; }
-  .topbar { padding: 0 16px; }
-  .log-item { padding: 20px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nguyễn Hoàng Anh - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">NHA</div>
+            <ul class="nav-menu">
+                <li><a href="#home">Trang chủ</a></li>
+                <li><a href="#about">Về tôi</a></li>
+                <li><a href="#education">Học vấn</a></li>
+                <li><a href="#experience">Kinh nghiệm</a></li>
+                <li><a href="#skills">Kỹ năng</a></li>
+                <li><a href="#projects">Dự án</a></li>
+                <li><a href="#contact">Liên hệ</a></li>
+            </ul>
+        </div>
+    </nav>
 
-<div class="topbar">
-  <div class="topbar-left">
-    <span class="logo">EAnh <span>/ changelog</span></span>
-    <span class="topbar-badge">Logs</span>
-  </div>
-  <a href="https://anh29.ct.ws/pages/profile.html" class="back-btn">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    Về trang chủ
-  </a>
-</div>
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div class="profile-image">
+                <img src="profile.jpg" alt="Nguyễn Hoàng Anh">
+            </div>
+            <h1 class="hero-title">NGUYỄN HOÀNG ANH</h1>
+            <p class="hero-subtitle">Kỹ thuật viên phần mềm (IT)</p>
+            <div class="hero-divider"></div>
+            <div class="hero-info">
+                <span><i class="fas fa-phone"></i> 0388486348</span>
+                <span><i class="fas fa-envelope"></i> giaa32087@gmail.com</span>
+                <span><i class="fas fa-graduation-cap"></i> Trường Đại học Thủ Dầu Một</span>
+            </div>
+            <div class="hero-cta">
+                <a href="#contact" class="btn btn-primary">Liên hệ tôi</a>
+                <a href="#projects" class="btn btn-secondary">Xem dự án</a>
+            </div>
+        </div>
+    </section>
 
-<div class="hero">
-  <div class="hero-eyebrow">Release Notes</div>
-  <div class="hero-title">Nhật ký cập nhật hệ thống</div>
-  <div class="hero-sub">Theo dõi toàn bộ lịch sử thay đổi, sửa lỗi và các tính năng mới được phát triển cho hệ thống EAnh.</div>
-  
-  <div class="current-version-badge" id="current-version-display">
-    Bạn đang ở phiên bản: <strong>Đang tải...</strong>
-  </div>
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <h2 class="section-title">Về Tôi</h2>
+            <div class="about-content">
+                <p>Một sinh viên đang theo học chuyên ngành Kỹ thuật phần mềm tại Trường Đại học Thủ Dầu Một. Nhạnh nhẹn và có mở, giao tiếp tốt với mọi người xung quanh, đam mê học hỏi những điều mới.</p>
+                <p>Hiểu biết về tin học cơ bản và nâng cao, cơ bản về các ngôn ngữ trong lập trình như HTML, PHP, JS, Flutter, và nhiều công nghệ khác.</p>
+            </div>
+        </div>
+    </section>
 
-  <div class="hero-meta">
-    <div class="meta-item"><div class="meta-dot"></div>Dev: Nguyen Hoang Anh</div>
-    <div class="meta-item"><div class="meta-dot"></div>Nick: Ju</div>
-  </div>
-</div>
+    <!-- Education Section -->
+    <section class="education" id="education">
+        <div class="container">
+            <h2 class="section-title">Trình Độ Học Vấn</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-date">2022-2024</div>
+                    <div class="timeline-content">
+                        <h3>THU DAU MOT UNIVERSITY</h3>
+                        <p class="timeline-subtitle">Performed Custom ROM Flashing and Firmware Upgrades on Xiaomi Devices</p>
+                        <p class="timeline-desc">Đại học Thủ Dầu Một – Ngành Kỹ thuật Phần mềm<br>Năm 1 – Năm 2</p>
+                        <p>Thực hiện tùy chỉnh hệ thống Android trên thiết bị Xiaomi (cài ROM, nâng cấp firmware, mở khóa bootloader, root, TWRP, ADB/Fastboot, xử lý lỗi hệ thống)</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-date">2024-2026</div>
+                    <div class="timeline-content">
+                        <h3>THU DAU MOT UNIVERSITY</h3>
+                        <p class="timeline-subtitle">Mobile & Web Application Developer (Flutter, Web)</p>
+                        <p class="timeline-desc">Phát triển ứng dụng Flutter (các sản phẩm đã làm như: ghi chú thông minh, nghe nhạc trực tuyến,...), xây dựng website EAnh, có kiến thức MySQL và quản lý dữ liệu/file, ứng dụng AI để tối ưu phát triển; sản phẩm tại: anh29.ct.ws</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="admin-panel">
-  <div class="admin-box">
-    <div class="admin-title">Khu vực quản trị — Thêm / Sửa bản ghi</div>
-    <input type="hidden" id="edit-id">
-    <div class="form-row">
-      <input type="date" id="log-date" class="form-input">
-      <textarea id="log-content" class="form-input" placeholder="Nhập nội dung cập nhật mới..."></textarea>
-    </div>
-    <button class="btn-save" onclick="saveLog()">Lưu & Tạo mã Code</button>
-    
-    <div class="copy-box" id="copy-box">
-      <div class="copy-label">// Dán đoạn mã này thay cho const defaultData = [...] trong mã nguồn</div>
-      <textarea id="generated-code" class="copy-textarea" readonly></textarea>
-      <button class="btn-copy" onclick="copyCode()">Sao chép mã</button>
-    </div>
-  </div>
-</div>
+    <!-- Experience Section -->
+    <section class="experience" id="experience">
+        <div class="container">
+            <h2 class="section-title">Kinh Nghiệm Thực Hành</h2>
+            <div class="experience-grid">
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-mobile-alt"></i></div>
+                    <h3>Phát triển ứng dụng Flutter</h3>
+                    <p>Xây dựng các ứng dụng di động đa nền tảng với giao diện hiện đại và hiệu năng cao.</p>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-globe"></i></div>
+                    <h3>Xây dựng website EAnh</h3>
+                    <p>Triển khai hệ thống website toàn diện với frontend và backend tối ưu.</p>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-database"></i></div>
+                    <h3>Quản lý dữ liệu</h3>
+                    <p>Làm việc với MySQL, quản lý dữ liệu và file hệ thống một cách hiệu quả.</p>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-robot"></i></div>
+                    <h3>Ứng dụng AI</h3>
+                    <p>Tích hợp AI và Machine Learning để tối ưu hóa các tính năng ứng dụng.</p>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-gears"></i></div>
+                    <h3>Android Customization</h3>
+                    <p>Chuyên về tùy chỉnh hệ thống Android (ROM, Root, TWRP, Bootloader).</p>
+                </div>
+                <div class="experience-card">
+                    <div class="exp-icon"><i class="fas fa-lightbulb"></i></div>
+                    <h3>Giải quyết vấn đề</h3>
+                    <p>Khả năng phân tích và giải quyết các vấn đề phức tạp trong phát triển phần mềm.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<div class="log-wrap">
-  <div class="log-count" id="log-count"></div>
-  <div id="log-list"></div>
-  <div class="pagination" id="pagination"></div>
-</div>
+    <!-- Skills Section -->
+    <section class="skills" id="skills">
+        <div class="container">
+            <h2 class="section-title">Kỹ Năng</h2>
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Lập trình</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Dart (Flutter)</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">HTML/CSS</span>
+                        <span class="skill-tag">PHP</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Phát triển di động</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Flutter</span>
+                        <span class="skill-tag">REST API</span>
+                        <span class="skill-tag">Android Dev</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Web Development</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">HTML/CSS</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Responsive Design</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Cơ sở dữ liệu</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">Firestore</span>
+                        <span class="skill-tag">Data Management</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Công cụ</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">ADB/Fastboot</span>
+                        <span class="skill-tag">VSCode</span>
+                        <span class="skill-tag">Android Studio</span>
+                    </div>
+                </div>
+                <div class="skill-category">
+                    <h3>Khác</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Prompt Engineering</span>
+                        <span class="skill-tag">AI Literacy</span>
+                        <span class="skill-tag">Problem Solving</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-// ── XÁC THỰC ADMIN ──
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.get('pass') === 'eanh') document.body.classList.add('is-admin');
-const isAdmin = document.body.classList.contains('is-admin');
+    <!-- Projects Section -->
+    <section class="projects" id="projects">
+        <div class="container">
+            <h2 class="section-title">Dự Án Nổi Bật</h2>
+            <div class="projects-grid">
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+                    <h3>Ứng dụng Flutter</h3>
+                    <p>Phát triển các sản phẩm ứng dụng như ghi chú thông minh, nghe nhạc trực tuyến, và nhiều tính năng khác.</p>
+                    <div class="project-tags">
+                        <span>Flutter</span>
+                        <span>Dart</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <h3>Website EAnh</h3>
+                    <p>Website toàn diện với quản lý dữ liệu MySQL, tích hợp AI, và giao diện hiện đại.</p>
+                    <div class="project-tags">
+                        <span>HTML/CSS</span>
+                        <span>JavaScript</span>
+                        <span>MySQL</span>
+                    </div>
+                    <a href="https://anh29.ct.ws" class="project-link" target="_blank">Xem dự án →</a>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <h3>Android ROM Customization</h3>
+                    <p>Chuyên về tùy chỉnh hệ thống Android, flashing ROM, root device, và cấu hình bootloader.</p>
+                    <div class="project-tags">
+                        <span>Android</span>
+                        <span>ROM</span>
+                        <span>System</span>
+                    </div>
+                </div>
+                <div class="project-card">
+                    <div class="project-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                    <h3>AI-Assisted Development</h3>
+                    <p>Ứng dụng Prompt Engineering và AI để tối ưu hóa quy trình phát triển phần mềm.</p>
+                    <div class="project-tags">
+                        <span>AI</span>
+                        <span>ML</span>
+                        <span>Automation</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-// ── DỮ LIỆU MẶC ĐỊNH ──
-const defaultData = [
-    { id: 1776940856216, date: "2026-04-23", content: "Version v1.2.4.STABLE\n- Cập nhật chức năng đăng kí và đăng nhập Google\n- Tái cấu trúc nền sáng và nền tối\n- Thêm tính năng Tra cứu từ điển\n- Sửa lỗi Thông báo hiển thị không đúng trong 1 số trường hợp" },
-    { id: 1776658219664, date: "2026-04-20", content: "Version v1.2.3.STABLE\n- Cải thiện bố cục các trang chủ và đăng kí đăng nhập\n- Thêm chức năng hạn chế người dùng Admin\n- Vá lỗi người dùng và Admin có thể truy cập trang qua lại khi sửa đường dẫn\n- Cải thiện công cụ dịch thuật tối ưu hơn\n- Cập nhật độ ổn định hệ thống" },
-    { id: 1776444202779, date: "2026-04-17", content: "Version v1.2.2.STABLE\n- Tối ưu hóa giao diện trên nhiều thiết bị hơn\n- Hỗ trợ Hướng dẫn người mới \n- Cập nhật lịch sử phiên bản\n- Sửa lỗi kiểm tra từ vựng hiển thị không như mong muốn" },
-    { id: 1775725754041, date: "2026-04-09", content: "Version v1.2.1.STABLE\n\n- Cải thiện chế độ dịch thuật\n- Thêm chức năng ghi bảng tạm ở Dịch thuật \n- Cải tiến giao diện hồ sơ\n- Thêm nút nhảy link tải APK ( Lưu ý APK sẽ chưa được cập nhật )" },
-    { id: 1774611258207, date: "2026-03-27", content: "Version v1.2.0.STABLE\n\n* Dự án đã được tái cấu trúc toàn diện nhằm tối ưu hiệu năng và trải nghiệm người dùng.\n* Các module trọng tâm được triển khai trước gồm: Tổng quan, Từ vựng, Ngữ pháp và Thi thử.\n* Trong giai đoạn đầu của phiên bản này, một số lỗi có thể vẫn còn tồn tại trong quá trình sử dụng.\n* Một số nội dung và dữ liệu hiển thị có thể chưa hoàn toàn chính xác.\n* Mọi góp ý hoặc yêu cầu điều chỉnh, vui lòng gửi qua mục Góp ý trong phần Hồ sơ." },
-    { id: 1774542217448, date: "2026-03-26", content: "Version V1.1_26326.STABLE\nThêm mới\n- Cải tiến hoàn toàn giao diện\n- Bản dịch thuật ở ngay trên giao diện Desktop hoặc Mobile ( Thêm ) \n- Cải tiến tốc độ khung hình hỗ trợ thêm nhiều thiết bị đời cũ.\n- Bạn có thể bấm dịch ngay ở trên Trang tổng quan\n- Trang dịch thuật được thiết kế hướng tới con người làm trung tâm." },
-    { id: 1774343588188, date: "2026-03-24", content: "Version V1.1_24326.RELEASE\nNội dung:\n- Tối ưu hóa giao diện và bố cục trên Mobile\n- Xuất bản ứng dụng APK ( Android ) dạng Webview\nThêm mới:\n- Giờ đây bạn có thể chỉnh 2 chế độ sáng tối \n- Hộp thư góp ý sẽ được bổ sung sau phiên bản 24316RELEASE ( Truy cập vào mục Hồ sơ )" },
-    { id: 1774079790711, date: "2026-03-21", content: "Version V1.1_21326.RELEASE.TEST\nThêm mới:\n- Tính năng tìm kiếm được tích hợp vào trang tổng quan ( Tìm kiếm tất cả danh mục )\n- Tìm kiếm từng danh mục sẽ xuất hiện trong từng trang bạn chọn.\n- Thông báo cơ bản được bổ sung về tiến độ học, vui lòng nhấn vào icon thông báo." },
-    { id: 1774025223174, date: "2026-03-20", content: "Version V1.1_20326.TEST\nSửa lỗi:\n- Ảnh đại diện bị mất sau khi người dùng đăng xuất\n- Phân lại quyền Admin tại trang người dùng\nThêm mới:\n- Người dùng không cần phải đăng nhập lại sau khi đã ghi nhớ đăng nhập ( Lưu ý 1 phiên đăng nhập sẽ kéo dài đến 23:59 nếu người dùng không đăng xuất ) \n- Bạn có thể yêu cầu lấy lại mật khẩu bảo mật hơn qua xác thực Email chính chủ." },
-    { id: 1773989885184, date: "2026-03-19", content: "Version V1.1_19326.TEST\n- Thêm chức năng đổi ảnh đại diện đồng bộ" },
-    { id: 1773909012435, date: "2026-03-18", content: "Cập nhật phiên bản: \nVersion V1.1_19326.TEST\nThêm mới:\n- Cập nhật chức năng đọc từ vựng\n- Giờ đây bạn có thể kiểm tra từ khóa đã học\n- Các từ đã học sẽ được lưu vào mục ưu tiên nếu bạn đã đúng 5 lần kiểm tra \n- Thêm chức năng xóa sạch dữ liệu đã học của mục từ vựng \n- Giờ đây bạn có thể xem phiên bản cập nhật tại: Hồ sơ" },
-    { id: 1773760989511, date: "2026-03-17", content: "Version V1.0_17326.DEMO.TEST\nBảo trì hoàn tất ( 14:24 - 18/3/26 )\n- Đổi tên miền thành https://anh29.ct.ws/\n- Tăng cường bảo mật hệ thống\n- Thời gian bảo trì có thể lâu hơn dự kiến." },
-    { id: 1773576758754, date: "2026-03-15", content: "Version V1.0_15326.DEMO.TEST\nThêm mới:\n- Cập nhật tính năng chấm điểm cho hệ thống Speaking và Writing\n- Tăng cường bảo mật hệ thống, đồng bộ dữ liệu giữa các trang. \n- Cập nhật giao diện Thống kê đồng bộ cho cả Laptop và Mobile." },
-    { id: 1773577732793, date: "2026-03-14", content: "Version V1.0_14326.DEMO.TEST\nSửa lỗi :\n- Một số mẫu Mobile không hiển thị giao diện\nThêm mới:\n- Giờ đây bạn có thể xem cập nhật tại trang hồ sơ" },
-    { id: 1707555200000, date: "2026-02-09", content: "Version V1.0\nRa mắt phiên bản EAnh v1.0\nTình trạng: Đã xong" },
-    { id: 1776657630943, date: "2004-04-20", content: "Version v1.2.3.STABLE\n- Sửa lỗi quyền Admin không thực hiện được chức năng\n- Bổ sung chức năng đăng nhập bằng Google\n- Cải tiến giao diện Trang chủ \n- Cải tiến bố cục và chức năng trang Dịch thuật \n-  Thêm hạn chế người dùng vào quản trị Admin\n- Bố trí trực quan hơn các Icon\n- Thêm từ vựng và bài học" }
-];
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Liên Hệ</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Điện thoại</h4>
+                            <p><a href="tel:0388486348">0388486348</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p><a href="mailto:giaa32087@gmail.com">giaa32087@gmail.com</a></p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Địa chỉ</h4>
+                            <p>Trường Đại học Thủ Dầu Một</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Tên của bạn" required>
+                    <input type="email" placeholder="Email của bạn" required>
+                    <textarea placeholder="Tin nhắn" rows="5" required></textarea>
+                    <button type="submit" class="btn btn-primary">Gửi tin nhắn</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-let logs = JSON.parse(JSON.stringify(defaultData));
-const PER_PAGE = 5; // Hiển thị 5 bài trên 1 trang cho gọn
-let currentPage = 1;
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Nguyễn Hoàng Anh. Tất cả quyền được bảo lưu.</p>
+            <div class="social-links">
+                <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+    </footer>
 
-function getSorted() { return [...logs].sort((a,b) => new Date(b.date) - new Date(a.date)); }
-
-function fmtDate(d) {
-  const obj = new Date(d);
-  if (isNaN(obj)) return d;
-  return obj.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-function totalPages() { return Math.max(1, Math.ceil(getSorted().length / PER_PAGE)); }
-
-function escHtml(s) { return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
-
-// Cập nhật nhãn phiên bản hiện tại
-function updateVersionDisplay(sortedLogs) {
-  const display = document.getElementById('current-version-display');
-  if (!sortedLogs || sortedLogs.length === 0) {
-    display.innerHTML = 'Chưa có dữ liệu phiên bản';
-    return;
-  }
-  
-  // Lấy bản ghi mới nhất (đã được sort ngày giảm dần)
-  const latestLog = sortedLogs[0];
-  
-  // Tìm chữ Version (vd: Version v1.2.3.STABLE)
-  const match = latestLog.content.match(/Version\s+([^\n]+)/i);
-  let versionText = match ? match[1].trim() : 'Mới nhất';
-  
-  display.innerHTML = `Bạn đang ở phiên bản: <strong>${versionText}</strong>`;
-}
-
-function render() {
-  const sorted = getSorted();
-  const total  = totalPages();
-  if (currentPage > total) currentPage = total;
-  const start = (currentPage - 1) * PER_PAGE;
-  const pageItems = sorted.slice(start, start + PER_PAGE);
-
-  // Update Current Version Badge
-  updateVersionDisplay(sorted);
-
-  // Count
-  document.getElementById('log-count').innerHTML = 
-    `<span>Tổng số: <strong>${sorted.length}</strong> bản ghi</span> <span>Trang ${currentPage} / ${total}</span>`;
-
-  // List
-  const list = document.getElementById('log-list');
-  list.innerHTML = '';
-  if (!pageItems.length) {
-    list.innerHTML = '<div class="empty">Chưa có dữ liệu lịch sử cập nhật.</div>';
-  } else {
-    pageItems.forEach(log => {
-      const div = document.createElement('div');
-      div.className = 'log-item';
-      div.innerHTML = 
-        `<div class="log-date">${fmtDate(log.date)}</div>` +
-        `<div class="log-content">${escHtml(log.content)}</div>` +
-        (isAdmin
-          ? `<div class="log-actions">
-               <button class="btn-edit" onclick="editLog(${log.id})">Sửa bản ghi</button>
-               <button class="btn-del"  onclick="deleteLog(${log.id})">Xóa</button>
-             </div>`
-          : '');
-      list.appendChild(div);
-    });
-  }
-
-  // Pagination
-  const pg = document.getElementById('pagination');
-  pg.innerHTML = '';
-
-  const btnPrev = document.createElement('button');
-  btnPrev.className = 'page-btn';
-  btnPrev.textContent = 'Trước';
-  btnPrev.disabled = currentPage === 1;
-  btnPrev.onclick = () => { currentPage--; render(); window.scrollTo({top: 400, behavior: 'smooth'}); };
-  pg.appendChild(btnPrev);
-
-  for (let i = 1; i <= total; i++) {
-    // Thu gọn số trang nếu quá nhiều
-    if (total > 5 && i !== 1 && i !== total && (i < currentPage - 1 || i > currentPage + 1)) {
-      if (i === currentPage - 2 || i === currentPage + 2) {
-        const dots = document.createElement('span');
-        dots.textContent = '...';
-        dots.style.color = 'var(--muted)';
-        pg.appendChild(dots);
-      }
-      continue;
-    }
-
-    const btn = document.createElement('button');
-    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
-    btn.textContent = i;
-    btn.onclick = (p => () => { currentPage = p; render(); window.scrollTo({top: 400, behavior: 'smooth'}); })(i);
-    pg.appendChild(btn);
-  }
-
-  const btnNext = document.createElement('button');
-  btnNext.className = 'page-btn';
-  btnNext.textContent = 'Sau';
-  btnNext.disabled = currentPage === total;
-  btnNext.onclick = () => { currentPage++; render(); window.scrollTo({top: 400, behavior: 'smooth'}); };
-  pg.appendChild(btnNext);
-}
-
-function saveLog() {
-  const dateInput    = document.getElementById('log-date').value;
-  const contentInput = document.getElementById('log-content').value.trim();
-  const editId       = document.getElementById('edit-id').value;
-  
-  if (!dateInput || !contentInput) { alert('Vui lòng nhập đầy đủ ngày và nội dung!'); return; }
-  
-  if (editId) {
-    const i = logs.findIndex(l => l.id == editId);
-    if (i !== -1) { logs[i].date = dateInput; logs[i].content = contentInput; }
-    document.getElementById('edit-id').value = '';
-  } else {
-    logs.push({ id: Date.now(), date: dateInput, content: contentInput });
-    currentPage = 1;
-  }
-  
-  document.getElementById('log-date').value = '';
-  document.getElementById('log-content').value = '';
-  generateCode();
-  render();
-}
-
-function generateCode() {
-  const sorted = [...logs].sort((a,b) => new Date(b.date) - new Date(a.date));
-  const lines  = sorted.map(l => {
-    const esc = l.content.replace(/\\/g, '\\\\').replace(/`/g, '\\`').replace(/"/g, '\\"').replace(/\n/g, '\\n');
-    return `    { id: ${l.id}, date: "${l.date}", content: "${esc}" }`;
-  });
-  document.getElementById('generated-code').value = `const defaultData = [\n${lines.join(',\n')}\n];`;
-  document.getElementById('copy-box').style.display = 'block';
-}
-
-function copyCode() {
-  const ta = document.getElementById('generated-code');
-  ta.select();
-  document.execCommand('copy');
-  alert('Đã copy mã! Hãy dán vào file HTML thay thế cho đoạn const defaultData cũ nhé.');
-}
-
-function editLog(id) {
-  const log = logs.find(l => l.id == id);
-  if (log) {
-    document.getElementById('log-date').value    = log.date;
-    document.getElementById('log-content').value = log.content;
-    document.getElementById('edit-id').value     = log.id;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-}
-
-function deleteLog(id) {
-  if (confirm('Bạn có chắc muốn xóa bản ghi này?')) {
-    logs = logs.filter(l => l.id != id);
-    generateCode();
-    render();
-  }
-}
-
-// Khởi chạy
-render();
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
