@@ -8,6 +8,7 @@
 const cursor = document.getElementById('cursor');
 const cursorFollower = document.getElementById('cursorFollower');
 let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0;
+let cursorReady = false;
 
 if (cursor && cursorFollower) {
     document.addEventListener('mousemove', (e) => {
@@ -15,6 +16,11 @@ if (cursor && cursorFollower) {
         mouseY = e.clientY;
         cursor.style.left = mouseX + 'px';
         cursor.style.top = mouseY + 'px';
+        // Chỉ ẩn cursor hệ thống sau khi cursor tùy chỉnh đã di chuyển đúng vị trí
+        if (!cursorReady) {
+            cursorReady = true;
+            document.body.classList.add('cursor-ready');
+        }
     });
 
     function animateFollower() {
@@ -351,10 +357,11 @@ function showToast(msg, duration = 3200) {
 })();
 
 // ── Page Load Animation ────────────────────────────────────
+// Đặt opacity ban đầu = 1 để tránh trường hợp load event không fire gây màn đen
+document.documentElement.style.setProperty('--page-loaded', '0');
 window.addEventListener('load', () => {
-    document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.5s ease';
-    requestAnimationFrame(() => {
-        document.body.style.opacity = '1';
-    });
+    document.body.style.opacity = '1';
 });
+// Fallback sau 800ms phòng trường hợp load event trễ
+setTimeout(() => { document.body.style.opacity = '1'; }, 800);
