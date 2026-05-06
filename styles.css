@@ -383,9 +383,13 @@ button { font-family: var(--f1); }
     position: relative; z-index: 1;
     background: var(--bg3);
 }
-.avatar-img img { width: 100%; height: 100%; object-fit: cover; }
-/* Fallback if no image */
-.avatar-img img[src="profile.jpg"]:not([complete]) { display: none; }
+.avatar-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+}
 
 .orbit {
     position: absolute;
