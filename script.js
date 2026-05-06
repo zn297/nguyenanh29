@@ -1,367 +1,358 @@
-/* ============================================================
-   MAIN.JS — Portfolio Nguyễn Hoàng Anh (Ju)
-   ============================================================ */
+/* ═══════════════════════════════════════════════
+   PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
+   script.js — Complete, no external deps
+   ═══════════════════════════════════════════════ */
 
 'use strict';
 
-// ── Custom Cursor ──────────────────────────────────────────
-const cursor = document.getElementById('cursor');
-const cursorFollower = document.getElementById('cursorFollower');
-let mouseX = 0, mouseY = 0, followerX = 0, followerY = 0;
-let cursorReady = false;
-
-if (cursor && cursorFollower) {
-    document.addEventListener('mousemove', (e) => {
-        mouseX = e.clientX;
-        mouseY = e.clientY;
-        cursor.style.left = mouseX + 'px';
-        cursor.style.top = mouseY + 'px';
-        // Chỉ ẩn cursor hệ thống sau khi cursor tùy chỉnh đã di chuyển đúng vị trí
-        if (!cursorReady) {
-            cursorReady = true;
-            document.body.classList.add('cursor-ready');
-        }
-    });
-
-    function animateFollower() {
-        followerX += (mouseX - followerX) * 0.12;
-        followerY += (mouseY - followerY) * 0.12;
-        cursorFollower.style.left = followerX + 'px';
-        cursorFollower.style.top = followerY + 'px';
-        requestAnimationFrame(animateFollower);
-    }
-    animateFollower();
-}
-
-// ── Matrix Rain Canvas ─────────────────────────────────────
-(function initMatrix() {
-    const canvas = document.getElementById('matrixCanvas');
+/* ══ 1. MATRIX RAIN ══════════════════════════════════════════ */
+(function () {
+    const canvas = document.getElementById('matrix');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    let W, H, cols, drops;
-
-    const chars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノ';
+    const CHARS = '01アイウエオカキクケコサシスセソ';
+    let cols, drops, W, H;
 
     function resize() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
-        cols = Math.floor(W / 20);
-        drops = Array(cols).fill(1);
+        cols = Math.floor(W / 18);
+        drops = Array.from({ length: cols }, () => Math.random() * H / 18);
     }
 
     function draw() {
-        ctx.fillStyle = 'rgba(8,11,18,0.05)';
+        ctx.fillStyle = 'rgba(8,11,18,0.06)';
         ctx.fillRect(0, 0, W, H);
         ctx.fillStyle = '#00f5d4';
-        ctx.font = '14px JetBrains Mono, monospace';
-
+        ctx.font = '13px Consolas, monospace';
         for (let i = 0; i < drops.length; i++) {
-            const char = chars[Math.floor(Math.random() * chars.length)];
-            ctx.fillText(char, i * 20, drops[i] * 20);
-            if (drops[i] * 20 > H && Math.random() > 0.975) drops[i] = 0;
+            ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * 18, drops[i] * 18);
+            if (drops[i] * 18 > H && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
         }
     }
 
     resize();
     window.addEventListener('resize', resize);
-    setInterval(draw, 55);
+    setInterval(draw, 60);
 })();
 
-// ── Typewriter Effect ──────────────────────────────────────
-(function initTypewriter() {
-    const el = document.getElementById('typewriter');
+/* ══ 2. CUSTOM CURSOR ════════════════════════════════════════ */
+(function () {
+    // Chỉ bật trên thiết bị có pointer chuột thật
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+
+    const cur = document.getElementById('cursor');
+    const trail = document.getElementById('cursorTrail');
+    if (!cur || !trail) return;
+
+    let mx = 0, my = 0, tx = 0, ty = 0;
+
+    document.addEventListener('mousemove', function (e) {
+        mx = e.clientX;
+        my = e.clientY;
+        cur.style.left = mx + 'px';
+        cur.style.top  = my + 'px';
+    });
+
+    // Trail theo sau mượt
+    (function loop() {
+        tx += (mx - tx) * 0.13;
+        ty += (my - ty) * 0.13;
+        trail.style.left = tx + 'px';
+        trail.style.top  = ty + 'px';
+        requestAnimationFrame(loop);
+    })();
+
+    // Phóng to khi hover link/button
+    document.querySelectorAll('a, button').forEach(function (el) {
+        el.addEventListener('mouseenter', function () {
+            cur.style.transform   = 'translate(-50%,-50%) scale(1.8)';
+            cur.style.background  = '#ff2d78';
+            trail.style.width     = '46px';
+            trail.style.height    = '46px';
+            trail.style.borderColor = 'rgba(255,45,120,0.4)';
+        });
+        el.addEventListener('mouseleave', function () {
+            cur.style.transform   = 'translate(-50%,-50%) scale(1)';
+            cur.style.background  = '#00f5d4';
+            trail.style.width     = '30px';
+            trail.style.height    = '30px';
+            trail.style.borderColor = 'rgba(0,245,212,0.4)';
+        });
+    });
+})();
+
+/* ══ 3. NAVBAR SCROLL + ACTIVE LINK ═════════════════════════ */
+(function () {
+    var navbar  = document.getElementById('navbar');
+    var links   = document.querySelectorAll('.nav-links a');
+    var sections = document.querySelectorAll('section[id]');
+
+    function onScroll() {
+        // Solid background
+        if (navbar) {
+            navbar.classList.toggle('solid', window.scrollY > 20);
+        }
+
+        // Active link theo section đang xem
+        var scrollY = window.scrollY + 100;
+        sections.forEach(function (sec) {
+            var top = sec.offsetTop;
+            var h   = sec.offsetHeight;
+            var id  = sec.getAttribute('id');
+            links.forEach(function (a) {
+                if (a.getAttribute('href') === '#' + id) {
+                    a.classList.toggle('active', scrollY >= top && scrollY < top + h);
+                }
+            });
+        });
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+})();
+
+/* ══ 4. HAMBURGER MOBILE MENU ════════════════════════════════ */
+(function () {
+    var burger    = document.getElementById('burger');
+    var mobileNav = document.getElementById('mobileNav');
+    if (!burger || !mobileNav) return;
+
+    burger.addEventListener('click', function () {
+        burger.classList.toggle('open');
+        mobileNav.classList.toggle('open');
+    });
+
+    // Đóng khi click link
+    mobileNav.querySelectorAll('a').forEach(function (a) {
+        a.addEventListener('click', function () {
+            burger.classList.remove('open');
+            mobileNav.classList.remove('open');
+        });
+    });
+
+    // Đóng khi click ngoài
+    document.addEventListener('click', function (e) {
+        if (!burger.contains(e.target) && !mobileNav.contains(e.target)) {
+            burger.classList.remove('open');
+            mobileNav.classList.remove('open');
+        }
+    });
+})();
+
+/* ══ 5. SMOOTH SCROLL ════════════════════════════════════════ */
+document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+        var href = this.getAttribute('href');
+        if (!href || href === '#') return;
+        var target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav')) || 60;
+        var top  = target.getBoundingClientRect().top + window.scrollY - navH;
+        window.scrollTo({ top: top, behavior: 'smooth' });
+    });
+});
+
+/* ══ 6. REVEAL ON SCROLL ═════════════════════════════════════ */
+(function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!els.length) return;
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry, i) {
+            if (entry.isIntersecting) {
+                // Delay nhỏ theo thứ tự
+                setTimeout(function () {
+                    entry.target.classList.add('in');
+                }, i * 80);
+                io.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    els.forEach(function (el) { io.observe(el); });
+})();
+
+/* ══ 7. COUNTER ANIMATION ════════════════════════════════════ */
+(function () {
+    var nums = document.querySelectorAll('.stat-n[data-to]');
+    if (!nums.length) return;
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            var el     = entry.target;
+            var target = parseInt(el.dataset.to, 10);
+            var suffix = target === 100 ? '%' : '+';
+            var start  = 0;
+            var dur    = 1400;
+            var step   = Math.ceil(target / 60);
+            var timer  = setInterval(function () {
+                start = Math.min(start + step, target);
+                el.textContent = start + suffix;
+                if (start >= target) clearInterval(timer);
+            }, dur / Math.ceil(target / step));
+            io.unobserve(el);
+        });
+    }, { threshold: 0.6 });
+
+    nums.forEach(function (n) { io.observe(n); });
+})();
+
+/* ══ 8. SKILL BAR ANIMATION ══════════════════════════════════ */
+(function () {
+    var bars = document.querySelectorAll('.bar-fill[data-w]');
+    if (!bars.length) return;
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.style.width = entry.target.dataset.w + '%';
+            io.unobserve(entry.target);
+        });
+    }, { threshold: 0.3 });
+
+    bars.forEach(function (b) { io.observe(b); });
+})();
+
+/* ══ 9. TYPEWRITER EFFECT ════════════════════════════════════ */
+(function () {
+    var el = document.getElementById('typed');
     if (!el) return;
-    const roles = [
+
+    var roles = [
         'Software Engineer',
         'Flutter Developer',
         'Android Hacker',
         'AI Enthusiast',
         'Web Developer'
     ];
-    let roleIdx = 0, charIdx = 0, deleting = false;
-    const TYPING_SPEED = 85, DELETE_SPEED = 45, PAUSE = 1800;
+    var ri = 0, ci = 0, del = false;
+    var SPEED_TYPE = 80, SPEED_DEL = 42, PAUSE = 1800;
 
-    function type() {
-        const current = roles[roleIdx];
-        if (!deleting) {
-            el.textContent = current.slice(0, ++charIdx);
-            if (charIdx === current.length) {
-                deleting = true;
-                setTimeout(type, PAUSE);
+    function tick() {
+        var cur = roles[ri];
+        if (!del) {
+            ci++;
+            el.textContent = cur.slice(0, ci);
+            if (ci === cur.length) {
+                del = true;
+                setTimeout(tick, PAUSE);
                 return;
             }
+            setTimeout(tick, SPEED_TYPE);
         } else {
-            el.textContent = current.slice(0, --charIdx);
-            if (charIdx === 0) {
-                deleting = false;
-                roleIdx = (roleIdx + 1) % roles.length;
+            ci--;
+            el.textContent = cur.slice(0, ci);
+            if (ci === 0) {
+                del = false;
+                ri  = (ri + 1) % roles.length;
             }
+            setTimeout(tick, SPEED_DEL);
         }
-        setTimeout(type, deleting ? DELETE_SPEED : TYPING_SPEED);
     }
-    type();
+    tick();
 })();
 
-// ── Navbar Scroll ──────────────────────────────────────────
-(function initNavbar() {
-    const navbar = document.getElementById('navbar');
-    if (!navbar) return;
-    let ticking = false;
+/* ══ 10. GLITCH EFFECT TRÊN TÊN ═════════════════════════════ */
+(function () {
+    var name = document.getElementById('heroName');
+    if (!name) return;
+    setInterval(function () {
+        name.classList.add('glitch');
+        setTimeout(function () { name.classList.remove('glitch'); }, 200);
+    }, 4500);
+})();
 
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(() => {
-                navbar.classList.toggle('scrolled', window.scrollY > 30);
-                ticking = false;
-            });
-            ticking = true;
-        }
+/* ══ 11. PROFILE IMAGE FALLBACK ══════════════════════════════ */
+(function () {
+    var img = document.getElementById('profileImg');
+    if (!img) return;
+    img.addEventListener('error', function () {
+        var wrap = img.parentElement;
+        img.style.display = 'none';
+        var fb = document.createElement('div');
+        fb.style.cssText = [
+            'width:100%', 'height:100%',
+            'display:flex', 'align-items:center', 'justify-content:center',
+            'font-family:Consolas,monospace', 'font-size:3.5rem',
+            'font-weight:700', 'color:#00f5d4',
+            'background:#141920', 'border-radius:50%'
+        ].join(';');
+        fb.textContent = 'Ju';
+        wrap.appendChild(fb);
     });
 })();
 
-// ── Mobile Menu ────────────────────────────────────────────
-(function initMobileMenu() {
-    const hamburger = document.getElementById('hamburger');
-    const mobileMenu = document.getElementById('mobileMenu');
-    if (!hamburger || !mobileMenu) return;
-
-    hamburger.addEventListener('click', () => {
-        hamburger.classList.toggle('open');
-        mobileMenu.classList.toggle('open');
-    });
-
-    mobileMenu.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            hamburger.classList.remove('open');
-            mobileMenu.classList.remove('open');
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !mobileMenu.contains(e.target)) {
-            hamburger.classList.remove('open');
-            mobileMenu.classList.remove('open');
-        }
-    });
-})();
-
-// ── Smooth Scroll ──────────────────────────────────────────
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href === '#') return;
-        const target = document.querySelector(href);
-        if (!target) return;
-        e.preventDefault();
-        const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h')) || 64;
-        const top = target.getBoundingClientRect().top + window.scrollY - navH;
-        window.scrollTo({ top, behavior: 'smooth' });
-    });
-});
-
-// ── Reveal on Scroll ───────────────────────────────────────
-(function initReveal() {
-    const elements = document.querySelectorAll('.reveal');
-    if (!elements.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry, i) => {
-            if (entry.isIntersecting) {
-                entry.target.style.transitionDelay = (i * 0.08) + 's';
-                entry.target.classList.add('visible');
-                observer.unobserve(entry.target);
-            }
-        });
-    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
-
-    elements.forEach(el => observer.observe(el));
-})();
-
-// ── Animated Counters ──────────────────────────────────────
-(function initCounters() {
-    const counters = document.querySelectorAll('.stat-num[data-target]');
-    if (!counters.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            const el = entry.target;
-            const target = parseInt(el.dataset.target, 10);
-            const suffix = el.dataset.suffix || (target === 100 ? '%' : '+');
-            let start = 0;
-            const duration = 1600;
-            const step = Math.max(1, Math.floor(target / 60));
-            const timer = setInterval(() => {
-                start = Math.min(start + step, target);
-                el.textContent = start + suffix;
-                if (start >= target) clearInterval(timer);
-            }, duration / (target / step));
-            observer.unobserve(el);
-        });
-    }, { threshold: 0.5 });
-
-    counters.forEach(c => observer.observe(c));
-})();
-
-// ── Skill Bars ─────────────────────────────────────────────
-(function initSkillBars() {
-    const bars = document.querySelectorAll('.skill-bar-fill[data-width]');
-    if (!bars.length) return;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (!entry.isIntersecting) return;
-            entry.target.style.width = entry.target.dataset.width + '%';
-            observer.unobserve(entry.target);
-        });
-    }, { threshold: 0.3 });
-
-    bars.forEach(bar => observer.observe(bar));
-})();
-
-// ── Back to Top ────────────────────────────────────────────
-(function initBackToTop() {
-    const btn = document.getElementById('backTop');
+/* ══ 12. BACK TO TOP ═════════════════════════════════════════ */
+(function () {
+    var btn = document.getElementById('backTop');
     if (!btn) return;
 
-    window.addEventListener('scroll', () => {
-        btn.classList.toggle('show', window.scrollY > 400);
+    window.addEventListener('scroll', function () {
+        btn.classList.toggle('show', window.scrollY > 380);
     }, { passive: true });
 
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 })();
 
-// ── Toast Notification ─────────────────────────────────────
-function showToast(msg, duration = 3200) {
-    const toast = document.getElementById('toast');
-    if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), duration);
+/* ══ 13. TOAST ═══════════════════════════════════════════════ */
+function showToast(msg, ms) {
+    var t = document.getElementById('toast');
+    if (!t) return;
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, ms || 3200);
 }
 
-// ── Contact Form ───────────────────────────────────────────
-(function initContactForm() {
-    const form = document.getElementById('contactForm');
+/* ══ 14. CONTACT FORM ════════════════════════════════════════ */
+(function () {
+    var form = document.getElementById('contactForm');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', function (e) {
         e.preventDefault();
-        const btn = form.querySelector('.btn-submit');
-        const originalHTML = btn.innerHTML;
+        var btn  = form.querySelector('.btn-submit');
+        var orig = btn.innerHTML;
 
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Đang gửi...</span>';
-        btn.disabled = true;
+        btn.innerHTML  = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        btn.disabled   = true;
 
-        setTimeout(() => {
+        setTimeout(function () {
             form.reset();
-            btn.innerHTML = '<i class="fas fa-check"></i> <span>Đã gửi!</span>';
-            showToast('✅ Cảm ơn! Mình sẽ phản hồi sớm nhất có thể.');
-
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
+            showToast('✅ Cảm ơn! Mình sẽ phản hồi sớm nhất có thể.', 3500);
+            setTimeout(function () {
+                btn.innerHTML = orig;
+                btn.disabled  = false;
             }, 2500);
-        }, 1400);
+        }, 1300);
     });
 })();
 
-// ── Active Nav Link on Scroll ──────────────────────────────
-(function initActiveNav() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a');
-    if (!sections.length || !navLinks.length) return;
-    const navH = 64;
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const id = entry.target.getAttribute('id');
-                navLinks.forEach(link => {
-                    link.style.color = link.getAttribute('href') === '#' + id ? 'var(--primary)' : '';
-                });
-            }
-        });
-    }, { rootMargin: `-${navH}px 0px -60% 0px`, threshold: 0 });
-
-    sections.forEach(s => observer.observe(s));
-})();
-
-// ── Profile Image Fallback ─────────────────────────────────
-(function initImageFallback() {
-    const img = document.getElementById('profileImg');
-    if (!img) return;
-    img.addEventListener('error', () => {
-        img.style.display = 'none';
-        const wrap = img.parentElement;
-        const placeholder = document.createElement('div');
-        placeholder.style.cssText = `
-            width:100%; height:100%; background:var(--bg3);
-            display:flex; align-items:center; justify-content:center;
-            font-family:var(--font-mono); font-size:3.5rem; color:var(--primary);
-            font-weight:700; letter-spacing:0.08em;
-        `;
-        placeholder.textContent = 'Ju';
-        wrap.appendChild(placeholder);
-    });
-})();
-
-// ── Card Tilt Effect (desktop only) ───────────────────────
-(function initTilt() {
+/* ══ 15. CARD TILT (chỉ desktop) ════════════════════════════ */
+(function () {
     if (window.innerWidth <= 768) return;
-    const cards = document.querySelectorAll('.proj-card, .exp-card, .stat-card');
 
-    cards.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = (e.clientX - rect.left) / rect.width - 0.5;
-            const y = (e.clientY - rect.top) / rect.height - 0.5;
-            card.style.transform = `perspective(600px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateY(-4px)`;
+    var cards = document.querySelectorAll('.proj-card, .exp-card, .stat-box');
+    cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var r  = card.getBoundingClientRect();
+            var x  = (e.clientX - r.left) / r.width  - 0.5;
+            var y  = (e.clientY - r.top)  / r.height - 0.5;
+            card.style.transform = [
+                'perspective(500px)',
+                'rotateX(' + (-y * 5) + 'deg)',
+                'rotateY(' + (x * 5)  + 'deg)',
+                'translateY(-4px)'
+            ].join(' ');
         });
-        card.addEventListener('mouseleave', () => {
+        card.addEventListener('mouseleave', function () {
             card.style.transform = '';
         });
     });
 })();
-
-// ── Particle Glow on Click ─────────────────────────────────
-(function initClickParticles() {
-    if (window.innerWidth <= 768) return;
-    document.addEventListener('click', (e) => {
-        const particle = document.createElement('div');
-        particle.style.cssText = `
-            position:fixed; left:${e.clientX}px; top:${e.clientY}px;
-            width:6px; height:6px; border-radius:50%;
-            background:var(--primary); pointer-events:none; z-index:9999;
-            transform:translate(-50%,-50%);
-            animation: particle-fade 0.6s ease-out forwards;
-        `;
-        document.body.appendChild(particle);
-        setTimeout(() => particle.remove(), 620);
-    });
-
-    if (!document.getElementById('particle-style')) {
-        const style = document.createElement('style');
-        style.id = 'particle-style';
-        style.textContent = `
-            @keyframes particle-fade {
-                0% { transform: translate(-50%,-50%) scale(1); opacity:1; }
-                100% { transform: translate(-50%,-50%) scale(3.5); opacity:0; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-})();
-
-// ── Page Load Animation ────────────────────────────────────
-// Đặt opacity ban đầu = 1 để tránh trường hợp load event không fire gây màn đen
-document.documentElement.style.setProperty('--page-loaded', '0');
-window.addEventListener('load', () => {
-    document.body.style.transition = 'opacity 0.5s ease';
-    document.body.style.opacity = '1';
-});
-// Fallback sau 800ms phòng trường hợp load event trễ
-setTimeout(() => { document.body.style.opacity = '1'; }, 800);
