@@ -270,7 +270,17 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
 (function () {
     var img = document.getElementById('profileImg');
     if (!img) return;
+
+    // Thử load lại với cache-bust nếu lỗi lần đầu
+    var retried = false;
     img.addEventListener('error', function () {
+        if (!retried) {
+            retried = true;
+            // Thử thêm ./ phía trước để đảm bảo đường dẫn tương đối
+            img.src = './profile.jpg?' + Date.now();
+            return;
+        }
+        // Nếu vẫn lỗi sau retry → hiện chữ Ju
         var wrap = img.parentElement;
         img.style.display = 'none';
         var fb = document.createElement('div');
@@ -284,6 +294,18 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         fb.textContent = 'Ju';
         wrap.appendChild(fb);
     });
+
+    // Đảm bảo ảnh hiển thị khi load xong
+    img.addEventListener('load', function () {
+        img.style.display = 'block';
+        img.style.opacity = '1';
+    });
+
+    // Nếu ảnh đã cached và complete rồi thì hiện luôn
+    if (img.complete && img.naturalWidth > 0) {
+        img.style.display = 'block';
+        img.style.opacity = '1';
+    }
 })();
 
 /* ══ 12. BACK TO TOP ═════════════════════════════════════════ */
