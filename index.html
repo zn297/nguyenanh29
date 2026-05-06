@@ -3,363 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Title</title>
-    <script src="script.js"></script>
-</head>
-<body>
-    <section id="about">
-        <h2>Về Tôi</h2>
-        <p>Tôi là một lập trình viên web yêu thích công nghệ...</p> <!-- Full Vietnamese text here -->
-    </section><!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nguyễn Hoàng Anh — Software Engineer</title>
-    <!-- Prevent FOUC: body visible ngay lập tức, JS mới làm fade -->
-    <style>body{opacity:1!important}</style>
-    <meta name="theme-color" content="#080b12">
-    <meta name="description" content="Portfolio của Nguyễn Hoàng Anh — Software Engineer, Flutter Developer, Android Enthusiast">
+    <title>Nguyễn Hoàng Anh | Software Engineer</title>
+    <meta name="description" content="Portfolio của Nguyễn Hoàng Anh (Ju) — Flutter Developer, Android Engineer, Web Developer">
     <link rel="stylesheet" href="styles.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-<!-- Cursor -->
+<!-- Custom Cursor -->
 <div class="cursor" id="cursor"></div>
-<div class="cursor-follower" id="cursorFollower"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
 
-<!-- Noise Overlay -->
-<div class="noise-overlay"></div>
+<!-- Canvas Matrix -->
+<canvas id="matrix"></canvas>
 
-<!-- Matrix Rain Canvas -->
-<canvas id="matrixCanvas"></canvas>
-
-<!-- Navigation -->
+<!-- ═══ NAVBAR ═══ -->
 <nav class="navbar" id="navbar">
-    <div class="nav-inner">
-        <div class="nav-logo">
-            <span class="logo-bracket">&lt;</span>
-            <span class="logo-name">Ju</span>
-            <span class="logo-bracket"> /&gt;</span>
-        </div>
-        <ul class="nav-links">
-            <li><a href="#home" data-text="home">home</a></li>
-            <li><a href="#about" data-text="about">about</a></li>
-            <li><a href="#education" data-text="edu">edu</a></li>
-            <li><a href="#experience" data-text="exp">exp</a></li>
-            <li><a href="#skills" data-text="skills">skills</a></li>
-            <li><a href="#projects" data-text="projects">projects</a></li>
-            <li><a href="#contact" data-text="contact">contact</a></li>
+    <div class="nav-wrap">
+        <a href="#home" class="nav-logo">
+            <span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span>
+        </a>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">home</a></li>
+            <li><a href="#about">about</a></li>
+            <li><a href="#education">edu</a></li>
+            <li><a href="#experience">exp</a></li>
+            <li><a href="#skills">skills</a></li>
+            <li><a href="#projects">projects</a></li>
+            <li><a href="#contact">contact</a></li>
         </ul>
-        <button class="hamburger" id="hamburger" aria-label="Menu">
+        <button class="burger" id="burger" aria-label="Toggle menu">
             <span></span><span></span><span></span>
         </button>
     </div>
+    <!-- Mobile dropdown -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="#home">home</a>
+        <a href="#about">about</a>
+        <a href="#education">education</a>
+        <a href="#experience">experience</a>
+        <a href="#skills">skills</a>
+        <a href="#projects">projects</a>
+        <a href="#contact">contact</a>
+    </div>
 </nav>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
-    <ul>
-        <li><a href="#home">home</a></li>
-        <li><a href="#about">about</a></li>
-        <li><a href="#education">education</a></li>
-        <li><a href="#experience">experience</a></li>
-        <li><a href="#skills">skills</a></li>
-        <li><a href="#projects">projects</a></li>
-        <li><a href="#contact">contact</a></li>
-    </ul>
-</div>
-
-<!-- Hero Section -->
-<section class="hero" id="home">
-    <div class="hero-bg-grid"></div>
-    <div class="hero-inner">
+<!-- ═══ HERO ═══ -->
+<section id="home" class="hero">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-content">
+        <!-- LEFT -->
         <div class="hero-left">
-            <div class="status-badge">
-                <span class="pulse-dot"></span>
-                <span>Available for opportunities</span>
+            <div class="status-pill">
+                <span class="dot-live"></span> Available for opportunities
             </div>
-            <div class="hero-title-block">
-                <div class="glitch-wrap">
-                    <h1 class="hero-name" data-text="NGUYỄN HOÀNG ANH">NGUYỄN HOÀNG ANH</h1>
-                </div>
-                <div class="hero-role">
-                    <span class="role-prefix">// </span>
-                    <span class="typewriter" id="typewriter"></span>
-                    <span class="cursor-blink">_</span>
-                </div>
+            <h1 class="hero-name" id="heroName">NGUYỄN HOÀNG ANH</h1>
+            <p class="hero-role">
+                <span class="comment">// </span>
+                <span id="typed"></span><span class="blink-bar">|</span>
+            </p>
+            <div class="hero-tags">
+                <span><i class="fas fa-map-marker-alt"></i> Bình Dương, VN</span>
+                <span><i class="fas fa-graduation-cap"></i> ĐH Thủ Dầu Một</span>
+                <span><i class="fas fa-birthday-cake"></i> 29/07/2004</span>
             </div>
-            <div class="hero-meta">
-                <div class="meta-item">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <span>Thủ Dầu Một, Bình Dương</span>
-                </div>
-                <div class="meta-item">
-                    <i class="fas fa-university"></i>
-                    <span>Đại học Thủ Dầu Một</span>
-                </div>
-                <div class="meta-item">
-                    <i class="fas fa-birthday-cake"></i>
-                    <span>29/07/2004</span>
-                </div>
+            <div class="hero-contacts">
+                <a href="tel:0388486348" class="pill-link"><i class="fas fa-phone"></i> 0388 486 348</a>
+                <a href="mailto:giaa32087@gmail.com" class="pill-link"><i class="fas fa-envelope"></i> giaa32087@gmail.com</a>
             </div>
-            <div class="hero-contact-line">
-                <a href="tel:0388486348" class="contact-chip"><i class="fas fa-phone"></i> 0388486348</a>
-                <a href="mailto:giaa32087@gmail.com" class="contact-chip"><i class="fas fa-envelope"></i> giaa32087@gmail.com</a>
-            </div>
-            <div class="hero-actions">
-                <a href="#contact" class="btn-primary-hero">
-                    <span>Liên hệ</span>
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                <a href="#projects" class="btn-outline-hero">
-                    <span>Dự án</span>
-                </a>
-                <a href="https://www.facebook.com/Ju2974" class="btn-icon-hero fb" target="_blank" title="Facebook">
-                    <i class="fab fa-facebook-f"></i>
-                </a>
-                <a href="https://www.instagram.com/ng_ju29/" class="btn-icon-hero insta" target="_blank" title="Instagram">
-                    <i class="fab fa-instagram"></i>
-                </a>
+            <div class="hero-btns">
+                <a href="#contact" class="btn-solid">Liên hệ <i class="fas fa-arrow-right"></i></a>
+                <a href="#projects" class="btn-ghost">Xem dự án</a>
+                <a href="https://www.facebook.com/Ju2974" target="_blank" class="btn-icon" style="background:#1877f2"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="btn-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
+        <!-- RIGHT -->
         <div class="hero-right">
-            <div class="avatar-container">
-                <div class="avatar-ring-outer"></div>
-                <div class="avatar-ring-inner"></div>
-                <div class="avatar-img-wrap">
+            <div class="avatar-wrap">
+                <div class="avatar-ring r1"></div>
+                <div class="avatar-ring r2"></div>
+                <div class="avatar-img">
                     <img src="profile.jpg" alt="Nguyễn Hoàng Anh" id="profileImg">
-                    <div class="avatar-overlay"></div>
                 </div>
-                <div class="orbit-item orbit-1"><i class="fab fa-flutter"></i></div>
-                <div class="orbit-item orbit-2"><i class="fas fa-code"></i></div>
-                <div class="orbit-item orbit-3"><i class="fab fa-android"></i></div>
-                <div class="orbit-item orbit-4"><i class="fas fa-database"></i></div>
+                <div class="orbit o1"><i class="fab fa-flutter"></i></div>
+                <div class="orbit o2"><i class="fab fa-android"></i></div>
+                <div class="orbit o3"><i class="fas fa-code"></i></div>
+                <div class="orbit o4"><i class="fas fa-database"></i></div>
             </div>
-            <div class="code-card">
-                <div class="code-card-header">
-                    <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
-                    <span class="filename">profile.json</span>
+            <div class="code-snippet">
+                <div class="snippet-bar">
+                    <span class="s-dot" style="background:#ff5f57"></span>
+                    <span class="s-dot" style="background:#febc2e"></span>
+                    <span class="s-dot" style="background:#28c840"></span>
+                    <span style="margin-left:8px;color:#555;font-size:.75rem">profile.json</span>
                 </div>
-                <pre class="code-content"><code><span class="c-brace">{</span>
-  <span class="c-key">"name"</span>: <span class="c-str">"Nguyễn Hoàng Anh"</span>,
-  <span class="c-key">"alias"</span>: <span class="c-str">"Ju"</span>,
-  <span class="c-key">"role"</span>: <span class="c-str">"Software Engineer"</span>,
-  <span class="c-key">"stack"</span>: <span class="c-brace">[</span>
-    <span class="c-str">"Flutter"</span>, <span class="c-str">"Android"</span>,
-    <span class="c-str">"HTML/CSS/JS"</span>, <span class="c-str">"MySQL"</span>
-  <span class="c-brace">]</span>,
-  <span class="c-key">"passion"</span>: <span class="c-str">"Building great apps"</span>,
-  <span class="c-key">"status"</span>: <span class="c-bool">true</span>
-<span class="c-brace">}</span></code></pre>
+                <pre><code><span class="k">{</span>
+  <span class="p">"name"</span>: <span class="s">"Nguyễn Hoàng Anh"</span>,
+  <span class="p">"alias"</span>: <span class="s">"Ju"</span>,
+  <span class="p">"role"</span>: <span class="s">"Software Engineer"</span>,
+  <span class="p">"stack"</span>: <span class="k">[</span><span class="s">"Flutter"</span>, <span class="s">"Android"</span>, <span class="s">"Web"</span><span class="k">]</span>,
+  <span class="p">"open"</span>: <span class="b">true</span>
+<span class="k">}</span></code></pre>
             </div>
         </div>
     </div>
-    <div class="scroll-hint">
-        <div class="scroll-line"></div>
+    <div class="scroll-indicator">
+        <div class="scroll-bar"></div>
         <span>scroll</span>
     </div>
 </section>
 
-<!-- About Section -->
-<section class="section about-section" id="about">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">01</span>
-            <h2 class="section-title">Về Tôi</h2>
+<!-- ═══ ABOUT ═══ -->
+<section id="about" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">01</span>
+            <h2>Về Tôi</h2>
         </div>
         <div class="about-grid reveal">
             <div class="about-text">
-                <p class="about-lead">Mình là <strong>Nguyễn Hoàng Anh</strong>, một kỹ thuật viên phần mềm trẻ với niềm đam mê xây dựng phần mềm chất lượng cao và khám phá công nghệ mới.</p>
-                <p>Hiện đang học ngành Kỹ thuật phần mềm tại Đại học Thủ Dầu Một, mình tập trung vào phát triển ứng dụng di động với Flutter, tùy chỉnh hệ thống Android, và ứng dụng AI vào các dự án thực tế.</p>
-                <p>Mình tin rằng code tốt không chỉ là code chạy được — mà là code <em>đáng đọc, dễ bảo trì và đem lại giá trị thực sự</em> cho người dùng.</p>
+                <p class="lead">Mình là <strong>Nguyễn Hoàng Anh</strong>, sinh viên kỹ thuật phần mềm với niềm đam mê xây dựng phần mềm chất lượng và không ngừng khám phá công nghệ mới.</p>
+                <p>Từ tùy chỉnh Android ROM ở cấp độ hệ thống đến phát triển ứng dụng Flutter hiện đại, mình luôn tìm cách hiểu sâu bên dưới bề mặt của công nghệ.</p>
+                <p>Mình tin code tốt không chỉ chạy được — mà còn <em>dễ đọc, dễ bảo trì</em> và tạo ra giá trị thực cho người dùng.</p>
             </div>
-            <div class="about-stats">
-                <div class="stat-card">
-                    <div class="stat-num" data-target="3">0</div>
-                    <div class="stat-label">Năm học tập</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" data-target="5">0</div>
-                    <div class="stat-label">Dự án thực hiện</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" data-target="8">0</div>
-                    <div class="stat-label">Công nghệ thành thạo</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-num" data-target="100">0</div>
-                    <div class="stat-label">% Đam mê</div>
-                </div>
+            <div class="stats-grid">
+                <div class="stat-box"><span class="stat-n" data-to="3">0</span><span class="stat-l">Năm học</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="5">0</span><span class="stat-l">Dự án</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="8">0</span><span class="stat-l">Công nghệ</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="100">0</span><span class="stat-l">% Đam mê</span></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Education Section -->
-<section class="section education-section" id="education">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">02</span>
-            <h2 class="section-title">Học Vấn</h2>
+<!-- ═══ EDUCATION ═══ -->
+<section id="education" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">02</span>
+            <h2>Học Vấn</h2>
         </div>
         <div class="timeline reveal">
-            <div class="timeline-track"></div>
+            <div class="tl-line"></div>
             <div class="tl-item">
-                <div class="tl-dot"><i class="fas fa-graduation-cap"></i></div>
-                <div class="tl-card">
-                    <div class="tl-period">2022 — 2024</div>
+                <div class="tl-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div class="tl-body">
+                    <span class="tl-date">2022 — 2024</span>
                     <h3>Đại học Thủ Dầu Một</h3>
-                    <div class="tl-badge">Kỹ thuật phần mềm — Giai đoạn 1</div>
-                    <p>Học nền tảng kỹ thuật phần mềm, chuyên sâu vào tùy chỉnh và cài đặt hệ điều hành Android, xử lý phần mềm cấp thấp và phát triển hệ thống.</p>
-                    <div class="tl-tags">
-                        <span>Android ROM</span>
-                        <span>Firmware</span>
-                        <span>System Programming</span>
-                    </div>
+                    <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 1</span>
+                    <p>Nền tảng kỹ thuật phần mềm, chuyên sâu tùy chỉnh Android ROM, Firmware và lập trình hệ thống cấp thấp.</p>
+                    <div class="tl-chips"><span>Android ROM</span><span>Firmware</span><span>System Programming</span></div>
                 </div>
             </div>
-            <div class="tl-item tl-right">
-                <div class="tl-dot"><i class="fas fa-rocket"></i></div>
-                <div class="tl-card">
-                    <div class="tl-period">2024 — 2026</div>
+            <div class="tl-item">
+                <div class="tl-icon"><i class="fas fa-rocket"></i></div>
+                <div class="tl-body">
+                    <span class="tl-date">2024 — 2026</span>
                     <h3>Đại học Thủ Dầu Một</h3>
-                    <div class="tl-badge">Kỹ thuật phần mềm — Giai đoạn 2</div>
-                    <p>Phát triển ứng dụng di động với Flutter và xây dựng web. Dự án mẫu:
-                        <a href="https://anh29.ct.ws" target="_blank" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt"></i></a>
-                    </p>
-                    <div class="tl-tags">
-                        <span>Flutter</span>
-                        <span>Web Dev</span>
-                        <span>AI Integration</span>
-                    </div>
+                    <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 2</span>
+                    <p>Phát triển ứng dụng di động Flutter và web. Demo: <a href="https://anh29.ct.ws" target="_blank" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt"></i></a></p>
+                    <div class="tl-chips"><span>Flutter</span><span>Web Dev</span><span>AI Integration</span></div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Experience Section -->
-<section class="section experience-section" id="experience">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">03</span>
-            <h2 class="section-title">Kinh Nghiệm</h2>
+<!-- ═══ EXPERIENCE ═══ -->
+<section id="experience" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">03</span>
+            <h2>Kinh Nghiệm</h2>
         </div>
         <div class="exp-grid reveal">
             <div class="exp-card">
-                <div class="exp-icon-wrap">
-                    <i class="fab fa-flutter"></i>
-                </div>
-                <div class="exp-body">
+                <div class="exp-ico"><i class="fab fa-flutter"></i></div>
+                <div>
                     <h3>Flutter Development</h3>
-                    <p>Xây dựng ứng dụng di động cross-platform với giao diện thân thiện, hiệu năng cao và trải nghiệm mượt mà trên cả iOS lẫn Android.</p>
-                    <div class="exp-techs">
-                        <span>Dart</span><span>Flutter</span><span>Firebase</span>
-                    </div>
+                    <p>Xây dựng ứng dụng cross-platform với Dart/Flutter, giao diện Material 3, hiệu năng cao trên cả Android lẫn iOS.</p>
+                    <div class="chip-row"><span>Dart</span><span>Flutter</span><span>Firebase</span></div>
                 </div>
             </div>
             <div class="exp-card">
-                <div class="exp-icon-wrap">
-                    <i class="fab fa-android"></i>
-                </div>
-                <div class="exp-body">
-                    <h3>Android System Customization</h3>
-                    <p>Lập trình và tùy chỉnh Android ROM, Firmware. Flasher, decompile, recompile hệ thống. Hiểu sâu về kiến trúc hệ thống Android.</p>
-                    <div class="exp-techs">
-                        <span>ADB</span><span>Fastboot</span><span>TWRP</span>
-                    </div>
+                <div class="exp-ico"><i class="fab fa-android"></i></div>
+                <div>
+                    <h3>Android System</h3>
+                    <p>Flash ROM, decompile/recompile hệ thống, tùy chỉnh Firmware. Hiểu kiến trúc Android từ bootloader đến app layer.</p>
+                    <div class="chip-row"><span>ADB</span><span>Fastboot</span><span>TWRP</span></div>
                 </div>
             </div>
             <div class="exp-card">
-                <div class="exp-icon-wrap">
-                    <i class="fas fa-brain"></i>
-                </div>
-                <div class="exp-body">
+                <div class="exp-ico"><i class="fas fa-brain"></i></div>
+                <div>
                     <h3>AI Integration</h3>
-                    <p>Tích hợp và ứng dụng AI API vào phần mềm. Xây dựng tính năng thông minh, tối ưu trải nghiệm người dùng thông qua công nghệ AI.</p>
-                    <div class="exp-techs">
-                        <span>LLM API</span><span>Prompt Eng.</span><span>AI Features</span>
-                    </div>
+                    <p>Tích hợp LLM API vào ứng dụng, xây dựng tính năng thông minh và tối ưu trải nghiệm người dùng với AI.</p>
+                    <div class="chip-row"><span>LLM API</span><span>Prompt Eng.</span><span>AI Features</span></div>
                 </div>
             </div>
             <div class="exp-card">
-                <div class="exp-icon-wrap">
-                    <i class="fas fa-globe"></i>
-                </div>
-                <div class="exp-body">
+                <div class="exp-ico"><i class="fas fa-globe"></i></div>
+                <div>
                     <h3>Web Development</h3>
-                    <p>Phát triển giao diện web hiện đại, responsive. Từ landing page đến ứng dụng quản lý dữ liệu với HTML, CSS, JavaScript thuần.</p>
-                    <div class="exp-techs">
-                        <span>HTML5</span><span>CSS3</span><span>JavaScript</span>
-                    </div>
+                    <p>Phát triển giao diện web hiện đại, responsive với HTML5, CSS3, JavaScript thuần — từ landing page đến web app quản lý.</p>
+                    <div class="chip-row"><span>HTML5</span><span>CSS3</span><span>JavaScript</span></div>
                 </div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Skills Section -->
-<section class="section skills-section" id="skills">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">04</span>
-            <h2 class="section-title">Kỹ Năng</h2>
+<!-- ═══ SKILLS ═══ -->
+<section id="skills" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">04</span>
+            <h2>Kỹ Năng</h2>
         </div>
         <div class="skills-layout reveal">
-            <div class="skills-bars">
-                <h3 class="skills-sub">Core Technologies</h3>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>Flutter / Dart</span><span class="skill-pct">80%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="80"></div></div>
+            <div class="skill-bars">
+                <p class="sub-label">// Core Technologies</p>
+                <div class="bar-item">
+                    <div class="bar-top"><span>Flutter / Dart</span><span class="bar-pct">80%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="80"></div></div>
                 </div>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>HTML / CSS / JS</span><span class="skill-pct">75%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="75"></div></div>
+                <div class="bar-item">
+                    <div class="bar-top"><span>HTML / CSS / JS</span><span class="bar-pct">75%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="75"></div></div>
                 </div>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>Android / ROM</span><span class="skill-pct">70%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="70"></div></div>
+                <div class="bar-item">
+                    <div class="bar-top"><span>Android / ROM</span><span class="bar-pct">70%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
                 </div>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>MySQL / Database</span><span class="skill-pct">65%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="65"></div></div>
+                <div class="bar-item">
+                    <div class="bar-top"><span>MySQL / Database</span><span class="bar-pct">65%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="65"></div></div>
                 </div>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>Git / Version Control</span><span class="skill-pct">70%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="70"></div></div>
+                <div class="bar-item">
+                    <div class="bar-top"><span>Git / GitHub</span><span class="bar-pct">70%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
                 </div>
-                <div class="skill-bar-item">
-                    <div class="skill-bar-label"><span>AI Tools / Prompt Eng.</span><span class="skill-pct">85%</span></div>
-                    <div class="skill-bar-track"><div class="skill-bar-fill" data-width="85"></div></div>
+                <div class="bar-item">
+                    <div class="bar-top"><span>AI Tools</span><span class="bar-pct">85%</span></div>
+                    <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
                 </div>
             </div>
-            <div class="skills-tags-panel">
-                <h3 class="skills-sub">Tools & Ecosystem</h3>
+            <div class="skill-tags-panel">
+                <p class="sub-label">// Tools & Ecosystem</p>
                 <div class="tag-cloud">
-                    <span class="stag lg">Flutter</span>
-                    <span class="stag">Dart</span>
-                    <span class="stag md">Android Studio</span>
-                    <span class="stag">ADB</span>
-                    <span class="stag md">Git</span>
-                    <span class="stag">GitHub</span>
-                    <span class="stag lg">HTML5</span>
-                    <span class="stag">CSS3</span>
-                    <span class="stag md">JavaScript</span>
-                    <span class="stag">MySQL</span>
-                    <span class="stag">Fastboot</span>
-                    <span class="stag md">TWRP</span>
-                    <span class="stag lg">AI APIs</span>
-                    <span class="stag">VS Code</span>
-                    <span class="stag md">Firebase</span>
-                    <span class="stag">Linux</span>
+                    <span class="t-lg">Flutter</span><span class="t-md">Dart</span><span class="t-sm">Android Studio</span>
+                    <span class="t-sm">ADB / Fastboot</span><span class="t-md">Git</span><span class="t-sm">GitHub</span>
+                    <span class="t-lg">HTML5</span><span class="t-sm">CSS3</span><span class="t-md">JavaScript</span>
+                    <span class="t-sm">MySQL</span><span class="t-sm">TWRP</span><span class="t-md">Firebase</span>
+                    <span class="t-lg">AI APIs</span><span class="t-sm">VS Code</span><span class="t-md">Linux</span>
                 </div>
-                <h3 class="skills-sub" style="margin-top:28px">Soft Skills</h3>
-                <div class="soft-skills">
+                <p class="sub-label" style="margin-top:28px">// Soft Skills</p>
+                <div class="soft-grid">
                     <div class="soft-item"><i class="fas fa-lightbulb"></i> Tư duy phân tích</div>
                     <div class="soft-item"><i class="fas fa-sync-alt"></i> Học hỏi nhanh</div>
                     <div class="soft-item"><i class="fas fa-comments"></i> Giao tiếp tốt</div>
@@ -370,145 +270,108 @@
     </div>
 </section>
 
-<!-- Projects Section -->
-<section class="section projects-section" id="projects">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">05</span>
-            <h2 class="section-title">Dự Án</h2>
+<!-- ═══ PROJECTS ═══ -->
+<section id="projects" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">05</span>
+            <h2>Dự Án</h2>
         </div>
-        <div class="projects-grid reveal">
+        <div class="proj-grid reveal">
             <div class="proj-card featured">
-                <div class="proj-card-inner">
-                    <div class="proj-top">
-                        <div class="proj-folder"><i class="fas fa-folder-open"></i></div>
-                        <div class="proj-links">
-                            <a href="https://anh29.ct.ws" target="_blank" title="Live Demo"><i class="fas fa-external-link-alt"></i></a>
-                        </div>
-                    </div>
-                    <h3>Website EAnh</h3>
-                    <p>Trang quản lý dữ liệu sinh viên nâng cao tích hợp AI. Hệ thống tra cứu, quản lý điểm số và thông tin học vụ với giao diện hiện đại.</p>
-                    <div class="proj-stack">
-                        <span>HTML</span><span>CSS</span><span>JavaScript</span><span>AI API</span>
-                    </div>
-                    <div class="proj-badge">Featured</div>
+                <div class="proj-top">
+                    <i class="fas fa-folder-open proj-folder"></i>
+                    <a href="https://anh29.ct.ws" target="_blank" class="proj-ext"><i class="fas fa-external-link-alt"></i></a>
                 </div>
+                <h3>Website EAnh</h3>
+                <p>Trang quản lý dữ liệu sinh viên tích hợp AI — tra cứu, quản lý điểm số và thông tin học vụ với giao diện hiện đại.</p>
+                <div class="proj-chips"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>AI API</span></div>
+                <span class="proj-badge">Featured</span>
             </div>
             <div class="proj-card">
-                <div class="proj-card-inner">
-                    <div class="proj-top">
-                        <div class="proj-folder"><i class="fas fa-folder-open"></i></div>
-                        <div class="proj-links">
-                            <a href="#" title="Xem thêm"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <h3>Ứng dụng Ghi chú</h3>
-                    <p>App quản lý ghi chú cá nhân viết bằng Flutter. Hỗ trợ tạo, sửa, xóa note với giao diện Material 3 mượt mà, lưu trữ local.</p>
-                    <div class="proj-stack">
-                        <span>Flutter</span><span>Dart</span><span>SQLite</span>
-                    </div>
+                <div class="proj-top">
+                    <i class="fas fa-folder-open proj-folder"></i>
+                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
                 </div>
+                <h3>Note App</h3>
+                <p>Ứng dụng quản lý ghi chú cá nhân viết bằng Flutter — tạo, sửa, xóa note với giao diện Material 3, lưu trữ local SQLite.</p>
+                <div class="proj-chips"><span>Flutter</span><span>Dart</span><span>SQLite</span></div>
             </div>
             <div class="proj-card">
-                <div class="proj-card-inner">
-                    <div class="proj-top">
-                        <div class="proj-folder"><i class="fas fa-folder-open"></i></div>
-                        <div class="proj-links">
-                            <a href="#" title="Xem thêm"><i class="fab fa-github"></i></a>
-                        </div>
-                    </div>
-                    <h3>Android ROM Tools</h3>
-                    <p>Bộ công cụ hỗ trợ flash ROM, sửa bootloop, backup/restore dữ liệu cho thiết bị Android. Hỗ trợ nhiều dòng máy phổ biến.</p>
-                    <div class="proj-stack">
-                        <span>ADB</span><span>Fastboot</span><span>Shell Script</span>
-                    </div>
+                <div class="proj-top">
+                    <i class="fas fa-folder-open proj-folder"></i>
+                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
                 </div>
+                <h3>Android ROM Tools</h3>
+                <p>Bộ công cụ hỗ trợ flash ROM, sửa bootloop, backup/restore dữ liệu cho thiết bị Android — hỗ trợ nhiều dòng máy.</p>
+                <div class="proj-chips"><span>ADB</span><span>Fastboot</span><span>Shell Script</span></div>
             </div>
         </div>
     </div>
 </section>
 
-<!-- Contact Section -->
-<section class="section contact-section" id="contact">
-    <div class="container">
-        <div class="section-header reveal">
-            <span class="section-num">06</span>
-            <h2 class="section-title">Liên Hệ</h2>
+<!-- ═══ CONTACT ═══ -->
+<section id="contact" class="section">
+    <div class="wrap">
+        <div class="sec-head reveal">
+            <span class="sec-num">06</span>
+            <h2>Liên Hệ</h2>
         </div>
-        <div class="contact-grid reveal">
+        <div class="contact-layout reveal">
             <div class="contact-left">
-                <p class="contact-intro">Bạn có dự án thú vị, câu hỏi kỹ thuật, hay muốn hợp tác? Mình luôn sẵn sàng lắng nghe.</p>
-                <div class="contact-items">
-                    <a href="tel:0388486348" class="contact-item-link">
-                        <div class="ci-icon"><i class="fas fa-phone"></i></div>
-                        <div class="ci-info">
-                            <span class="ci-label">Điện thoại</span>
-                            <span class="ci-val">0388 486 348</span>
-                        </div>
+                <p class="lead" style="margin-bottom:32px">Có dự án thú vị, câu hỏi kỹ thuật, hay muốn hợp tác? Mình luôn sẵn sàng.</p>
+                <div class="c-links">
+                    <a href="tel:0388486348" class="c-link">
+                        <div class="c-ico"><i class="fas fa-phone"></i></div>
+                        <div><span class="c-lbl">Điện thoại</span><span class="c-val">0388 486 348</span></div>
                     </a>
-                    <a href="mailto:giaa32087@gmail.com" class="contact-item-link">
-                        <div class="ci-icon"><i class="fas fa-envelope"></i></div>
-                        <div class="ci-info">
-                            <span class="ci-label">Email</span>
-                            <span class="ci-val">giaa32087@gmail.com</span>
-                        </div>
+                    <a href="mailto:giaa32087@gmail.com" class="c-link">
+                        <div class="c-ico"><i class="fas fa-envelope"></i></div>
+                        <div><span class="c-lbl">Email</span><span class="c-val">giaa32087@gmail.com</span></div>
                     </a>
-                    <a href="https://www.facebook.com/Ju2974" target="_blank" class="contact-item-link">
-                        <div class="ci-icon fb-color"><i class="fab fa-facebook-f"></i></div>
-                        <div class="ci-info">
-                            <span class="ci-label">Facebook</span>
-                            <span class="ci-val">facebook.com/Ju2974</span>
-                        </div>
+                    <a href="https://www.facebook.com/Ju2974" target="_blank" class="c-link">
+                        <div class="c-ico" style="color:#1877f2"><i class="fab fa-facebook-f"></i></div>
+                        <div><span class="c-lbl">Facebook</span><span class="c-val">facebook.com/Ju2974</span></div>
                     </a>
-                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="contact-item-link">
-                        <div class="ci-icon insta-color"><i class="fab fa-instagram"></i></div>
-                        <div class="ci-info">
-                            <span class="ci-label">Instagram</span>
-                            <span class="ci-val">@ng_ju29</span>
-                        </div>
+                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="c-link">
+                        <div class="c-ico" style="color:#e1306c"><i class="fab fa-instagram"></i></div>
+                        <div><span class="c-lbl">Instagram</span><span class="c-val">@ng_ju29</span></div>
                     </a>
                 </div>
             </div>
-            <div class="contact-right">
-                <form class="contact-form" id="contactForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Tên của bạn</label>
-                            <input type="text" placeholder="Nguyễn Văn A" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" placeholder="you@example.com" required>
-                        </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Tên của bạn</label>
+                        <input type="text" placeholder="Nguyễn Văn A" required>
                     </div>
                     <div class="form-group">
-                        <label>Chủ đề</label>
-                        <input type="text" placeholder="Hợp tác dự án / Câu hỏi kỹ thuật..." required>
+                        <label>Email</label>
+                        <input type="email" placeholder="you@example.com" required>
                     </div>
-                    <div class="form-group">
-                        <label>Nội dung</label>
-                        <textarea rows="5" placeholder="Nội dung tin nhắn của bạn..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">
-                        <span>Gửi tin nhắn</span>
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </form>
-            </div>
+                </div>
+                <div class="form-group">
+                    <label>Chủ đề</label>
+                    <input type="text" placeholder="Hợp tác / Câu hỏi kỹ thuật..." required>
+                </div>
+                <div class="form-group">
+                    <label>Nội dung</label>
+                    <textarea rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">
+                    Gửi tin nhắn <i class="fas fa-paper-plane"></i>
+                </button>
+            </form>
         </div>
     </div>
 </section>
 
-<!-- Footer -->
+<!-- ═══ FOOTER ═══ -->
 <footer class="footer">
     <div class="footer-inner">
-        <div class="footer-logo">
-            <span class="logo-bracket">&lt;</span>
-            <span class="logo-name">Ju</span>
-            <span class="logo-bracket"> /&gt;</span>
-        </div>
-        <p class="footer-copy">© 2026 Nguyễn Hoàng Anh — Crafted with <i class="fas fa-heart" style="color:var(--accent)"></i> & lots of <i class="fas fa-coffee" style="color:var(--primary)"></i></p>
-        <div class="footer-socials">
+        <span class="nav-logo"><span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span></span>
+        <p>© 2026 Nguyễn Hoàng Anh · Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
+        <div class="foot-soc">
             <a href="https://www.facebook.com/Ju2974" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="https://www.instagram.com/ng_ju29/" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="mailto:giaa32087@gmail.com"><i class="fas fa-envelope"></i></a>
@@ -516,27 +379,9 @@
     </div>
 </footer>
 
-<!-- Back to Top -->
-<button class="back-top" id="backTop" aria-label="Back to top">
-    <i class="fas fa-chevron-up"></i>
-</button>
-
-<!-- Toast -->
+<button class="back-top" id="backTop" aria-label="Về đầu trang"><i class="fas fa-chevron-up"></i></button>
 <div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
-</body>
-</html>
-    <section id="education">
-        <h2>Giáo dục</h2>
-        <p>Tôi đã tốt nghiệp từ trường XYZ...</p> <!-- Complete education description -->
-    </section>
-    <section id="projects">
-        <h2>Dự án</h2>
-        <p>Dự án tiêu biểu của tôi là...</p> <!-- Complete project description -->
-    </section>
-    <footer>
-        <p>Bản quyền © 2026 Ju29anh. Tất cả các quyền được bảo lưu.</p> <!-- Complete footer copyright text -->
-    </footer>
 </body>
 </html>
