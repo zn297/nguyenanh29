@@ -1,177 +1,104 @@
-/* ═══════════════════════════════════════════════
-   PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   script.js — Improved & Optimized
+
+js_content = '''/* ═══════════════════════════════════════════════
+   PORTFOLIO — NGUYỄN HOÀNG ANH (Ju) v2.0
+   script.js — Optimized, Bug-free, Enhanced
    ═══════════════════════════════════════════════ */
 
 'use strict';
 
-/* ══ 0. LOADING SCREEN ════════════════════════════════════════ */
+/* ══ 1. MATRIX RAIN (Optimized with RAF) ═══════════════════ */
 (function () {
-    var loader = document.getElementById('loader');
-    if (!loader) return;
-    window.addEventListener('load', function () {
-        setTimeout(function () {
-            loader.classList.add('hidden');
-            document.body.style.overflow = '';
-        }, 600);
-    });
-    // Fallback: hide after 3s even if load event is slow
-    setTimeout(function () {
-        loader.classList.add('hidden');
-        document.body.style.overflow = '';
-    }, 3000);
-})();
-
-/* ══ 1. MATRIX RAIN (requestAnimationFrame) ══════════════════ */
-(function () {
-    var canvas = document.getElementById('matrix');
+    const canvas = document.getElementById('matrix');
     if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var CHARS = '01アイウエオカキクケコサシスセソ';
-    var cols, drops, W, H;
-    var lastTime = 0;
-    var interval = 1000 / 16; // ~16fps for matrix rain (subtle background)
+    const ctx = canvas.getContext('2d');
+    const CHARS = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+    let cols, drops, W, H, animId;
+    let isVisible = true;
+    let frameCount = 0;
 
     function resize() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
         cols = Math.floor(W / 18);
-        drops = Array.from({ length: cols }, function () { return Math.random() * H / 18; });
-    }
-
-    function draw(timestamp) {
-        requestAnimationFrame(draw);
-        if (timestamp - lastTime < interval) return;
-        lastTime = timestamp;
-
-        ctx.fillStyle = 'rgba(8,11,18,0.06)';
-        ctx.fillRect(0, 0, W, H);
-        ctx.fillStyle = '#00f5d4';
-        ctx.font = '13px Consolas, monospace';
-        for (var i = 0; i < drops.length; i++) {
-            ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * 18, drops[i] * 18);
-            if (drops[i] * 18 > H && Math.random() > 0.975) drops[i] = 0;
-            drops[i]++;
-        }
-    }
-
-    resize();
-    window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
-})();
-
-/* ══ 2. FLOATING PARTICLES ════════════════════════════════════ */
-(function () {
-    var canvas = document.getElementById('particles');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var particles = [];
-    var PARTICLE_COUNT = 40;
-    var W, H;
-
-    function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
-
-    function Particle() {
-        this.x = Math.random() * W;
-        this.y = Math.random() * H;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.opacity = Math.random() * 0.4 + 0.1;
-    }
-
-    function init() {
-        particles = [];
-        for (var i = 0; i < PARTICLE_COUNT; i++) {
-            particles.push(new Particle());
-        }
+        drops = Array.from({ length: cols }, () => Math.random() * H / 18);
     }
 
     function draw() {
-        requestAnimationFrame(draw);
-        ctx.clearRect(0, 0, W, H);
-
-        for (var i = 0; i < particles.length; i++) {
-            var p = particles[i];
-            p.x += p.speedX;
-            p.y += p.speedY;
-
-            if (p.x < 0) p.x = W;
-            if (p.x > W) p.x = 0;
-            if (p.y < 0) p.y = H;
-            if (p.y > H) p.y = 0;
-
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,245,212,' + p.opacity + ')';
-            ctx.fill();
+        if (!isVisible) {
+            animId = requestAnimationFrame(draw);
+            return;
         }
-
-        // Draw connections
-        for (var i = 0; i < particles.length; i++) {
-            for (var j = i + 1; j < particles.length; j++) {
-                var dx = particles[i].x - particles[j].x;
-                var dy = particles[i].y - particles[j].y;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
-                    ctx.beginPath();
-                    ctx.moveTo(particles[i].x, particles[i].y);
-                    ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = 'rgba(0,245,212,' + (0.08 * (1 - dist / 120)) + ')';
-                    ctx.lineWidth = 0.5;
-                    ctx.stroke();
-                }
+        frameCount++;
+        // Chỉ vẽ mỗi 2 frame để tiết kiệm CPU
+        if (frameCount % 2 === 0) {
+            ctx.fillStyle = 'rgba(8,11,18,0.06)';
+            ctx.fillRect(0, 0, W, H);
+            ctx.fillStyle = '#00f5d4';
+            ctx.font = '13px Consolas, monospace';
+            for (let i = 0; i < drops.length; i++) {
+                const char = CHARS[Math.floor(Math.random() * CHARS.length)];
+                const x = i * 18;
+                const y = drops[i] * 18;
+                // Gradient opacity theo chiều cao
+                const opacity = Math.max(0.1, 1 - (y / H));
+                ctx.globalAlpha = opacity;
+                ctx.fillText(char, x, y);
+                ctx.globalAlpha = 1;
+                if (y > H && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
             }
         }
+        animId = requestAnimationFrame(draw);
     }
 
+    // Visibility API để pause khi tab ẩn
+    document.addEventListener('visibilitychange', function () {
+        isVisible = !document.hidden;
+    });
+
     resize();
-    window.addEventListener('resize', resize);
-    init();
-    requestAnimationFrame(draw);
+    window.addEventListener('resize', debounce(resize, 200));
+    draw();
 })();
 
-/* ══ 3. CUSTOM CURSOR + GLOW ═════════════════════════════════ */
+/* ══ 2. CUSTOM CURSOR (Magnetic + Smooth) ════════════════════ */
 (function () {
     if (!window.matchMedia('(pointer: fine)').matches) return;
 
-    var cur = document.getElementById('cursor');
-    var trail = document.getElementById('cursorTrail');
+    const cur = document.getElementById('cursor');
+    const trail = document.getElementById('cursorTrail');
     if (!cur || !trail) return;
 
-    // Create glow element
-    var glow = document.createElement('div');
-    glow.className = 'cursor-glow';
-    document.body.appendChild(glow);
-
-    var mx = 0, my = 0, tx = 0, ty = 0, gx = 0, gy = 0;
+    let mx = 0, my = 0, tx = 0, ty = 0;
+    let isActive = true;
+    let inactivityTimer;
 
     document.addEventListener('mousemove', function (e) {
         mx = e.clientX;
         my = e.clientY;
         cur.style.left = mx + 'px';
         cur.style.top = my + 'px';
+        
+        // Reset inactivity
+        isActive = true;
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => { isActive = false; }, 100);
     });
 
-    // Smooth follow loop
-    function loop() {
-        tx += (mx - tx) * 0.13;
-        ty += (my - ty) * 0.13;
-        gx += (mx - gx) * 0.06;
-        gy += (my - gy) * 0.06;
-        trail.style.left = tx + 'px';
-        trail.style.top = ty + 'px';
-        glow.style.left = gx + 'px';
-        glow.style.top = gy + 'px';
+    // Smooth trail với requestAnimationFrame
+    (function loop() {
+        if (isActive) {
+            tx += (mx - tx) * 0.13;
+            ty += (my - ty) * 0.13;
+            trail.style.left = tx + 'px';
+            trail.style.top = ty + 'px';
+        }
         requestAnimationFrame(loop);
-    }
-    requestAnimationFrame(loop);
+    })();
 
-    // Hover effects on links/buttons
-    document.querySelectorAll('a, button').forEach(function (el) {
+    // Hover effects với debounce
+    const interactiveEls = document.querySelectorAll('a, button, input, textarea, .pill-link, .c-link, .btn-icon');
+    interactiveEls.forEach(function (el) {
         el.addEventListener('mouseenter', function () {
             cur.style.transform = 'translate(-50%,-50%) scale(1.8)';
             cur.style.background = '#ff2d78';
@@ -187,101 +114,103 @@
             trail.style.borderColor = 'rgba(0,245,212,0.4)';
         });
     });
+
+    // Ẩn cursor khi rời khỏi window
+    document.addEventListener('mouseleave', function () {
+        cur.style.opacity = '0';
+        trail.style.opacity = '0';
+    });
+    document.addEventListener('mouseenter', function () {
+        cur.style.opacity = '1';
+        trail.style.opacity = '1';
+    });
 })();
 
-/* ══ 4. SCROLL PROGRESS BAR ══════════════════════════════════ */
+/* ══ 3. MAGNETIC BUTTONS ════════════════════════════════════ */
 (function () {
-    var bar = document.getElementById('scrollProgress');
-    if (!bar) return;
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                var scrollTop = window.scrollY;
-                var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-                bar.style.width = progress + '%';
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
+    if (!window.matchMedia('(pointer: fine)').matches) return;
+    
+    const magneticBtns = document.querySelectorAll('.magnetic-btn');
+    magneticBtns.forEach(function (btn) {
+        btn.addEventListener('mousemove', function (e) {
+            const rect = btn.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+            btn.style.transform = 'translate(' + (x * 0.2) + 'px, ' + (y * 0.2) + 'px)';
+        });
+        btn.addEventListener('mouseleave', function () {
+            btn.style.transform = '';
+        });
+    });
 })();
 
-/* ══ 5. NAVBAR SCROLL + ACTIVE LINK ═════════════════════════ */
+/* ══ 4. NAVBAR SCROLL + ACTIVE LINK ═════════════════════════ */
 (function () {
     var navbar = document.getElementById('navbar');
     var links = document.querySelectorAll('.nav-links a');
     var sections = document.querySelectorAll('section[id]');
-    var ticking = false;
+    var mobileLinks = document.querySelectorAll('.mobile-nav a');
 
     function onScroll() {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(function () {
-            if (navbar) {
-                navbar.classList.toggle('solid', window.scrollY > 20);
-            }
+        if (navbar) {
+            navbar.classList.toggle('solid', window.scrollY > 20);
+        }
 
-            var scrollY = window.scrollY + 100;
-            sections.forEach(function (sec) {
-                var top = sec.offsetTop;
-                var h = sec.offsetHeight;
-                var id = sec.getAttribute('id');
-                links.forEach(function (a) {
+        var scrollY = window.scrollY + 100;
+        sections.forEach(function (sec) {
+            var top = sec.offsetTop;
+            var h = sec.offsetHeight;
+            var id = sec.getAttribute('id');
+            [links, mobileLinks].forEach(function (linkSet) {
+                linkSet.forEach(function (a) {
                     if (a.getAttribute('href') === '#' + id) {
                         a.classList.toggle('active', scrollY >= top && scrollY < top + h);
                     }
                 });
             });
-            ticking = false;
         });
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('scroll', throttle(onScroll, 50), { passive: true });
     onScroll();
 })();
 
-/* ══ 6. HAMBURGER MOBILE MENU ════════════════════════════════ */
+/* ══ 5. HAMBURGER MOBILE MENU ════════════════════════════════ */
 (function () {
     var burger = document.getElementById('burger');
     var mobileNav = document.getElementById('mobileNav');
     if (!burger || !mobileNav) return;
 
     burger.addEventListener('click', function () {
-        burger.classList.toggle('open');
+        var isOpen = burger.classList.toggle('open');
         mobileNav.classList.toggle('open');
+        burger.setAttribute('aria-expanded', isOpen);
+        mobileNav.setAttribute('aria-hidden', !isOpen);
+        document.body.style.overflow = isOpen ? 'hidden' : '';
     });
 
     mobileNav.querySelectorAll('a').forEach(function (a) {
         a.addEventListener('click', function () {
             burger.classList.remove('open');
             mobileNav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
         });
     });
 
     document.addEventListener('click', function (e) {
-        if (!burger.contains(e.target) && !mobileNav.contains(e.target)) {
+        if (!burger.contains(e.target) && !mobileNav.contains(e.target) && burger.classList.contains('open')) {
             burger.classList.remove('open');
             mobileNav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
         }
     });
-
-    // Swipe to close on mobile
-    var startY = 0;
-    mobileNav.addEventListener('touchstart', function (e) {
-        startY = e.touches[0].clientY;
-    }, { passive: true });
-    mobileNav.addEventListener('touchmove', function (e) {
-        if (e.touches[0].clientY - startY < -30) {
-            burger.classList.remove('open');
-            mobileNav.classList.remove('open');
-        }
-    }, { passive: true });
 })();
 
-/* ══ 7. SMOOTH SCROLL ════════════════════════════════════════ */
+/* ══ 6. SMOOTH SCROLL ════════════════════════════════════════ */
 document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     a.addEventListener('click', function (e) {
         var href = this.getAttribute('href');
@@ -295,77 +224,82 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     });
 });
 
-/* ══ 8. REVEAL ON SCROLL + STAGGER ══════════════════════════ */
+/* ══ 7. REVEAL ON SCROLL (Staggered) ════════════════════════ */
 (function () {
     var els = document.querySelectorAll('.reveal');
     if (!els.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry, i) {
             if (entry.isIntersecting) {
-                entry.target.classList.add('in');
-                observer.unobserve(entry.target);
+                setTimeout(function () {
+                    entry.target.classList.add('in');
+                }, i * 80);
+                io.unobserve(entry.target);
             }
         });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-    els.forEach(function (el) { observer.observe(el); });
+    els.forEach(function (el) { io.observe(el); });
 })();
 
-/* ══ 9. COUNTER ANIMATION ════════════════════════════════════ */
+/* ══ 8. COUNTER ANIMATION ════════════════════════════════════ */
 (function () {
     var nums = document.querySelectorAll('.stat-n[data-to]');
     if (!nums.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
             var el = entry.target;
             var target = parseInt(el.dataset.to, 10);
-            var suffix = el.dataset.suffix || (target === 100 ? '%' : '+');
+            var suffix = target === 100 ? '%' : '+';
             var start = 0;
             var dur = 1400;
-            var step = Math.max(1, Math.ceil(target / 60));
+            var step = Math.max(1, Math.ceil(target / 40));
             var startTime = null;
 
-            function animate(timestamp) {
-                if (!startTime) startTime = timestamp;
-                var elapsed = timestamp - startTime;
-                var progress = Math.min(elapsed / dur, 1);
-                // Ease out cubic
-                var eased = 1 - Math.pow(1 - progress, 3);
-                var current = Math.round(eased * target);
+            function animate(currentTime) {
+                if (!startTime) startTime = currentTime;
+                var progress = Math.min((currentTime - startTime) / dur, 1);
+                // Easing function: easeOutQuart
+                var ease = 1 - Math.pow(1 - progress, 4);
+                var current = Math.floor(ease * target);
                 el.textContent = current + suffix;
                 if (progress < 1) {
                     requestAnimationFrame(animate);
+                } else {
+                    el.textContent = target + suffix;
                 }
             }
-
             requestAnimationFrame(animate);
-            observer.unobserve(el);
+            io.unobserve(el);
         });
     }, { threshold: 0.6 });
 
-    nums.forEach(function (n) { observer.observe(n); });
+    nums.forEach(function (n) { io.observe(n); });
 })();
 
-/* ══ 10. SKILL BAR ANIMATION ═════════════════════════════════ */
+/* ══ 9. SKILL BAR ANIMATION ══════════════════════════════════ */
 (function () {
     var bars = document.querySelectorAll('.bar-fill[data-w]');
     if (!bars.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            entry.target.style.width = entry.target.dataset.w + '%';
-            observer.unobserve(entry.target);
+            // Delay nhỏ để tạo hiệu ứng cascade
+            setTimeout(function () {
+                entry.target.style.width = entry.target.dataset.w + '%';
+            }, Math.random() * 300);
+            io.unobserve(entry.target);
         });
     }, { threshold: 0.3 });
 
-    bars.forEach(function (b) { observer.observe(b); });
+    bars.forEach(function (b) { io.observe(b); });
 })();
 
-/* ══ 11. TYPEWRITER EFFECT ════════════════════════════════════ */
+/* ══ 10. TYPEWRITER EFFECT ═══════════════════════════════════ */
 (function () {
     var el = document.getElementById('typed');
     if (!el) return;
@@ -379,8 +313,10 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     ];
     var ri = 0, ci = 0, del = false;
     var SPEED_TYPE = 80, SPEED_DEL = 42, PAUSE = 1800;
+    var isRunning = true;
 
     function tick() {
+        if (!isRunning) return;
         var cur = roles[ri];
         if (!del) {
             ci++;
@@ -390,7 +326,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
                 setTimeout(tick, PAUSE);
                 return;
             }
-            setTimeout(tick, SPEED_TYPE);
+            setTimeout(tick, SPEED_TYPE + Math.random() * 20);
         } else {
             ci--;
             el.textContent = cur.slice(0, ci);
@@ -402,119 +338,33 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
         }
     }
     tick();
+
+    // Pause khi tab ẩn
+    document.addEventListener('visibilitychange', function () {
+        isRunning = !document.hidden;
+        if (isRunning) tick();
+    });
 })();
 
-/* ══ 12. TEXT SCRAMBLE EFFECT ON HEADINGS ═════════════════════ */
-(function () {
-    var headings = document.querySelectorAll('.scramble-text');
-    if (!headings.length) return;
-
-    var chars = '!<>-_\\/[]{}—=+*^?#________';
-
-    function scramble(el) {
-        var original = el.textContent;
-        var iterations = 0;
-        var maxIterations = original.length * 3;
-
-        var interval = setInterval(function () {
-            el.textContent = original.split('').map(function (char, index) {
-                if (index < iterations / 3) return original[index];
-                return chars[Math.floor(Math.random() * chars.length)];
-            }).join('');
-
-            iterations++;
-            if (iterations > maxIterations) {
-                clearInterval(interval);
-                el.textContent = original;
-            }
-        }, 30);
-    }
-
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            scramble(entry.target);
-            observer.unobserve(entry.target);
-        });
-    }, { threshold: 0.5 });
-
-    headings.forEach(function (h) { observer.observe(h); });
-})();
-
-/* ══ 13. GLITCH EFFECT ON NAME ═══════════════════════════════ */
+/* ══ 11. GLITCH EFFECT + CHARACTER REVEAL ════════════════════ */
 (function () {
     var name = document.getElementById('heroName');
     if (!name) return;
+
+    // Character reveal animation
+    var chars = name.querySelectorAll('.char');
+    chars.forEach(function (char, i) {
+        char.style.animationDelay = (0.1 + i * 0.04) + 's';
+    });
+
+    // Glitch effect
     setInterval(function () {
         name.classList.add('glitch');
-        setTimeout(function () { name.classList.remove('glitch'); }, 200);
-    }, 4500);
+        setTimeout(function () { name.classList.remove('glitch'); }, 300);
+    }, 5000);
 })();
 
-/* ══ 14. PARALLAX ON HERO GRID ══════════════════════════════ */
-(function () {
-    var grid = document.getElementById('heroGrid');
-    if (!grid) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                var scrolled = window.scrollY;
-                if (scrolled < window.innerHeight * 1.5) {
-                    grid.style.transform = 'translateY(' + (scrolled * 0.15) + 'px)';
-                }
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
-})();
-
-/* ══ 15. MAGNETIC BUTTONS ════════════════════════════════════ */
-(function () {
-    if (window.innerWidth <= 768) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    document.querySelectorAll('.magnetic-btn').forEach(function (btn) {
-        btn.addEventListener('mousemove', function (e) {
-            var rect = btn.getBoundingClientRect();
-            var x = e.clientX - rect.left - rect.width / 2;
-            var y = e.clientY - rect.top - rect.height / 2;
-            btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
-        });
-        btn.addEventListener('mouseleave', function () {
-            btn.style.transform = '';
-        });
-    });
-})();
-
-/* ══ 16. CARD TILT (desktop only) ════════════════════════════ */
-(function () {
-    if (window.innerWidth <= 768) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var cards = document.querySelectorAll('.proj-card, .exp-card, .stat-box');
-    cards.forEach(function (card) {
-        card.addEventListener('mousemove', function (e) {
-            var r = card.getBoundingClientRect();
-            var x = (e.clientX - r.left) / r.width - 0.5;
-            var y = (e.clientY - r.top) / r.height - 0.5;
-            card.style.transform = [
-                'perspective(500px)',
-                'rotateX(' + (-y * 5) + 'deg)',
-                'rotateY(' + (x * 5) + 'deg)',
-                'translateY(-4px)'
-            ].join(' ');
-        });
-        card.addEventListener('mouseleave', function () {
-            card.style.transform = '';
-        });
-    });
-})();
-
-/* ══ 17. PROFILE IMAGE FALLBACK ══════════════════════════════ */
+/* ══ 12. PROFILE IMAGE FALLBACK ══════════════════════════════ */
 (function () {
     var img = document.getElementById('profileImg');
     if (!img) return;
@@ -551,79 +401,21 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
     }
 })();
 
-/* ══ 18. BACK TO TOP ═════════════════════════════════════════ */
+/* ══ 13. BACK TO TOP ═════════════════════════════════════════ */
 (function () {
     var btn = document.getElementById('backTop');
     if (!btn) return;
 
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                btn.classList.toggle('show', window.scrollY > 380);
-                ticking = false;
-            });
-            ticking = true;
-        }
-    }, { passive: true });
+    window.addEventListener('scroll', throttle(function () {
+        btn.classList.toggle('show', window.scrollY > 380);
+    }, 100), { passive: true });
 
     btn.addEventListener('click', function () {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 })();
 
-/* ══ 19. FLOATING ACTION BUTTON ══════════════════════════════ */
-(function () {
-    var fab = document.getElementById('fab');
-    var toggle = document.getElementById('fabToggle');
-    if (!fab || !toggle) return;
-
-    toggle.addEventListener('click', function () {
-        fab.classList.toggle('open');
-    });
-
-    // Close when clicking a fab item
-    fab.querySelectorAll('.fab-item').forEach(function (item) {
-        item.addEventListener('click', function () {
-            fab.classList.remove('open');
-        });
-    });
-
-    // Close when clicking outside
-    document.addEventListener('click', function (e) {
-        if (!fab.contains(e.target)) {
-            fab.classList.remove('open');
-        }
-    });
-})();
-
-/* ══ 20. THEME TOGGLE ════════════════════════════════════════ */
-(function () {
-    var btn = document.getElementById('themeToggle');
-    if (!btn) return;
-
-    var icon = btn.querySelector('i');
-    var saved = localStorage.getItem('theme');
-    if (saved === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-        icon.className = 'fas fa-sun';
-    }
-
-    btn.addEventListener('click', function () {
-        var isLight = document.documentElement.getAttribute('data-theme') === 'light';
-        if (isLight) {
-            document.documentElement.removeAttribute('data-theme');
-            icon.className = 'fas fa-moon';
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.setAttribute('data-theme', 'light');
-            icon.className = 'fas fa-sun';
-            localStorage.setItem('theme', 'light');
-        }
-    });
-})();
-
-/* ══ 21. TOAST ═══════════════════════════════════════════════ */
+/* ══ 14. TOAST ═══════════════════════════════════════════════ */
 function showToast(msg, ms) {
     var t = document.getElementById('toast');
     if (!t) return;
@@ -632,13 +424,32 @@ function showToast(msg, ms) {
     setTimeout(function () { t.classList.remove('show'); }, ms || 3200);
 }
 
-/* ══ 22. CONTACT FORM ════════════════════════════════════════ */
+/* ══ 15. CONTACT FORM ════════════════════════════════════════ */
 (function () {
     var form = document.getElementById('contactForm');
     if (!form) return;
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
+        
+        // Validate
+        var name = form.querySelector('#contactName');
+        var email = form.querySelector('#contactEmail');
+        var subject = form.querySelector('#contactSubject');
+        var message = form.querySelector('#contactMessage');
+        
+        if (!name.value.trim() || !email.value.trim() || !subject.value.trim() || !message.value.trim()) {
+            showToast('⚠️ Vui lòng điền đầy đủ thông tin!', 3000);
+            return;
+        }
+        
+        var emailRegex = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/;
+        if (!emailRegex.test(email.value.trim())) {
+            showToast('⚠️ Email không hợp lệ!', 3000);
+            email.focus();
+            return;
+        }
+
         var btn = form.querySelector('.btn-submit');
         var orig = btn.innerHTML;
 
@@ -657,29 +468,100 @@ function showToast(msg, ms) {
     });
 })();
 
-/* ══ 23. MOBILE MENU SWIPE GESTURE ═══════════════════════════ */
+/* ══ 16. CARD TILT 3D (Vanilla JS) ══════════════════════════ */
 (function () {
-    var mobileNav = document.getElementById('mobileNav');
-    var burger = document.getElementById('burger');
-    if (!mobileNav || !burger) return;
+    if (window.innerWidth <= 768) return;
 
-    var startX = 0;
-    document.addEventListener('touchstart', function (e) {
-        startX = e.touches[0].clientX;
-    }, { passive: true });
-
-    document.addEventListener('touchend', function (e) {
-        var endX = e.changedTouches[0].clientX;
-        var diff = endX - startX;
-        // Swipe right to open
-        if (diff > 80 && startX < 30 && !mobileNav.classList.contains('open')) {
-            burger.classList.add('open');
-            mobileNav.classList.add('open');
-        }
-        // Swipe left to close
-        if (diff < -80 && mobileNav.classList.contains('open')) {
-            burger.classList.remove('open');
-            mobileNav.classList.remove('open');
-        }
-    }, { passive: true });
+    var cards = document.querySelectorAll('[data-tilt]');
+    cards.forEach(function (card) {
+        card.addEventListener('mousemove', function (e) {
+            var r = card.getBoundingClientRect();
+            var x = (e.clientX - r.left) / r.width - 0.5;
+            var y = (e.clientY - r.top) / r.height - 0.5;
+            card.style.transform = [
+                'perspective(500px)',
+                'rotateX(' + (-y * 6) + 'deg)',
+                'rotateY(' + (x * 6) + 'deg)',
+                'translateY(-4px)',
+                'scale(1.01)'
+            ].join(' ');
+        });
+        card.addEventListener('mouseleave', function () {
+            card.style.transform = '';
+            card.style.transition = 'transform .4s ease';
+            setTimeout(function () {
+                card.style.transition = '';
+            }, 400);
+        });
+    });
 })();
+
+/* ══ 17. PARALLAX HERO ═══════════════════════════════════════ */
+(function () {
+    var hero = document.querySelector('.hero');
+    if (!hero) return;
+    
+    var gridBg = hero.querySelector('.hero-grid-bg');
+    var particles = hero.querySelector('.hero-particles');
+    
+    window.addEventListener('scroll', throttle(function () {
+        var scrolled = window.pageYOffset;
+        if (scrolled < window.innerHeight) {
+            if (gridBg) gridBg.style.transform = 'translateY(' + (scrolled * 0.3) + 'px)';
+            if (particles) particles.style.transform = 'translateY(' + (scrolled * 0.15) + 'px)';
+        }
+    }, 16), { passive: true });
+})();
+
+/* ══ 18. CURRENT YEAR ════════════════════════════════════════ */
+(function () {
+    var yearEl = document.getElementById('year');
+    if (yearEl) yearEl.textContent = new Date().getFullYear();
+})();
+
+/* ══ 19. ORBIT ANIMATION ENHANCEMENT ═════════════════════════ */
+(function () {
+    var orbits = document.querySelectorAll('.orbit');
+    orbits.forEach(function (orbit, i) {
+        orbit.style.animationDelay = (i * 0.5) + 's';
+    });
+})();
+
+/* ══ UTILITY FUNCTIONS ═══════════════════════════════════════ */
+function debounce(func, wait) {
+    var timeout;
+    return function executedFunction() {
+        var context = this;
+        var args = arguments;
+        var later = function () {
+            timeout = null;
+            func.apply(context, args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+function throttle(func, limit) {
+    var inThrottle;
+    return function () {
+        var args = arguments;
+        var context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(function () { inThrottle = false; }, limit);
+        }
+    };
+}
+
+/* ══ PERFORMANCE: Cleanup on page hide ═══════════════════════ */
+window.addEventListener('beforeunload', function () {
+    // Cleanup any running intervals/animations if needed
+});
+'''
+
+with open('/mnt/agents/output/script.js', 'w', encoding='utf-8') as f:
+    f.write(js_content)
+
+print("✅ script.js đã được tạo")
