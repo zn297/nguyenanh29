@@ -1,32 +1,45 @@
-
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <meta name="description" content="Portfolio của Nguyễn Hoàng Anh (Ju) — Flutter Developer, Android Engineer, Web Developer">
-    <meta name="theme-color" content="#080b12">
-    <meta name="color-scheme" content="dark">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Nguyễn Hoàng Anh | Software Engineer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="Portfolio của Nguyễn Hoàng Anh (Ju) — Flutter Developer, Android Engineer, Web Developer">
+    <meta name="keywords" content="Nguyễn Hoàng Anh, Ju, Flutter Developer, Android, Web Developer, Portfolio">
+    <meta name="author" content="Nguyễn Hoàng Anh">
+    <meta property="og:title" content="Nguyễn Hoàng Anh | Software Engineer">
+    <meta property="og:description" content="Portfolio — Flutter Developer, Android Engineer, Web Developer">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
+<!-- Loading Screen -->
+<div class="loader" id="loader">
+    <div class="loader-inner">
+        <div class="loader-ring"></div>
+        <div class="loader-logo">&lt;Ju/&gt;</div>
+    </div>
+</div>
+
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
 <!-- Custom Cursor -->
-<div class="cursor" id="cursor" aria-hidden="true"></div>
-<div class="cursor-trail" id="cursorTrail" aria-hidden="true"></div>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
 
 <!-- Canvas Matrix -->
-<canvas id="matrix" aria-hidden="true"></canvas>
+<canvas id="matrix"></canvas>
+
+<!-- Floating Particles Canvas -->
+<canvas id="particles"></canvas>
 
 <!-- ═══ NAVBAR ═══ -->
 <nav class="navbar" id="navbar">
     <div class="nav-wrap">
-        <a href="#home" class="nav-logo" aria-label="Về đầu trang">
+        <a href="#home" class="nav-logo">
             <span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span>
         </a>
         <ul class="nav-links" id="navLinks">
@@ -38,12 +51,17 @@ html_content = '''<!DOCTYPE html>
             <li><a href="#projects">projects</a></li>
             <li><a href="#contact">contact</a></li>
         </ul>
-        <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileNav">
-            <span></span><span></span><span></span>
-        </button>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="burger" id="burger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
     </div>
     <!-- Mobile dropdown -->
-    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+    <div class="mobile-nav" id="mobileNav">
         <a href="#home">home</a>
         <a href="#about">about</a>
         <a href="#education">education</a>
@@ -56,21 +74,14 @@ html_content = '''<!DOCTYPE html>
 
 <!-- ═══ HERO ═══ -->
 <section id="home" class="hero">
-    <div class="hero-grid-bg"></div>
-    <div class="hero-particles" id="heroParticles" aria-hidden="true"></div>
+    <div class="hero-grid-bg" id="heroGrid"></div>
     <div class="hero-content">
         <!-- LEFT -->
         <div class="hero-left">
             <div class="status-pill">
                 <span class="dot-live"></span> Available for opportunities
             </div>
-            <h1 class="hero-name" id="heroName">
-                <span class="char">N</span><span class="char">G</span><span class="char">U</span><span class="char">Y</span><span class="char">Ễ</span><span class="char">N</span>
-                <span class="char"> </span>
-                <span class="char">H</span><span class="char">O</span><span class="char">À</span><span class="char">N</span><span class="char">G</span>
-                <span class="char"> </span>
-                <span class="char">A</span><span class="char">N</span><span class="char">H</span>
-            </h1>
+            <h1 class="hero-name" id="heroName">NGUYỄN HOÀNG ANH</h1>
             <p class="hero-role">
                 <span class="comment">// </span>
                 <span id="typed"></span><span class="blink-bar">|</span>
@@ -87,24 +98,25 @@ html_content = '''<!DOCTYPE html>
             <div class="hero-btns">
                 <a href="#contact" class="btn-solid magnetic-btn">Liên hệ <i class="fas fa-arrow-right"></i></a>
                 <a href="#projects" class="btn-ghost magnetic-btn">Xem dự án</a>
-                <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" class="btn-icon magnetic-btn" style="background:#1877f2" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer" class="btn-icon magnetic-btn" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/Ju2974" target="_blank" class="btn-icon" style="background:#1877f2"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="btn-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)"><i class="fab fa-instagram"></i></a>
             </div>
         </div>
         <!-- RIGHT -->
         <div class="hero-right">
-            <div class="avatar-wrap" id="avatarWrap">
+            <div class="avatar-wrap">
+                <div class="blob-bg"></div>
                 <div class="avatar-ring r1"></div>
                 <div class="avatar-ring r2"></div>
                 <div class="avatar-img">
-                    <img src="./profile.jpg" alt="Nguyễn Hoàng Anh" id="profileImg" loading="eager" decoding="sync" width="260" height="260">
+                    <img src="./profile.jpg" alt="Nguyễn Hoàng Anh" id="profileImg" loading="eager" decoding="sync">
                 </div>
-                <div class="orbit o1" data-tooltip="Flutter"><i class="fab fa-flutter"></i></div>
-                <div class="orbit o2" data-tooltip="Android"><i class="fab fa-android"></i></div>
-                <div class="orbit o3" data-tooltip="Code"><i class="fas fa-code"></i></div>
-                <div class="orbit o4" data-tooltip="Database"><i class="fas fa-database"></i></div>
+                <div class="orbit o1"><i class="fab fa-flutter"></i></div>
+                <div class="orbit o2"><i class="fab fa-android"></i></div>
+                <div class="orbit o3"><i class="fas fa-code"></i></div>
+                <div class="orbit o4"><i class="fas fa-database"></i></div>
             </div>
-            <div class="code-snippet" id="codeSnippet">
+            <div class="code-snippet">
                 <div class="snippet-bar">
                     <span class="s-dot" style="background:#ff5f57"></span>
                     <span class="s-dot" style="background:#febc2e"></span>
@@ -132,7 +144,7 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">01</span>
-            <h2>Về Tôi</h2>
+            <h2 class="scramble-text">Về Tôi</h2>
         </div>
         <div class="about-grid reveal">
             <div class="about-text">
@@ -141,22 +153,10 @@ html_content = '''<!DOCTYPE html>
                 <p>Mình tin code tốt không chỉ chạy được — mà còn <em>dễ đọc, dễ bảo trì</em> và tạo ra giá trị thực cho người dùng.</p>
             </div>
             <div class="stats-grid">
-                <div class="stat-box" data-tilt>
-                    <span class="stat-n" data-to="3">0</span>
-                    <span class="stat-l">Năm học</span>
-                </div>
-                <div class="stat-box" data-tilt>
-                    <span class="stat-n" data-to="5">0</span>
-                    <span class="stat-l">Dự án</span>
-                </div>
-                <div class="stat-box" data-tilt>
-                    <span class="stat-n" data-to="8">0</span>
-                    <span class="stat-l">Công nghệ</span>
-                </div>
-                <div class="stat-box" data-tilt>
-                    <span class="stat-n" data-to="100">0</span>
-                    <span class="stat-l">% Đam mê</span>
-                </div>
+                <div class="stat-box"><span class="stat-n" data-to="3">0</span><span class="stat-l">Năm học</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="5">0</span><span class="stat-l">Dự án</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="8">0</span><span class="stat-l">Công nghệ</span></div>
+                <div class="stat-box"><span class="stat-n" data-to="100">0</span><span class="stat-l">% Đam mê</span></div>
             </div>
         </div>
     </div>
@@ -167,13 +167,13 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">02</span>
-            <h2>Học Vấn</h2>
+            <h2 class="scramble-text">Học Vấn</h2>
         </div>
         <div class="timeline reveal">
             <div class="tl-line"></div>
-            <div class="tl-item">
+            <div class="tl-item stagger-item">
                 <div class="tl-icon"><i class="fas fa-graduation-cap"></i></div>
-                <div class="tl-body" data-tilt>
+                <div class="tl-body">
                     <span class="tl-date">2022 — 2024</span>
                     <h3>Đại học Thủ Dầu Một</h3>
                     <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 1</span>
@@ -181,13 +181,13 @@ html_content = '''<!DOCTYPE html>
                     <div class="tl-chips"><span>Android ROM</span><span>Firmware</span><span>System Programming</span></div>
                 </div>
             </div>
-            <div class="tl-item">
+            <div class="tl-item stagger-item">
                 <div class="tl-icon"><i class="fas fa-rocket"></i></div>
-                <div class="tl-body" data-tilt>
+                <div class="tl-body">
                     <span class="tl-date">2024 — 2026</span>
                     <h3>Đại học Thủ Dầu Một</h3>
                     <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 2</span>
-                    <p>Phát triển ứng dụng di động Flutter và web. Demo: <a href="https://anh29.ct.ws" target="_blank" rel="noopener noreferrer" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt"></i></a></p>
+                    <p>Phát triển ứng dụng di động Flutter và web. Demo: <a href="https://anh29.ct.ws" target="_blank" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt"></i></a></p>
                     <div class="tl-chips"><span>Flutter</span><span>Web Dev</span><span>AI Integration</span></div>
                 </div>
             </div>
@@ -200,10 +200,10 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">03</span>
-            <h2>Kinh Nghiệm</h2>
+            <h2 class="scramble-text">Kinh Nghiệm</h2>
         </div>
         <div class="exp-grid reveal">
-            <div class="exp-card" data-tilt>
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fab fa-flutter"></i></div>
                 <div>
                     <h3>Flutter Development</h3>
@@ -211,7 +211,7 @@ html_content = '''<!DOCTYPE html>
                     <div class="chip-row"><span>Dart</span><span>Flutter</span><span>Firebase</span></div>
                 </div>
             </div>
-            <div class="exp-card" data-tilt>
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fab fa-android"></i></div>
                 <div>
                     <h3>Android System</h3>
@@ -219,7 +219,7 @@ html_content = '''<!DOCTYPE html>
                     <div class="chip-row"><span>ADB</span><span>Fastboot</span><span>TWRP</span></div>
                 </div>
             </div>
-            <div class="exp-card" data-tilt>
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fas fa-brain"></i></div>
                 <div>
                     <h3>AI Integration</h3>
@@ -227,7 +227,7 @@ html_content = '''<!DOCTYPE html>
                     <div class="chip-row"><span>LLM API</span><span>Prompt Eng.</span><span>AI Features</span></div>
                 </div>
             </div>
-            <div class="exp-card" data-tilt>
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fas fa-globe"></i></div>
                 <div>
                     <h3>Web Development</h3>
@@ -244,7 +244,7 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">04</span>
-            <h2>Kỹ Năng</h2>
+            <h2 class="scramble-text">Kỹ Năng</h2>
         </div>
         <div class="skills-layout reveal">
             <div class="skill-bars">
@@ -300,32 +300,33 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">05</span>
-            <h2>Dự Án</h2>
+            <h2 class="scramble-text">Dự Án</h2>
         </div>
         <div class="proj-grid reveal">
-            <div class="proj-card featured" data-tilt>
+            <div class="proj-card featured stagger-item">
+                <div class="proj-glow"></div>
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="https://anh29.ct.ws" target="_blank" rel="noopener noreferrer" class="proj-ext" aria-label="Xem dự án"><i class="fas fa-external-link-alt"></i></a>
+                    <a href="https://anh29.ct.ws" target="_blank" class="proj-ext"><i class="fas fa-external-link-alt"></i></a>
                 </div>
                 <h3>Website EAnh</h3>
                 <p>Trang quản lý dữ liệu sinh viên tích hợp AI — tra cứu, quản lý điểm số và thông tin học vụ với giao diện hiện đại.</p>
                 <div class="proj-chips"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>AI API</span></div>
                 <span class="proj-badge">Featured</span>
             </div>
-            <div class="proj-card" data-tilt>
+            <div class="proj-card stagger-item">
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="#" class="proj-ext" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
                 </div>
                 <h3>Note App</h3>
                 <p>Ứng dụng quản lý ghi chú cá nhân viết bằng Flutter — tạo, sửa, xóa note với giao diện Material 3, lưu trữ local SQLite.</p>
                 <div class="proj-chips"><span>Flutter</span><span>Dart</span><span>SQLite</span></div>
             </div>
-            <div class="proj-card" data-tilt>
+            <div class="proj-card stagger-item">
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="#" class="proj-ext" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
                 </div>
                 <h3>Android ROM Tools</h3>
                 <p>Bộ công cụ hỗ trợ flash ROM, sửa bootloop, backup/restore dữ liệu cho thiết bị Android — hỗ trợ nhiều dòng máy.</p>
@@ -340,7 +341,7 @@ html_content = '''<!DOCTYPE html>
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">06</span>
-            <h2>Liên Hệ</h2>
+            <h2 class="scramble-text">Liên Hệ</h2>
         </div>
         <div class="contact-layout reveal">
             <div class="contact-left">
@@ -354,34 +355,34 @@ html_content = '''<!DOCTYPE html>
                         <div class="c-ico"><i class="fas fa-envelope"></i></div>
                         <div><span class="c-lbl">Email</span><span class="c-val">giaa32087@gmail.com</span></div>
                     </a>
-                    <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" class="c-link">
+                    <a href="https://www.facebook.com/Ju2974" target="_blank" class="c-link">
                         <div class="c-ico" style="color:#1877f2"><i class="fab fa-facebook-f"></i></div>
                         <div><span class="c-lbl">Facebook</span><span class="c-val">facebook.com/Ju2974</span></div>
                     </a>
-                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer" class="c-link">
+                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="c-link">
                         <div class="c-ico" style="color:#e1306c"><i class="fab fa-instagram"></i></div>
                         <div><span class="c-lbl">Instagram</span><span class="c-val">@ng_ju29</span></div>
                     </a>
                 </div>
             </div>
-            <form class="contact-form" id="contactForm" novalidate>
+            <form class="contact-form" id="contactForm">
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="contactName">Tên của bạn</label>
-                        <input type="text" id="contactName" name="name" placeholder="Nguyễn Văn A" required autocomplete="name">
+                        <label>Tên của bạn</label>
+                        <input type="text" placeholder="Nguyễn Văn A" required>
                     </div>
                     <div class="form-group">
-                        <label for="contactEmail">Email</label>
-                        <input type="email" id="contactEmail" name="email" placeholder="you@example.com" required autocomplete="email">
+                        <label>Email</label>
+                        <input type="email" placeholder="you@example.com" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="contactSubject">Chủ đề</label>
-                    <input type="text" id="contactSubject" name="subject" placeholder="Hợp tác / Câu hỏi kỹ thuật..." required>
+                    <label>Chủ đề</label>
+                    <input type="text" placeholder="Hợp tác / Câu hỏi kỹ thuật..." required>
                 </div>
                 <div class="form-group">
-                    <label for="contactMessage">Nội dung</label>
-                    <textarea id="contactMessage" name="message" rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
+                    <label>Nội dung</label>
+                    <textarea rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
                 </div>
                 <button type="submit" class="btn-submit magnetic-btn">
                     Gửi tin nhắn <i class="fas fa-paper-plane"></i>
@@ -395,23 +396,34 @@ html_content = '''<!DOCTYPE html>
 <footer class="footer">
     <div class="footer-inner">
         <span class="nav-logo"><span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span></span>
-        <p>© <span id="year"></span> Nguyễn Hoàng Anh · Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
+        <p>&copy; 2026 Nguyễn Hoàng Anh &middot; Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
         <div class="foot-soc">
-            <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="mailto:giaa32087@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+            <a href="https://www.facebook.com/Ju2974" target="_blank"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/ng_ju29/" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="mailto:giaa32087@gmail.com"><i class="fas fa-envelope"></i></a>
         </div>
     </div>
 </footer>
 
+<!-- Back to top -->
 <button class="back-top" id="backTop" aria-label="Về đầu trang"><i class="fas fa-chevron-up"></i></button>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<!-- Floating Action Button -->
+<div class="fab" id="fab">
+    <button class="fab-toggle" id="fabToggle" aria-label="Quick links">
+        <i class="fas fa-plus"></i>
+    </button>
+    <div class="fab-menu" id="fabMenu">
+        <a href="tel:0388486348" class="fab-item" title="Gọi"><i class="fas fa-phone"></i></a>
+        <a href="mailto:giaa32087@gmail.com" class="fab-item" title="Email"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.facebook.com/Ju2974" target="_blank" class="fab-item" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#home" class="fab-item" title="Về đầu"><i class="fas fa-arrow-up"></i></a>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
 </body>
-</html>'''
-
-with open('/mnt/agents/output/index.html', 'w', encoding='utf-8') as f:
-    f.write(html_content)
-
-print("✅ index.html đã được tạo")
+</html>
