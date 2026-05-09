@@ -2,13 +2,29 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Nguyễn Hoàng Anh | Software Engineer</title>
     <meta name="description" content="Portfolio của Nguyễn Hoàng Anh (Ju) — Flutter Developer, Android Engineer, Web Developer">
+    <meta name="keywords" content="Nguyễn Hoàng Anh, Ju, Flutter Developer, Android, Web Developer, Portfolio">
+    <meta name="author" content="Nguyễn Hoàng Anh">
+    <meta property="og:title" content="Nguyễn Hoàng Anh | Software Engineer">
+    <meta property="og:description" content="Portfolio — Flutter Developer, Android Engineer, Web Developer">
+    <meta property="og:type" content="website">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+
+<!-- Loading Screen -->
+<div class="loader" id="loader">
+    <div class="loader-inner">
+        <div class="loader-ring"></div>
+        <div class="loader-logo">&lt;Ju/&gt;</div>
+    </div>
+</div>
+
+<!-- Scroll Progress Bar -->
+<div class="scroll-progress" id="scrollProgress"></div>
 
 <!-- Custom Cursor -->
 <div class="cursor" id="cursor"></div>
@@ -16,6 +32,9 @@
 
 <!-- Canvas Matrix -->
 <canvas id="matrix"></canvas>
+
+<!-- Floating Particles Canvas -->
+<canvas id="particles"></canvas>
 
 <!-- ═══ NAVBAR ═══ -->
 <nav class="navbar" id="navbar">
@@ -32,9 +51,14 @@
             <li><a href="#projects">projects</a></li>
             <li><a href="#contact">contact</a></li>
         </ul>
-        <button class="burger" id="burger" aria-label="Toggle menu">
-            <span></span><span></span><span></span>
-        </button>
+        <div class="nav-actions">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+            <button class="burger" id="burger" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
     </div>
     <!-- Mobile dropdown -->
     <div class="mobile-nav" id="mobileNav">
@@ -50,7 +74,7 @@
 
 <!-- ═══ HERO ═══ -->
 <section id="home" class="hero">
-    <div class="hero-grid-bg"></div>
+    <div class="hero-grid-bg" id="heroGrid"></div>
     <div class="hero-content">
         <!-- LEFT -->
         <div class="hero-left">
@@ -72,8 +96,8 @@
                 <a href="mailto:giaa32087@gmail.com" class="pill-link"><i class="fas fa-envelope"></i> giaa32087@gmail.com</a>
             </div>
             <div class="hero-btns">
-                <a href="#contact" class="btn-solid">Liên hệ <i class="fas fa-arrow-right"></i></a>
-                <a href="#projects" class="btn-ghost">Xem dự án</a>
+                <a href="#contact" class="btn-solid magnetic-btn">Liên hệ <i class="fas fa-arrow-right"></i></a>
+                <a href="#projects" class="btn-ghost magnetic-btn">Xem dự án</a>
                 <a href="https://www.facebook.com/Ju2974" target="_blank" class="btn-icon" style="background:#1877f2"><i class="fab fa-facebook-f"></i></a>
                 <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="btn-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)"><i class="fab fa-instagram"></i></a>
             </div>
@@ -81,6 +105,7 @@
         <!-- RIGHT -->
         <div class="hero-right">
             <div class="avatar-wrap">
+                <div class="blob-bg"></div>
                 <div class="avatar-ring r1"></div>
                 <div class="avatar-ring r2"></div>
                 <div class="avatar-img">
@@ -119,7 +144,7 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">01</span>
-            <h2>Về Tôi</h2>
+            <h2 class="scramble-text">Về Tôi</h2>
         </div>
         <div class="about-grid reveal">
             <div class="about-text">
@@ -142,11 +167,11 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">02</span>
-            <h2>Học Vấn</h2>
+            <h2 class="scramble-text">Học Vấn</h2>
         </div>
         <div class="timeline reveal">
             <div class="tl-line"></div>
-            <div class="tl-item">
+            <div class="tl-item stagger-item">
                 <div class="tl-icon"><i class="fas fa-graduation-cap"></i></div>
                 <div class="tl-body">
                     <span class="tl-date">2022 — 2024</span>
@@ -156,7 +181,7 @@
                     <div class="tl-chips"><span>Android ROM</span><span>Firmware</span><span>System Programming</span></div>
                 </div>
             </div>
-            <div class="tl-item">
+            <div class="tl-item stagger-item">
                 <div class="tl-icon"><i class="fas fa-rocket"></i></div>
                 <div class="tl-body">
                     <span class="tl-date">2024 — 2026</span>
@@ -175,10 +200,10 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">03</span>
-            <h2>Kinh Nghiệm</h2>
+            <h2 class="scramble-text">Kinh Nghiệm</h2>
         </div>
         <div class="exp-grid reveal">
-            <div class="exp-card">
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fab fa-flutter"></i></div>
                 <div>
                     <h3>Flutter Development</h3>
@@ -186,7 +211,7 @@
                     <div class="chip-row"><span>Dart</span><span>Flutter</span><span>Firebase</span></div>
                 </div>
             </div>
-            <div class="exp-card">
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fab fa-android"></i></div>
                 <div>
                     <h3>Android System</h3>
@@ -194,7 +219,7 @@
                     <div class="chip-row"><span>ADB</span><span>Fastboot</span><span>TWRP</span></div>
                 </div>
             </div>
-            <div class="exp-card">
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fas fa-brain"></i></div>
                 <div>
                     <h3>AI Integration</h3>
@@ -202,7 +227,7 @@
                     <div class="chip-row"><span>LLM API</span><span>Prompt Eng.</span><span>AI Features</span></div>
                 </div>
             </div>
-            <div class="exp-card">
+            <div class="exp-card stagger-item">
                 <div class="exp-ico"><i class="fas fa-globe"></i></div>
                 <div>
                     <h3>Web Development</h3>
@@ -219,7 +244,7 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">04</span>
-            <h2>Kỹ Năng</h2>
+            <h2 class="scramble-text">Kỹ Năng</h2>
         </div>
         <div class="skills-layout reveal">
             <div class="skill-bars">
@@ -275,10 +300,11 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">05</span>
-            <h2>Dự Án</h2>
+            <h2 class="scramble-text">Dự Án</h2>
         </div>
         <div class="proj-grid reveal">
-            <div class="proj-card featured">
+            <div class="proj-card featured stagger-item">
+                <div class="proj-glow"></div>
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
                     <a href="https://anh29.ct.ws" target="_blank" class="proj-ext"><i class="fas fa-external-link-alt"></i></a>
@@ -288,7 +314,7 @@
                 <div class="proj-chips"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>AI API</span></div>
                 <span class="proj-badge">Featured</span>
             </div>
-            <div class="proj-card">
+            <div class="proj-card stagger-item">
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
                     <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
@@ -297,7 +323,7 @@
                 <p>Ứng dụng quản lý ghi chú cá nhân viết bằng Flutter — tạo, sửa, xóa note với giao diện Material 3, lưu trữ local SQLite.</p>
                 <div class="proj-chips"><span>Flutter</span><span>Dart</span><span>SQLite</span></div>
             </div>
-            <div class="proj-card">
+            <div class="proj-card stagger-item">
                 <div class="proj-top">
                     <i class="fas fa-folder-open proj-folder"></i>
                     <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
@@ -315,7 +341,7 @@
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">06</span>
-            <h2>Liên Hệ</h2>
+            <h2 class="scramble-text">Liên Hệ</h2>
         </div>
         <div class="contact-layout reveal">
             <div class="contact-left">
@@ -358,7 +384,7 @@
                     <label>Nội dung</label>
                     <textarea rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
                 </div>
-                <button type="submit" class="btn-submit">
+                <button type="submit" class="btn-submit magnetic-btn">
                     Gửi tin nhắn <i class="fas fa-paper-plane"></i>
                 </button>
             </form>
@@ -370,7 +396,7 @@
 <footer class="footer">
     <div class="footer-inner">
         <span class="nav-logo"><span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span></span>
-        <p>© 2026 Nguyễn Hoàng Anh · Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
+        <p>&copy; 2026 Nguyễn Hoàng Anh &middot; Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
         <div class="foot-soc">
             <a href="https://www.facebook.com/Ju2974" target="_blank"><i class="fab fa-facebook-f"></i></a>
             <a href="https://www.instagram.com/ng_ju29/" target="_blank"><i class="fab fa-instagram"></i></a>
@@ -379,7 +405,23 @@
     </div>
 </footer>
 
+<!-- Back to top -->
 <button class="back-top" id="backTop" aria-label="Về đầu trang"><i class="fas fa-chevron-up"></i></button>
+
+<!-- Floating Action Button -->
+<div class="fab" id="fab">
+    <button class="fab-toggle" id="fabToggle" aria-label="Quick links">
+        <i class="fas fa-plus"></i>
+    </button>
+    <div class="fab-menu" id="fabMenu">
+        <a href="tel:0388486348" class="fab-item" title="Gọi"><i class="fas fa-phone"></i></a>
+        <a href="mailto:giaa32087@gmail.com" class="fab-item" title="Email"><i class="fas fa-envelope"></i></a>
+        <a href="https://www.facebook.com/Ju2974" target="_blank" class="fab-item" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#home" class="fab-item" title="Về đầu"><i class="fas fa-arrow-up"></i></a>
+    </div>
+</div>
+
+<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script src="script.js"></script>
