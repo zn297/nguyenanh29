@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   styles.css — Professional & Optimized v2.0
+   styles.css — Professional & Optimized v2.1
    ═══════════════════════════════════════════════ */
 
 /* ── Google Fonts ── */
@@ -82,7 +82,7 @@
         scroll-behavior: auto !important;
     }
     .loader { display: none !important; }
-    .aurora { display: none !important; }
+    .aurora, .dynamic-bg { display: none !important; }
     #bgCanvas { display: none !important; }
 }
 
@@ -141,6 +141,56 @@ ul { list-style: none; }
     border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--c); }
+
+/* ═══ DYNAMIC BACKGROUND ═══ */
+.dynamic-bg {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -20;
+    background: linear-gradient(120deg, #05070a, #0a0e17, #05070a);
+    background-size: 200% 200%;
+    animation: bgShift 20s ease infinite;
+    overflow: hidden;
+}
+[data-theme="light"] .dynamic-bg {
+    background: linear-gradient(120deg, #e4e9f2, #f4f6fa, #e4e9f2);
+}
+@keyframes bgShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+.glow-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.4;
+    animation: orbFloat 25s infinite ease-in-out alternate;
+}
+.orb-1 {
+    width: 40vw; height: 40vw;
+    background: rgba(0, 245, 212, 0.15);
+    top: -10%; left: -10%;
+}
+.orb-2 {
+    width: 35vw; height: 35vw;
+    background: rgba(0, 119, 255, 0.1);
+    bottom: -10%; right: -5%;
+    animation-delay: -5s;
+    animation-duration: 30s;
+}
+.orb-3 {
+    width: 30vw; height: 30vw;
+    background: rgba(168, 85, 247, 0.12);
+    top: 40%; left: 40%;
+    animation-delay: -10s;
+    animation-duration: 20s;
+}
+@keyframes orbFloat {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(15vw, 15vh) scale(1.2); }
+}
 
 /* ═══ LOADING SCREEN ═══ */
 .loader {
@@ -230,17 +280,17 @@ ul { list-style: none; }
 #bgCanvas {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -10;
     pointer-events: none;
     opacity: 0.045;
-    will-change: auto;
+    will-change: opacity;
 }
 
 /* ═══ AURORA BACKGROUND ═══ */
 .aurora-bg {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -15;
     pointer-events: none;
     overflow: hidden;
 }
@@ -252,28 +302,21 @@ ul { list-style: none; }
     animation: auroraFadeIn 2s ease forwards;
 }
 .a1 {
-    width: 70vw;
-    height: 60vh;
+    width: 70vw; height: 60vh;
     background: radial-gradient(ellipse, rgba(0,245,212,0.06) 0%, transparent 70%);
-    top: -20%;
-    left: -20%;
-    animation-delay: 0.5s;
+    top: -20%; left: -20%;
     animation: auroraFadeIn 2s 0.5s ease forwards, auroraFloat1 18s 2s ease-in-out infinite;
 }
 .a2 {
-    width: 60vw;
-    height: 55vh;
+    width: 60vw; height: 55vh;
     background: radial-gradient(ellipse, rgba(0,119,255,0.05) 0%, transparent 70%);
-    top: 30%;
-    right: -15%;
+    top: 30%; right: -15%;
     animation: auroraFadeIn 2s 1s ease forwards, auroraFloat2 22s 3s ease-in-out infinite;
 }
 .a3 {
-    width: 50vw;
-    height: 50vh;
+    width: 50vw; height: 50vh;
     background: radial-gradient(ellipse, rgba(168,85,247,0.04) 0%, transparent 70%);
-    bottom: -10%;
-    left: 30%;
+    bottom: -10%; left: 30%;
     animation: auroraFadeIn 2s 1.5s ease forwards, auroraFloat3 26s 4s ease-in-out infinite;
 }
 @keyframes auroraFadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -296,9 +339,9 @@ ul { list-style: none; }
 .noise-overlay {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: -5;
     pointer-events: none;
-    opacity: 0.022;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
     background-size: 256px 256px;
 }
@@ -314,8 +357,8 @@ ul { list-style: none; }
 }
 .navbar.solid {
     background: rgba(8,11,18,0.88);
-    backdrop-filter: blur(20px) saturate(1.4);
-    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     box-shadow: 0 1px 0 rgba(0,245,212,0.08), 0 8px 32px rgba(0,0,0,0.5);
     border-bottom-color: rgba(0,245,212,0.07);
 }
@@ -670,7 +713,7 @@ ul { list-style: none; }
     align-items: center;
     justify-content: center;
     color: #fff;
-    font-size: 1rem;
+    font-size: 1.1rem;
     transition: transform var(--t), box-shadow var(--t), opacity var(--t);
     flex-shrink: 0;
 }
@@ -1035,7 +1078,7 @@ ul { list-style: none; }
     align-items: center;
     justify-content: center;
     color: var(--c);
-    font-size: 0.9rem;
+    font-size: 1rem;
     box-shadow: var(--glow);
     flex-shrink: 0;
     z-index: 2;
@@ -1792,6 +1835,16 @@ ul { list-style: none; }
     .section { padding: 72px 20px; }
     .wrap { padding: 0; }
 
+    /* Timeline Mobile Fixes */
+    .timeline { padding-left: 28px; }
+    .tl-line { left: 8px; }
+    .tl-icon { 
+        left: -28px; 
+        width: 30px; height: 30px; 
+        font-size: 0.8rem; 
+    }
+    .tl-item { gap: 16px; margin-bottom: 32px; }
+
     .proj-grid { grid-template-columns: 1fr; }
     .form-row { grid-template-columns: 1fr; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
@@ -1840,7 +1893,7 @@ ul { list-style: none; }
 /* ═══ PRINT STYLES ═══ */
 @media print {
     .navbar, .loader, .fab, .back-top, .toast,
-    #bgCanvas, .aurora-bg, .noise-overlay,
+    #bgCanvas, .aurora-bg, .noise-overlay, .dynamic-bg,
     .scroll-progress, .scroll-indicator { display: none !important; }
     .hero { min-height: auto; padding-top: 20px; }
     .section { padding: 32px 0; }
