@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   styles.css — Professional & Optimized v2.1
+   styles.css — Professional & Optimized v2.2
    ═══════════════════════════════════════════════ */
 
 /* ── Google Fonts ── */
@@ -1152,6 +1152,7 @@ ul { list-style: none; }
     color: #ff8ab8;
 }
 .tl-chips span i { font-size: 0.68rem; }
+.tl-chips span svg { font-size: 0.78rem; }
 
 /* ═══ EXPERIENCE ═══ */
 .exp-grid {
@@ -1229,6 +1230,7 @@ ul { list-style: none; }
     color: #7ab8ff;
 }
 .chip-row span i { font-size: 0.68rem; }
+.chip-row span svg { font-size: 0.78rem; }
 
 /* ═══ SKILLS ═══ */
 .skills-layout {
@@ -1471,6 +1473,7 @@ ul { list-style: none; }
     padding: 4px 11px;
 }
 .proj-chips span i { font-size: 0.68rem; }
+.proj-chips span svg { font-size: 0.78rem; }
 .proj-badge {
     position: absolute;
     top: 14px; right: 14px;
