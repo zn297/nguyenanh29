@@ -7,140 +7,173 @@
     <meta name="description" content="Portfolio của Nguyễn Hoàng Anh (Ju) — Flutter Developer, Android Engineer, Web Developer">
     <meta name="keywords" content="Nguyễn Hoàng Anh, Ju, Flutter Developer, Android, Web Developer, Portfolio">
     <meta name="author" content="Nguyễn Hoàng Anh">
+    <meta name="theme-color" content="#080b12">
     <meta property="og:title" content="Nguyễn Hoàng Anh | Software Engineer">
     <meta property="og:description" content="Portfolio — Flutter Developer, Android Engineer, Web Developer">
     <meta property="og:type" content="website">
+    <!-- Preconnect for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
 <!-- Loading Screen -->
-<div class="loader" id="loader">
+<div class="loader" id="loader" aria-hidden="true">
     <div class="loader-inner">
         <div class="loader-ring"></div>
+        <div class="loader-ring loader-ring--2"></div>
         <div class="loader-logo">&lt;Ju/&gt;</div>
     </div>
+    <div class="loader-progress-bar"><div class="loader-progress-fill" id="loaderFill"></div></div>
 </div>
 
 <!-- Scroll Progress Bar -->
-<div class="scroll-progress" id="scrollProgress"></div>
+<div class="scroll-progress" id="scrollProgress" role="progressbar" aria-hidden="true"></div>
 
-<!-- Custom Cursor -->
-<div class="cursor" id="cursor"></div>
-<div class="cursor-trail" id="cursorTrail"></div>
+<!-- Background Canvas -->
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
 
-<!-- Canvas Matrix -->
-<canvas id="matrix"></canvas>
+<!-- Aurora Background -->
+<div class="aurora-bg" aria-hidden="true">
+    <div class="aurora a1"></div>
+    <div class="aurora a2"></div>
+    <div class="aurora a3"></div>
+</div>
 
-<!-- Floating Particles Canvas -->
-<canvas id="particles"></canvas>
+<!-- Noise Overlay -->
+<div class="noise-overlay" aria-hidden="true"></div>
 
 <!-- ═══ NAVBAR ═══ -->
-<nav class="navbar" id="navbar">
+<nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
     <div class="nav-wrap">
-        <a href="#home" class="nav-logo">
+        <a href="#home" class="nav-logo" aria-label="Go to top">
             <span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span>
         </a>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#home">home</a></li>
-            <li><a href="#about">about</a></li>
-            <li><a href="#education">edu</a></li>
-            <li><a href="#experience">exp</a></li>
-            <li><a href="#skills">skills</a></li>
-            <li><a href="#projects">projects</a></li>
-            <li><a href="#contact">contact</a></li>
+        <ul class="nav-links" id="navLinks" role="list">
+            <li><a href="#home" aria-label="Home section">home</a></li>
+            <li><a href="#about" aria-label="About section">about</a></li>
+            <li><a href="#education" aria-label="Education section">edu</a></li>
+            <li><a href="#experience" aria-label="Experience section">exp</a></li>
+            <li><a href="#skills" aria-label="Skills section">skills</a></li>
+            <li><a href="#projects" aria-label="Projects section">projects</a></li>
+            <li><a href="#contact" aria-label="Contact section">contact</a></li>
         </ul>
         <div class="nav-actions">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                <i class="fas fa-moon"></i>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle light/dark theme">
+                <i class="fas fa-moon" aria-hidden="true"></i>
             </button>
-            <button class="burger" id="burger" aria-label="Toggle menu">
+            <button class="burger" id="burger" aria-label="Toggle mobile menu" aria-expanded="false">
                 <span></span><span></span><span></span>
             </button>
         </div>
     </div>
     <!-- Mobile dropdown -->
-    <div class="mobile-nav" id="mobileNav">
-        <a href="#home">home</a>
-        <a href="#about">about</a>
-        <a href="#education">education</a>
-        <a href="#experience">experience</a>
-        <a href="#skills">skills</a>
-        <a href="#projects">projects</a>
-        <a href="#contact">contact</a>
+    <div class="mobile-nav" id="mobileNav" aria-hidden="true">
+        <a href="#home"><i class="fas fa-house" aria-hidden="true"></i> Home</a>
+        <a href="#about"><i class="fas fa-user" aria-hidden="true"></i> About</a>
+        <a href="#education"><i class="fas fa-graduation-cap" aria-hidden="true"></i> Education</a>
+        <a href="#experience"><i class="fas fa-briefcase" aria-hidden="true"></i> Experience</a>
+        <a href="#skills"><i class="fas fa-code" aria-hidden="true"></i> Skills</a>
+        <a href="#projects"><i class="fas fa-folder-open" aria-hidden="true"></i> Projects</a>
+        <a href="#contact"><i class="fas fa-paper-plane" aria-hidden="true"></i> Contact</a>
     </div>
 </nav>
 
 <!-- ═══ HERO ═══ -->
-<section id="home" class="hero">
-    <div class="hero-grid-bg" id="heroGrid"></div>
+<section id="home" class="hero" aria-label="Hero section">
+    <div class="hero-grid-bg" id="heroGrid" aria-hidden="true"></div>
     <div class="hero-content">
         <!-- LEFT -->
         <div class="hero-left">
             <div class="status-pill">
-                <span class="dot-live"></span> Available for opportunities
+                <span class="dot-live" aria-hidden="true"></span>
+                <span>Available for opportunities</span>
             </div>
             <h1 class="hero-name" id="heroName">NGUYỄN HOÀNG ANH</h1>
-            <p class="hero-role">
-                <span class="comment">// </span>
-                <span id="typed"></span><span class="blink-bar">|</span>
+            <p class="hero-role" aria-live="polite" aria-label="Current role">
+                <span class="comment" aria-hidden="true">// </span>
+                <span id="typed"></span><span class="blink-bar" aria-hidden="true">|</span>
             </p>
             <div class="hero-tags">
-                <span><i class="fas fa-map-marker-alt"></i> TP.HCM</span>
-                <span><i class="fas fa-graduation-cap"></i> ĐH Thủ Dầu Một</span>
-                <span><i class="fas fa-birthday-cake"></i> 29/07/2004</span>
+                <span><i class="fas fa-location-dot" aria-hidden="true"></i> TP.HCM</span>
+                <span><i class="fas fa-graduation-cap" aria-hidden="true"></i> ĐH Thủ Dầu Một</span>
+                <span><i class="fas fa-cake-candles" aria-hidden="true"></i> 29/07/2004</span>
             </div>
             <div class="hero-contacts">
-                <a href="tel:0388486348" class="pill-link"><i class="fas fa-phone"></i> 0388 486 348</a>
-                <a href="mailto:giaa32087@gmail.com" class="pill-link"><i class="fas fa-envelope"></i> giaa32087@gmail.com</a>
+                <a href="tel:0388486348" class="pill-link" aria-label="Call 0388 486 348">
+                    <i class="fas fa-phone" aria-hidden="true"></i> 0388 486 348
+                </a>
+                <a href="mailto:giaa32087@gmail.com" class="pill-link" aria-label="Email giaa32087@gmail.com">
+                    <i class="fas fa-envelope" aria-hidden="true"></i> giaa32087@gmail.com
+                </a>
             </div>
             <div class="hero-btns">
-                <a href="#contact" class="btn-solid magnetic-btn">Liên hệ <i class="fas fa-arrow-right"></i></a>
-                <a href="#projects" class="btn-ghost magnetic-btn">Xem dự án</a>
-                <a href="https://www.facebook.com/Ju2974" target="_blank" class="btn-icon" style="background:#1877f2"><i class="fab fa-facebook-f"></i></a>
-                <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="btn-icon" style="background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af)"><i class="fab fa-instagram"></i></a>
+                <a href="#contact" class="btn-solid">
+                    Liên hệ <i class="fas fa-arrow-right" aria-hidden="true"></i>
+                </a>
+                <a href="#projects" class="btn-ghost">
+                    <i class="fas fa-folder-open" aria-hidden="true"></i> Xem dự án
+                </a>
+                <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer"
+                   class="btn-icon" style="background:#1877f2" aria-label="Facebook profile">
+                    <i class="fab fa-facebook-f" aria-hidden="true"></i>
+                </a>
+                <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer"
+                   class="btn-icon btn-icon--ig" aria-label="Instagram profile">
+                    <i class="fab fa-instagram" aria-hidden="true"></i>
+                </a>
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer"
+                   class="btn-icon" style="background:#24292f" aria-label="GitHub profile">
+                    <i class="fab fa-github" aria-hidden="true"></i>
+                </a>
             </div>
         </div>
         <!-- RIGHT -->
         <div class="hero-right">
             <div class="avatar-wrap">
-                <div class="blob-bg"></div>
-                <div class="avatar-ring r1"></div>
-                <div class="avatar-ring r2"></div>
+                <div class="blob-bg" aria-hidden="true"></div>
+                <div class="avatar-ring r1" aria-hidden="true"></div>
+                <div class="avatar-ring r2" aria-hidden="true"></div>
                 <div class="avatar-img">
-                    <img src="./profile.jpg" alt="Nguyễn Hoàng Anh" id="profileImg" loading="eager" decoding="sync">
+                    <img src="./profile.jpg" alt="Nguyễn Hoàng Anh — Software Engineer" id="profileImg" loading="eager" decoding="sync">
                 </div>
-                <div class="orbit o1"><i class="fab fa-flutter"></i></div>
-                <div class="orbit o2"><i class="fab fa-android"></i></div>
-                <div class="orbit o3"><i class="fas fa-code"></i></div>
-                <div class="orbit o4"><i class="fas fa-database"></i></div>
+                <div class="orbit o1" aria-hidden="true" title="Flutter"><i class="fab fa-flutter"></i></div>
+                <div class="orbit o2" aria-hidden="true" title="Android"><i class="fab fa-android"></i></div>
+                <div class="orbit o3" aria-hidden="true" title="Code"><i class="fas fa-code"></i></div>
+                <div class="orbit o4" aria-hidden="true" title="Database"><i class="fas fa-database"></i></div>
             </div>
-            <div class="code-snippet">
-                <div class="snippet-bar">
+            <div class="code-snippet" aria-label="Profile code snippet">
+                <div class="snippet-bar" aria-hidden="true">
                     <span class="s-dot" style="background:#ff5f57"></span>
                     <span class="s-dot" style="background:#febc2e"></span>
                     <span class="s-dot" style="background:#28c840"></span>
-                    <span style="margin-left:8px;color:#555;font-size:.75rem">profile.json</span>
+                    <span class="snippet-title">profile.json</span>
                 </div>
-                <pre><code><span class="k">{</span>
+                <pre aria-label="Profile data in JSON format"><code><span class="k">{</span>
   <span class="p">"name"</span>: <span class="s">"Nguyễn Hoàng Anh"</span>,
   <span class="p">"alias"</span>: <span class="s">"Ju"</span>,
   <span class="p">"role"</span>: <span class="s">"Software Engineer"</span>,
-  <span class="p">"stack"</span>: <span class="k">[</span><span class="s">"Flutter"</span>, <span class="s">"Android"</span>, <span class="s">"Web"</span><span class="k">]</span>,
-  <span class="p">"open"</span>: <span class="b">true</span>
+  <span class="p">"stack"</span>: <span class="k">[</span>
+    <span class="s">"Flutter"</span>, <span class="s">"Android"</span>, <span class="s">"Web"</span>
+  <span class="k">]</span>,
+  <span class="p">"open_to_work"</span>: <span class="b">true</span>,
+  <span class="p">"location"</span>: <span class="s">"Ho Chi Minh City"</span>
 <span class="k">}</span></code></pre>
             </div>
         </div>
     </div>
-    <div class="scroll-indicator">
+    <div class="scroll-indicator" aria-hidden="true">
         <div class="scroll-bar"></div>
         <span>scroll</span>
     </div>
 </section>
 
 <!-- ═══ ABOUT ═══ -->
-<section id="about" class="section">
+<section id="about" class="section" aria-label="About section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">01</span>
@@ -151,44 +184,73 @@
                 <p class="lead">Mình là <strong>Nguyễn Hoàng Anh</strong>, sinh viên kỹ thuật phần mềm với niềm đam mê xây dựng phần mềm chất lượng và không ngừng khám phá công nghệ mới.</p>
                 <p>Từ tùy chỉnh Android ROM ở cấp độ hệ thống đến phát triển ứng dụng Flutter hiện đại, mình luôn tìm cách hiểu sâu bên dưới bề mặt của công nghệ.</p>
                 <p>Mình tin code tốt không chỉ chạy được — mà còn <em>dễ đọc, dễ bảo trì</em> và tạo ra giá trị thực cho người dùng.</p>
+                <div class="about-badges">
+                    <span class="badge"><i class="fas fa-check-circle" aria-hidden="true"></i> Clean Code</span>
+                    <span class="badge"><i class="fas fa-bolt" aria-hidden="true"></i> Fast Learner</span>
+                    <span class="badge"><i class="fas fa-users" aria-hidden="true"></i> Team Player</span>
+                </div>
             </div>
             <div class="stats-grid">
-                <div class="stat-box"><span class="stat-n" data-to="3">0</span><span class="stat-l">Năm học</span></div>
-                <div class="stat-box"><span class="stat-n" data-to="5">0</span><span class="stat-l">Dự án</span></div>
-                <div class="stat-box"><span class="stat-n" data-to="8">0</span><span class="stat-l">Công nghệ</span></div>
-                <div class="stat-box"><span class="stat-n" data-to="100">0</span><span class="stat-l">% Đam mê</span></div>
+                <div class="stat-box stagger-item">
+                    <span class="stat-icon" aria-hidden="true"><i class="fas fa-calendar-days"></i></span>
+                    <span class="stat-n" data-to="3">0</span>
+                    <span class="stat-l">Năm học</span>
+                </div>
+                <div class="stat-box stagger-item">
+                    <span class="stat-icon" aria-hidden="true"><i class="fas fa-diagram-project"></i></span>
+                    <span class="stat-n" data-to="5">0</span>
+                    <span class="stat-l">Dự án</span>
+                </div>
+                <div class="stat-box stagger-item">
+                    <span class="stat-icon" aria-hidden="true"><i class="fas fa-microchip"></i></span>
+                    <span class="stat-n" data-to="8">0</span>
+                    <span class="stat-l">Công nghệ</span>
+                </div>
+                <div class="stat-box stagger-item">
+                    <span class="stat-icon" aria-hidden="true"><i class="fas fa-fire"></i></span>
+                    <span class="stat-n" data-to="100">0</span>
+                    <span class="stat-l">% Đam mê</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ═══ EDUCATION ═══ -->
-<section id="education" class="section">
+<section id="education" class="section" aria-label="Education section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">02</span>
             <h2 class="scramble-text">Học Vấn</h2>
         </div>
         <div class="timeline reveal">
-            <div class="tl-line"></div>
+            <div class="tl-line" aria-hidden="true"></div>
             <div class="tl-item stagger-item">
-                <div class="tl-icon"><i class="fas fa-graduation-cap"></i></div>
+                <div class="tl-icon" aria-hidden="true"><i class="fas fa-graduation-cap"></i></div>
                 <div class="tl-body">
-                    <span class="tl-date">2022 — 2024</span>
+                    <span class="tl-date"><i class="fas fa-calendar" aria-hidden="true"></i> 2022 — 2024</span>
                     <h3>Đại học Thủ Dầu Một</h3>
                     <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 1</span>
                     <p>Nền tảng kỹ thuật phần mềm, chuyên sâu tùy chỉnh Android ROM, Firmware và lập trình hệ thống cấp thấp.</p>
-                    <div class="tl-chips"><span>Android ROM</span><span>Firmware</span><span>System Programming</span></div>
+                    <div class="tl-chips">
+                        <span><i class="fab fa-android" aria-hidden="true"></i> Android ROM</span>
+                        <span><i class="fas fa-microchip" aria-hidden="true"></i> Firmware</span>
+                        <span><i class="fas fa-terminal" aria-hidden="true"></i> System Prog.</span>
+                    </div>
                 </div>
             </div>
             <div class="tl-item stagger-item">
-                <div class="tl-icon"><i class="fas fa-rocket"></i></div>
+                <div class="tl-icon" aria-hidden="true"><i class="fas fa-rocket"></i></div>
                 <div class="tl-body">
-                    <span class="tl-date">2024 — 2026</span>
+                    <span class="tl-date"><i class="fas fa-calendar" aria-hidden="true"></i> 2024 — 2026</span>
                     <h3>Đại học Thủ Dầu Một</h3>
                     <span class="tl-tag">Kỹ thuật phần mềm · Giai đoạn 2</span>
-                    <p>Phát triển ứng dụng di động Flutter và web. Demo: <a href="https://anh29.ct.ws" target="_blank" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt"></i></a></p>
-                    <div class="tl-chips"><span>Flutter</span><span>Web Dev</span><span>AI Integration</span></div>
+                    <p>Phát triển ứng dụng di động Flutter và web. Demo: <a href="https://anh29.ct.ws" target="_blank" rel="noopener noreferrer" class="tl-link">anh29.ct.ws <i class="fas fa-external-link-alt" aria-hidden="true"></i></a></p>
+                    <div class="tl-chips">
+                        <span><i class="fab fa-flutter" aria-hidden="true"></i> Flutter</span>
+                        <span><i class="fas fa-globe" aria-hidden="true"></i> Web Dev</span>
+                        <span><i class="fas fa-brain" aria-hidden="true"></i> AI Integration</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -196,7 +258,7 @@
 </section>
 
 <!-- ═══ EXPERIENCE ═══ -->
-<section id="experience" class="section">
+<section id="experience" class="section" aria-label="Experience section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">03</span>
@@ -204,35 +266,51 @@
         </div>
         <div class="exp-grid reveal">
             <div class="exp-card stagger-item">
-                <div class="exp-ico"><i class="fab fa-flutter"></i></div>
-                <div>
+                <div class="exp-ico" aria-hidden="true"><i class="fab fa-flutter"></i></div>
+                <div class="exp-content">
                     <h3>Flutter Development</h3>
                     <p>Xây dựng ứng dụng cross-platform với Dart/Flutter, giao diện Material 3, hiệu năng cao trên cả Android lẫn iOS.</p>
-                    <div class="chip-row"><span>Dart</span><span>Flutter</span><span>Firebase</span></div>
+                    <div class="chip-row">
+                        <span><i class="fas fa-circle-dot" aria-hidden="true"></i> Dart</span>
+                        <span><i class="fab fa-flutter" aria-hidden="true"></i> Flutter</span>
+                        <span><i class="fas fa-fire-flame-curved" aria-hidden="true"></i> Firebase</span>
+                    </div>
                 </div>
             </div>
             <div class="exp-card stagger-item">
-                <div class="exp-ico"><i class="fab fa-android"></i></div>
-                <div>
+                <div class="exp-ico" aria-hidden="true"><i class="fab fa-android"></i></div>
+                <div class="exp-content">
                     <h3>Android System</h3>
                     <p>Flash ROM, decompile/recompile hệ thống, tùy chỉnh Firmware. Hiểu kiến trúc Android từ bootloader đến app layer.</p>
-                    <div class="chip-row"><span>ADB</span><span>Fastboot</span><span>TWRP</span></div>
+                    <div class="chip-row">
+                        <span><i class="fas fa-terminal" aria-hidden="true"></i> ADB</span>
+                        <span><i class="fas fa-bolt" aria-hidden="true"></i> Fastboot</span>
+                        <span><i class="fas fa-shield" aria-hidden="true"></i> TWRP</span>
+                    </div>
                 </div>
             </div>
             <div class="exp-card stagger-item">
-                <div class="exp-ico"><i class="fas fa-brain"></i></div>
-                <div>
+                <div class="exp-ico" aria-hidden="true"><i class="fas fa-brain"></i></div>
+                <div class="exp-content">
                     <h3>AI Integration</h3>
                     <p>Tích hợp LLM API vào ứng dụng, xây dựng tính năng thông minh và tối ưu trải nghiệm người dùng với AI.</p>
-                    <div class="chip-row"><span>LLM API</span><span>Prompt Eng.</span><span>AI Features</span></div>
+                    <div class="chip-row">
+                        <span><i class="fas fa-robot" aria-hidden="true"></i> LLM API</span>
+                        <span><i class="fas fa-comment-dots" aria-hidden="true"></i> Prompt Eng.</span>
+                        <span><i class="fas fa-wand-magic-sparkles" aria-hidden="true"></i> AI Features</span>
+                    </div>
                 </div>
             </div>
             <div class="exp-card stagger-item">
-                <div class="exp-ico"><i class="fas fa-globe"></i></div>
-                <div>
+                <div class="exp-ico" aria-hidden="true"><i class="fas fa-globe"></i></div>
+                <div class="exp-content">
                     <h3>Web Development</h3>
                     <p>Phát triển giao diện web hiện đại, responsive với HTML5, CSS3, JavaScript thuần — từ landing page đến web app quản lý.</p>
-                    <div class="chip-row"><span>HTML5</span><span>CSS3</span><span>JavaScript</span></div>
+                    <div class="chip-row">
+                        <span><i class="fab fa-html5" aria-hidden="true"></i> HTML5</span>
+                        <span><i class="fab fa-css3-alt" aria-hidden="true"></i> CSS3</span>
+                        <span><i class="fab fa-js" aria-hidden="true"></i> JavaScript</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -240,7 +318,7 @@
 </section>
 
 <!-- ═══ SKILLS ═══ -->
-<section id="skills" class="section">
+<section id="skills" class="section" aria-label="Skills section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">04</span>
@@ -248,47 +326,99 @@
         </div>
         <div class="skills-layout reveal">
             <div class="skill-bars">
-                <p class="sub-label">// Core Technologies</p>
+                <p class="sub-label"><i class="fas fa-layer-group" aria-hidden="true"></i> // Core Technologies</p>
                 <div class="bar-item">
-                    <div class="bar-top"><span>Flutter / Dart</span><span class="bar-pct">80%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="80"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fab fa-flutter" aria-hidden="true"></i> Flutter / Dart</span>
+                        <span class="bar-pct">80%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" aria-label="Flutter Dart proficiency 80%">
+                        <div class="bar-fill" data-w="80"></div>
+                    </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-top"><span>HTML / CSS / JS</span><span class="bar-pct">75%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="75"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fas fa-code" aria-hidden="true"></i> HTML / CSS / JS</span>
+                        <span class="bar-pct">75%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" aria-label="HTML CSS JS proficiency 75%">
+                        <div class="bar-fill" data-w="75"></div>
+                    </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-top"><span>Android / ROM</span><span class="bar-pct">70%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fab fa-android" aria-hidden="true"></i> Android / ROM</span>
+                        <span class="bar-pct">70%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="Android ROM proficiency 70%">
+                        <div class="bar-fill" data-w="70"></div>
+                    </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-top"><span>MySQL / Database</span><span class="bar-pct">65%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="65"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fas fa-database" aria-hidden="true"></i> MySQL / Database</span>
+                        <span class="bar-pct">65%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" aria-label="MySQL Database proficiency 65%">
+                        <div class="bar-fill" data-w="65"></div>
+                    </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-top"><span>Git / GitHub</span><span class="bar-pct">70%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="70"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fab fa-git-alt" aria-hidden="true"></i> Git / GitHub</span>
+                        <span class="bar-pct">70%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" aria-label="Git GitHub proficiency 70%">
+                        <div class="bar-fill" data-w="70"></div>
+                    </div>
                 </div>
                 <div class="bar-item">
-                    <div class="bar-top"><span>AI Tools</span><span class="bar-pct">85%</span></div>
-                    <div class="bar-track"><div class="bar-fill" data-w="85"></div></div>
+                    <div class="bar-top">
+                        <span><i class="fas fa-robot" aria-hidden="true"></i> AI Tools</span>
+                        <span class="bar-pct">85%</span>
+                    </div>
+                    <div class="bar-track" role="progressbar" aria-valuenow="85" aria-valuemin="0" aria-valuemax="100" aria-label="AI Tools proficiency 85%">
+                        <div class="bar-fill" data-w="85"></div>
+                    </div>
                 </div>
             </div>
             <div class="skill-tags-panel">
-                <p class="sub-label">// Tools & Ecosystem</p>
+                <p class="sub-label"><i class="fas fa-toolbox" aria-hidden="true"></i> // Tools & Ecosystem</p>
                 <div class="tag-cloud">
-                    <span class="t-lg">Flutter</span><span class="t-md">Dart</span><span class="t-sm">Android Studio</span>
-                    <span class="t-sm">ADB / Fastboot</span><span class="t-md">Git</span><span class="t-sm">GitHub</span>
-                    <span class="t-lg">HTML5</span><span class="t-sm">CSS3</span><span class="t-md">JavaScript</span>
-                    <span class="t-sm">MySQL</span><span class="t-sm">TWRP</span><span class="t-md">Firebase</span>
-                    <span class="t-lg">AI APIs</span><span class="t-sm">VS Code</span><span class="t-md">Linux</span>
+                    <span class="t-lg"><i class="fab fa-flutter" aria-hidden="true"></i> Flutter</span>
+                    <span class="t-md"><i class="fas fa-circle-dot" aria-hidden="true"></i> Dart</span>
+                    <span class="t-sm"><i class="fas fa-laptop-code" aria-hidden="true"></i> Android Studio</span>
+                    <span class="t-sm"><i class="fas fa-terminal" aria-hidden="true"></i> ADB / Fastboot</span>
+                    <span class="t-md"><i class="fab fa-git-alt" aria-hidden="true"></i> Git</span>
+                    <span class="t-sm"><i class="fab fa-github" aria-hidden="true"></i> GitHub</span>
+                    <span class="t-lg"><i class="fab fa-html5" aria-hidden="true"></i> HTML5</span>
+                    <span class="t-sm"><i class="fab fa-css3-alt" aria-hidden="true"></i> CSS3</span>
+                    <span class="t-md"><i class="fab fa-js" aria-hidden="true"></i> JavaScript</span>
+                    <span class="t-sm"><i class="fas fa-database" aria-hidden="true"></i> MySQL</span>
+                    <span class="t-sm"><i class="fas fa-shield-halved" aria-hidden="true"></i> TWRP</span>
+                    <span class="t-md"><i class="fas fa-fire" aria-hidden="true"></i> Firebase</span>
+                    <span class="t-lg"><i class="fas fa-brain" aria-hidden="true"></i> AI APIs</span>
+                    <span class="t-sm"><i class="fas fa-code" aria-hidden="true"></i> VS Code</span>
+                    <span class="t-md"><i class="fab fa-linux" aria-hidden="true"></i> Linux</span>
                 </div>
-                <p class="sub-label" style="margin-top:28px">// Soft Skills</p>
+                <p class="sub-label" style="margin-top:32px"><i class="fas fa-star" aria-hidden="true"></i> // Soft Skills</p>
                 <div class="soft-grid">
-                    <div class="soft-item"><i class="fas fa-lightbulb"></i> Tư duy phân tích</div>
-                    <div class="soft-item"><i class="fas fa-sync-alt"></i> Học hỏi nhanh</div>
-                    <div class="soft-item"><i class="fas fa-comments"></i> Giao tiếp tốt</div>
-                    <div class="soft-item"><i class="fas fa-puzzle-piece"></i> Giải quyết vấn đề</div>
+                    <div class="soft-item">
+                        <span class="soft-ico"><i class="fas fa-lightbulb" aria-hidden="true"></i></span>
+                        <span>Tư duy phân tích</span>
+                    </div>
+                    <div class="soft-item">
+                        <span class="soft-ico"><i class="fas fa-rotate" aria-hidden="true"></i></span>
+                        <span>Học hỏi nhanh</span>
+                    </div>
+                    <div class="soft-item">
+                        <span class="soft-ico"><i class="fas fa-comments" aria-hidden="true"></i></span>
+                        <span>Giao tiếp tốt</span>
+                    </div>
+                    <div class="soft-item">
+                        <span class="soft-ico"><i class="fas fa-puzzle-piece" aria-hidden="true"></i></span>
+                        <span>Giải quyết vấn đề</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -296,7 +426,7 @@
 </section>
 
 <!-- ═══ PROJECTS ═══ -->
-<section id="projects" class="section">
+<section id="projects" class="section" aria-label="Projects section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">05</span>
@@ -304,40 +434,66 @@
         </div>
         <div class="proj-grid reveal">
             <div class="proj-card featured stagger-item">
-                <div class="proj-glow"></div>
+                <div class="proj-glow" aria-hidden="true"></div>
                 <div class="proj-top">
-                    <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="https://anh29.ct.ws" target="_blank" class="proj-ext"><i class="fas fa-external-link-alt"></i></a>
+                    <div class="proj-icon-wrap" aria-hidden="true">
+                        <i class="fas fa-globe-asia"></i>
+                    </div>
+                    <a href="https://anh29.ct.ws" target="_blank" rel="noopener noreferrer"
+                       class="proj-ext" aria-label="View Website EAnh project">
+                        <i class="fas fa-arrow-up-right-from-square" aria-hidden="true"></i>
+                    </a>
                 </div>
                 <h3>Website EAnh</h3>
                 <p>Trang quản lý dữ liệu sinh viên tích hợp AI — tra cứu, quản lý điểm số và thông tin học vụ với giao diện hiện đại.</p>
-                <div class="proj-chips"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>AI API</span></div>
-                <span class="proj-badge">Featured</span>
+                <div class="proj-chips">
+                    <span><i class="fab fa-html5" aria-hidden="true"></i> HTML</span>
+                    <span><i class="fab fa-css3-alt" aria-hidden="true"></i> CSS</span>
+                    <span><i class="fab fa-js" aria-hidden="true"></i> JavaScript</span>
+                    <span><i class="fas fa-robot" aria-hidden="true"></i> AI API</span>
+                </div>
+                <span class="proj-badge"><i class="fas fa-star" aria-hidden="true"></i> Featured</span>
             </div>
             <div class="proj-card stagger-item">
                 <div class="proj-top">
-                    <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
+                    <div class="proj-icon-wrap" aria-hidden="true">
+                        <i class="fas fa-note-sticky"></i>
+                    </div>
+                    <a href="#" class="proj-ext" aria-label="View Note App on GitHub">
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                    </a>
                 </div>
                 <h3>Note App</h3>
                 <p>Ứng dụng quản lý ghi chú cá nhân viết bằng Flutter — tạo, sửa, xóa note với giao diện Material 3, lưu trữ local SQLite.</p>
-                <div class="proj-chips"><span>Flutter</span><span>Dart</span><span>SQLite</span></div>
+                <div class="proj-chips">
+                    <span><i class="fab fa-flutter" aria-hidden="true"></i> Flutter</span>
+                    <span><i class="fas fa-circle-dot" aria-hidden="true"></i> Dart</span>
+                    <span><i class="fas fa-database" aria-hidden="true"></i> SQLite</span>
+                </div>
             </div>
             <div class="proj-card stagger-item">
                 <div class="proj-top">
-                    <i class="fas fa-folder-open proj-folder"></i>
-                    <a href="#" class="proj-ext"><i class="fab fa-github"></i></a>
+                    <div class="proj-icon-wrap" aria-hidden="true">
+                        <i class="fab fa-android"></i>
+                    </div>
+                    <a href="#" class="proj-ext" aria-label="View Android ROM Tools on GitHub">
+                        <i class="fab fa-github" aria-hidden="true"></i>
+                    </a>
                 </div>
                 <h3>Android ROM Tools</h3>
                 <p>Bộ công cụ hỗ trợ flash ROM, sửa bootloop, backup/restore dữ liệu cho thiết bị Android — hỗ trợ nhiều dòng máy.</p>
-                <div class="proj-chips"><span>ADB</span><span>Fastboot</span><span>Shell Script</span></div>
+                <div class="proj-chips">
+                    <span><i class="fas fa-terminal" aria-hidden="true"></i> ADB</span>
+                    <span><i class="fas fa-bolt" aria-hidden="true"></i> Fastboot</span>
+                    <span><i class="fas fa-scroll" aria-hidden="true"></i> Shell Script</span>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- ═══ CONTACT ═══ -->
-<section id="contact" class="section">
+<section id="contact" class="section" aria-label="Contact section">
     <div class="wrap">
         <div class="sec-head reveal">
             <span class="sec-num">06</span>
@@ -347,45 +503,61 @@
             <div class="contact-left">
                 <p class="lead" style="margin-bottom:32px">Có dự án thú vị, câu hỏi kỹ thuật, hay muốn hợp tác? Mình luôn sẵn sàng.</p>
                 <div class="c-links">
-                    <a href="tel:0388486348" class="c-link">
-                        <div class="c-ico"><i class="fas fa-phone"></i></div>
-                        <div><span class="c-lbl">Điện thoại</span><span class="c-val">0388 486 348</span></div>
+                    <a href="tel:0388486348" class="c-link" aria-label="Call 0388 486 348">
+                        <div class="c-ico"><i class="fas fa-phone" aria-hidden="true"></i></div>
+                        <div class="c-text">
+                            <span class="c-lbl">Điện thoại</span>
+                            <span class="c-val">0388 486 348</span>
+                        </div>
+                        <i class="fas fa-chevron-right c-arrow" aria-hidden="true"></i>
                     </a>
-                    <a href="mailto:giaa32087@gmail.com" class="c-link">
-                        <div class="c-ico"><i class="fas fa-envelope"></i></div>
-                        <div><span class="c-lbl">Email</span><span class="c-val">giaa32087@gmail.com</span></div>
+                    <a href="mailto:giaa32087@gmail.com" class="c-link" aria-label="Email giaa32087@gmail.com">
+                        <div class="c-ico"><i class="fas fa-envelope" aria-hidden="true"></i></div>
+                        <div class="c-text">
+                            <span class="c-lbl">Email</span>
+                            <span class="c-val">giaa32087@gmail.com</span>
+                        </div>
+                        <i class="fas fa-chevron-right c-arrow" aria-hidden="true"></i>
                     </a>
-                    <a href="https://www.facebook.com/Ju2974" target="_blank" class="c-link">
-                        <div class="c-ico" style="color:#1877f2"><i class="fab fa-facebook-f"></i></div>
-                        <div><span class="c-lbl">Facebook</span><span class="c-val">facebook.com/Ju2974</span></div>
+                    <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" class="c-link" aria-label="Facebook profile">
+                        <div class="c-ico" style="color:#1877f2"><i class="fab fa-facebook-f" aria-hidden="true"></i></div>
+                        <div class="c-text">
+                            <span class="c-lbl">Facebook</span>
+                            <span class="c-val">facebook.com/Ju2974</span>
+                        </div>
+                        <i class="fas fa-chevron-right c-arrow" aria-hidden="true"></i>
                     </a>
-                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" class="c-link">
-                        <div class="c-ico" style="color:#e1306c"><i class="fab fa-instagram"></i></div>
-                        <div><span class="c-lbl">Instagram</span><span class="c-val">@ng_ju29</span></div>
+                    <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer" class="c-link" aria-label="Instagram profile">
+                        <div class="c-ico" style="color:#e1306c"><i class="fab fa-instagram" aria-hidden="true"></i></div>
+                        <div class="c-text">
+                            <span class="c-lbl">Instagram</span>
+                            <span class="c-val">@ng_ju29</span>
+                        </div>
+                        <i class="fas fa-chevron-right c-arrow" aria-hidden="true"></i>
                     </a>
                 </div>
             </div>
-            <form class="contact-form" id="contactForm">
+            <form class="contact-form" id="contactForm" novalidate aria-label="Contact form">
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Tên của bạn</label>
-                        <input type="text" placeholder="Nguyễn Văn A" required>
+                        <label for="contactName"><i class="fas fa-user" aria-hidden="true"></i> Tên của bạn</label>
+                        <input type="text" id="contactName" name="name" placeholder="Nguyễn Văn A" required autocomplete="name">
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" placeholder="you@example.com" required>
+                        <label for="contactEmail"><i class="fas fa-envelope" aria-hidden="true"></i> Email</label>
+                        <input type="email" id="contactEmail" name="email" placeholder="you@example.com" required autocomplete="email">
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Chủ đề</label>
-                    <input type="text" placeholder="Hợp tác / Câu hỏi kỹ thuật..." required>
+                    <label for="contactSubject"><i class="fas fa-tag" aria-hidden="true"></i> Chủ đề</label>
+                    <input type="text" id="contactSubject" name="subject" placeholder="Hợp tác / Câu hỏi kỹ thuật..." required>
                 </div>
                 <div class="form-group">
-                    <label>Nội dung</label>
-                    <textarea rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
+                    <label for="contactMessage"><i class="fas fa-message" aria-hidden="true"></i> Nội dung</label>
+                    <textarea id="contactMessage" name="message" rows="5" placeholder="Nội dung tin nhắn..." required></textarea>
                 </div>
-                <button type="submit" class="btn-submit magnetic-btn">
-                    Gửi tin nhắn <i class="fas fa-paper-plane"></i>
+                <button type="submit" class="btn-submit" aria-label="Send message">
+                    <span class="btn-submit-text">Gửi tin nhắn <i class="fas fa-paper-plane" aria-hidden="true"></i></span>
                 </button>
             </form>
         </div>
@@ -393,36 +565,57 @@
 </section>
 
 <!-- ═══ FOOTER ═══ -->
-<footer class="footer">
+<footer class="footer" role="contentinfo">
     <div class="footer-inner">
-        <span class="nav-logo"><span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span></span>
-        <p>&copy; 2026 Nguyễn Hoàng Anh &middot; Crafted with <i class="fas fa-heart" style="color:#ff2d78"></i></p>
-        <div class="foot-soc">
-            <a href="https://www.facebook.com/Ju2974" target="_blank"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/ng_ju29/" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="mailto:giaa32087@gmail.com"><i class="fas fa-envelope"></i></a>
+        <a href="#home" class="nav-logo" aria-label="Back to top">
+            <span class="bracket">&lt;</span>Ju<span class="bracket">/&gt;</span>
+        </a>
+        <p>&copy; 2026 Nguyễn Hoàng Anh &middot; Crafted with <i class="fas fa-heart" style="color:#ff2d78" aria-label="love"></i></p>
+        <div class="foot-soc" aria-label="Social media links">
+            <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+                <i class="fab fa-facebook-f" aria-hidden="true"></i>
+            </a>
+            <a href="https://www.instagram.com/ng_ju29/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                <i class="fab fa-instagram" aria-hidden="true"></i>
+            </a>
+            <a href="mailto:giaa32087@gmail.com" aria-label="Email">
+                <i class="fas fa-envelope" aria-hidden="true"></i>
+            </a>
+            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                <i class="fab fa-github" aria-hidden="true"></i>
+            </a>
         </div>
     </div>
 </footer>
 
 <!-- Back to top -->
-<button class="back-top" id="backTop" aria-label="Về đầu trang"><i class="fas fa-chevron-up"></i></button>
+<button class="back-top" id="backTop" aria-label="Về đầu trang">
+    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+</button>
 
 <!-- Floating Action Button -->
-<div class="fab" id="fab">
-    <button class="fab-toggle" id="fabToggle" aria-label="Quick links">
-        <i class="fas fa-plus"></i>
+<div class="fab" id="fab" role="region" aria-label="Quick actions">
+    <button class="fab-toggle" id="fabToggle" aria-label="Toggle quick links" aria-expanded="false">
+        <i class="fas fa-plus" aria-hidden="true"></i>
     </button>
-    <div class="fab-menu" id="fabMenu">
-        <a href="tel:0388486348" class="fab-item" title="Gọi"><i class="fas fa-phone"></i></a>
-        <a href="mailto:giaa32087@gmail.com" class="fab-item" title="Email"><i class="fas fa-envelope"></i></a>
-        <a href="https://www.facebook.com/Ju2974" target="_blank" class="fab-item" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="#home" class="fab-item" title="Về đầu"><i class="fas fa-arrow-up"></i></a>
+    <div class="fab-menu" id="fabMenu" aria-hidden="true">
+        <a href="tel:0388486348" class="fab-item" title="Gọi điện" aria-label="Call">
+            <i class="fas fa-phone" aria-hidden="true"></i>
+        </a>
+        <a href="mailto:giaa32087@gmail.com" class="fab-item" title="Gửi Email" aria-label="Email">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+        </a>
+        <a href="https://www.facebook.com/Ju2974" target="_blank" rel="noopener noreferrer" class="fab-item" title="Facebook" aria-label="Facebook">
+            <i class="fab fa-facebook-f" aria-hidden="true"></i>
+        </a>
+        <a href="#home" class="fab-item" title="Về đầu trang" aria-label="Back to top">
+            <i class="fas fa-arrow-up" aria-hidden="true"></i>
+        </a>
     </div>
 </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+<!-- Toast Notification -->
+<div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script src="script.js"></script>
 </body>
