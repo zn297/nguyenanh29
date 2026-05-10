@@ -1,126 +1,154 @@
 /* ═══════════════════════════════════════════════
    PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   script.js — Improved & Optimized
+   script.js — Optimized v2.0
+   No custom cursor · Performance-first · Smooth on all devices
    ═══════════════════════════════════════════════ */
 
 'use strict';
 
-/* ══ 0. LOADING SCREEN ════════════════════════════════════════ */
+/* ══ UTILS ═══════════════════════════════════════════════════ */
+var raf = window.requestAnimationFrame || function (cb) { return setTimeout(cb, 16); };
+var rIdle = window.requestIdleCallback || function (cb) { return setTimeout(cb, 50); };
+
+function $(sel, ctx) { return (ctx || document).querySelector(sel); }
+function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
+
+/* ══ 0. PERFORMANCE HINTS ════════════════════════════════════ */
+// Mark elements for GPU compositing where needed
 (function () {
-    var loader = document.getElementById('loader');
+    var gpu = $$('.avatar-img, .code-snippet, .proj-card, .exp-card, .tl-body');
+    gpu.forEach(function (el) {
+        el.style.willChange = 'transform';
+        el.addEventListener('transitionend', function () {
+            // Release will-change after animation to free memory
+            el.style.willChange = 'auto';
+        }, { once: true, passive: true });
+        el.addEventListener('mouseenter', function () {
+            el.style.willChange = 'transform, box-shadow';
+        }, { passive: true });
+        el.addEventListener('mouseleave', function () {
+            // Delay release to avoid thrashing
+            setTimeout(function () { el.style.willChange = 'auto'; }, 300);
+        }, { passive: true });
+    });
+})();
+
+/* ══ 1. LOADING SCREEN ════════════════════════════════════════ */
+(function () {
+    var loader = $('#loader');
+    var fill = $('#loaderFill');
     if (!loader) return;
-    window.addEventListener('load', function () {
+
+    // Simulate progress
+    var progress = 0;
+    var fillInterval = setInterval(function () {
+        progress = Math.min(progress + Math.random() * 18, 90);
+        if (fill) fill.style.width = progress + '%';
+    }, 120);
+
+    function hideLoader() {
+        clearInterval(fillInterval);
+        if (fill) fill.style.width = '100%';
         setTimeout(function () {
             loader.classList.add('hidden');
             document.body.style.overflow = '';
-        }, 600);
-    });
-    // Fallback: hide after 3s even if load event is slow
-    setTimeout(function () {
-        loader.classList.add('hidden');
-        document.body.style.overflow = '';
-    }, 3000);
+        }, 300);
+    }
+
+    if (document.readyState === 'complete') {
+        setTimeout(hideLoader, 400);
+    } else {
+        window.addEventListener('load', function () {
+            setTimeout(hideLoader, 400);
+        });
+        // Safety timeout
+        setTimeout(hideLoader, 3500);
+    }
 })();
 
-/* ══ 1. MATRIX RAIN (requestAnimationFrame) ══════════════════ */
+/* ══ 2. BACKGROUND CANVAS (Particle & Matrix) ════════════════ */
 (function () {
-    var canvas = document.getElementById('matrix');
+    var canvas = $('#bgCanvas');
     if (!canvas) return;
+
     var ctx = canvas.getContext('2d');
-    var CHARS = '01アイウエオカキクケコサシスセソ';
-    var cols, drops, W, H;
+    var W, H, cols, drops;
+    var CHARS = '01アイウエカキクコサシスセソタチ';
+    var particles = [];
+    var PARTICLE_COUNT = window.innerWidth < 768 ? 20 : 38;
     var lastTime = 0;
-    var interval = 1000 / 16; // ~16fps for matrix rain (subtle background)
+    var MATRIX_FPS = 12; // Keep matrix slow for performance
+    var matrixInterval = 1000 / MATRIX_FPS;
+    var matrixOpacity = 0.045;
 
     function resize() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
-        cols = Math.floor(W / 18);
-        drops = Array.from({ length: cols }, function () { return Math.random() * H / 18; });
+        cols = Math.floor(W / 20);
+        drops = new Array(cols).fill(0).map(function () {
+            return Math.random() * (H / 18);
+        });
+        // Re-init particles on resize
+        initParticles();
     }
 
-    function draw(timestamp) {
-        requestAnimationFrame(draw);
-        if (timestamp - lastTime < interval) return;
-        lastTime = timestamp;
+    function initParticles() {
+        particles = [];
+        for (var i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push({
+                x: Math.random() * W,
+                y: Math.random() * H,
+                size: Math.random() * 1.5 + 0.5,
+                vx: (Math.random() - 0.5) * 0.25,
+                vy: (Math.random() - 0.5) * 0.25,
+                alpha: Math.random() * 0.4 + 0.08
+            });
+        }
+    }
 
-        ctx.fillStyle = 'rgba(8,11,18,0.06)';
+    function drawMatrix(ts) {
+        if (ts - lastTime < matrixInterval) return;
+        lastTime = ts;
+        ctx.fillStyle = 'rgba(8,11,18,' + matrixOpacity + ')';
         ctx.fillRect(0, 0, W, H);
         ctx.fillStyle = '#00f5d4';
-        ctx.font = '13px Consolas, monospace';
-        for (var i = 0; i < drops.length; i++) {
-            ctx.fillText(CHARS[Math.floor(Math.random() * CHARS.length)], i * 18, drops[i] * 18);
-            if (drops[i] * 18 > H && Math.random() > 0.975) drops[i] = 0;
+        ctx.font = '12px Consolas, monospace';
+        for (var i = 0; i < cols; i++) {
+            var char = CHARS[Math.floor(Math.random() * CHARS.length)];
+            ctx.fillText(char, i * 20, drops[i] * 18);
+            if (drops[i] * 18 > H && Math.random() > 0.978) drops[i] = 0;
             drops[i]++;
         }
     }
 
-    resize();
-    window.addEventListener('resize', resize);
-    requestAnimationFrame(draw);
-})();
-
-/* ══ 2. FLOATING PARTICLES ════════════════════════════════════ */
-(function () {
-    var canvas = document.getElementById('particles');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var particles = [];
-    var PARTICLE_COUNT = 40;
-    var W, H;
-
-    function resize() {
-        W = canvas.width = window.innerWidth;
-        H = canvas.height = window.innerHeight;
-    }
-
-    function Particle() {
-        this.x = Math.random() * W;
-        this.y = Math.random() * H;
-        this.size = Math.random() * 2 + 0.5;
-        this.speedX = (Math.random() - 0.5) * 0.3;
-        this.speedY = (Math.random() - 0.5) * 0.3;
-        this.opacity = Math.random() * 0.4 + 0.1;
-    }
-
-    function init() {
-        particles = [];
-        for (var i = 0; i < PARTICLE_COUNT; i++) {
-            particles.push(new Particle());
-        }
-    }
-
-    function draw() {
-        requestAnimationFrame(draw);
-        ctx.clearRect(0, 0, W, H);
-
+    function drawParticles() {
         for (var i = 0; i < particles.length; i++) {
             var p = particles[i];
-            p.x += p.speedX;
-            p.y += p.speedY;
-
+            p.x += p.vx;
+            p.y += p.vy;
             if (p.x < 0) p.x = W;
             if (p.x > W) p.x = 0;
             if (p.y < 0) p.y = H;
             if (p.y > H) p.y = 0;
-
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(0,245,212,' + p.opacity + ')';
+            ctx.fillStyle = 'rgba(0,245,212,' + p.alpha + ')';
             ctx.fill();
         }
 
-        // Draw connections
-        for (var i = 0; i < particles.length; i++) {
-            for (var j = i + 1; j < particles.length; j++) {
+        // Draw connections (limit iterations on mobile)
+        var limit = window.innerWidth < 768 ? particles.length * 0.6 : particles.length;
+        for (var i = 0; i < limit; i++) {
+            for (var j = i + 1; j < limit; j++) {
                 var dx = particles[i].x - particles[j].x;
                 var dy = particles[i].y - particles[j].y;
-                var dist = Math.sqrt(dx * dx + dy * dy);
-                if (dist < 120) {
+                var dist = dx * dx + dy * dy; // Skip sqrt — compare squared
+                if (dist < 14400) { // 120^2
+                    var d = Math.sqrt(dist);
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = 'rgba(0,245,212,' + (0.08 * (1 - dist / 120)) + ')';
+                    ctx.strokeStyle = 'rgba(0,245,212,' + (0.07 * (1 - d / 120)) + ')';
                     ctx.lineWidth = 0.5;
                     ctx.stroke();
                 }
@@ -128,443 +156,469 @@
         }
     }
 
-    resize();
-    window.addEventListener('resize', resize);
-    init();
-    requestAnimationFrame(draw);
-})();
-
-/* ══ 3. CUSTOM CURSOR + GLOW ═════════════════════════════════ */
-(function () {
-    if (!window.matchMedia('(pointer: fine)').matches) return;
-
-    var cur = document.getElementById('cursor');
-    var trail = document.getElementById('cursorTrail');
-    if (!cur || !trail) return;
-
-    // Create glow element
-    var glow = document.createElement('div');
-    glow.className = 'cursor-glow';
-    document.body.appendChild(glow);
-
-    var mx = 0, my = 0, tx = 0, ty = 0, gx = 0, gy = 0;
-
-    document.addEventListener('mousemove', function (e) {
-        mx = e.clientX;
-        my = e.clientY;
-        cur.style.left = mx + 'px';
-        cur.style.top = my + 'px';
-    });
-
-    // Smooth follow loop
-    function loop() {
-        tx += (mx - tx) * 0.13;
-        ty += (my - ty) * 0.13;
-        gx += (mx - gx) * 0.06;
-        gy += (my - gy) * 0.06;
-        trail.style.left = tx + 'px';
-        trail.style.top = ty + 'px';
-        glow.style.left = gx + 'px';
-        glow.style.top = gy + 'px';
-        requestAnimationFrame(loop);
+    var animating = true;
+    function loop(ts) {
+        if (!animating) return;
+        raf(loop);
+        if (!W || !H) return;
+        drawMatrix(ts);
+        drawParticles();
     }
-    requestAnimationFrame(loop);
 
-    // Hover effects on links/buttons
-    document.querySelectorAll('a, button').forEach(function (el) {
-        el.addEventListener('mouseenter', function () {
-            cur.style.transform = 'translate(-50%,-50%) scale(1.8)';
-            cur.style.background = '#ff2d78';
-            trail.style.width = '46px';
-            trail.style.height = '46px';
-            trail.style.borderColor = 'rgba(255,45,120,0.4)';
-        });
-        el.addEventListener('mouseleave', function () {
-            cur.style.transform = 'translate(-50%,-50%) scale(1)';
-            cur.style.background = '#00f5d4';
-            trail.style.width = '30px';
-            trail.style.height = '30px';
-            trail.style.borderColor = 'rgba(0,245,212,0.4)';
-        });
+    resize();
+    // Debounced resize
+    var resizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(resize, 180);
+    }, { passive: true });
+
+    // Pause when tab is hidden to save resources
+    document.addEventListener('visibilitychange', function () {
+        animating = !document.hidden;
+        if (animating) raf(loop);
     });
+
+    raf(loop);
 })();
 
-/* ══ 4. SCROLL PROGRESS BAR ══════════════════════════════════ */
+/* ══ 3. SCROLL PROGRESS BAR ══════════════════════════════════ */
 (function () {
-    var bar = document.getElementById('scrollProgress');
+    var bar = $('#scrollProgress');
     if (!bar) return;
-
     var ticking = false;
     window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                var scrollTop = window.scrollY;
-                var docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                var progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-                bar.style.width = progress + '%';
-                ticking = false;
-            });
-            ticking = true;
-        }
+        if (ticking) return;
+        ticking = true;
+        raf(function () {
+            var scrollTop = window.scrollY || window.pageYOffset;
+            var docH = document.documentElement.scrollHeight - window.innerHeight;
+            bar.style.width = (docH > 0 ? (scrollTop / docH) * 100 : 0) + '%';
+            ticking = false;
+        });
     }, { passive: true });
 })();
 
-/* ══ 5. NAVBAR SCROLL + ACTIVE LINK ═════════════════════════ */
+/* ══ 4. NAVBAR: SCROLL + ACTIVE LINKS ═══════════════════════ */
 (function () {
-    var navbar = document.getElementById('navbar');
-    var links = document.querySelectorAll('.nav-links a');
-    var sections = document.querySelectorAll('section[id]');
+    var navbar = $('#navbar');
+    var links = $$('.nav-links a');
+    var sections = $$('section[id]');
     var ticking = false;
 
-    function onScroll() {
-        if (ticking) return;
+    function update() {
         ticking = true;
-        requestAnimationFrame(function () {
-            if (navbar) {
-                navbar.classList.toggle('solid', window.scrollY > 20);
-            }
+        raf(function () {
+            var scrollY = window.scrollY || window.pageYOffset;
+            if (navbar) navbar.classList.toggle('solid', scrollY > 20);
 
-            var scrollY = window.scrollY + 100;
+            var active = '';
             sections.forEach(function (sec) {
-                var top = sec.offsetTop;
-                var h = sec.offsetHeight;
-                var id = sec.getAttribute('id');
-                links.forEach(function (a) {
-                    if (a.getAttribute('href') === '#' + id) {
-                        a.classList.toggle('active', scrollY >= top && scrollY < top + h);
-                    }
-                });
+                if (scrollY >= sec.offsetTop - 90) active = sec.id;
+            });
+            links.forEach(function (a) {
+                var matches = a.getAttribute('href') === '#' + active;
+                a.classList.toggle('active', matches);
             });
             ticking = false;
         });
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+    window.addEventListener('scroll', function () {
+        if (!ticking) update();
+    }, { passive: true });
+    update();
 })();
 
-/* ══ 6. HAMBURGER MOBILE MENU ════════════════════════════════ */
+/* ══ 5. HAMBURGER MOBILE MENU ════════════════════════════════ */
 (function () {
-    var burger = document.getElementById('burger');
-    var mobileNav = document.getElementById('mobileNav');
+    var burger = $('#burger');
+    var mobileNav = $('#mobileNav');
     if (!burger || !mobileNav) return;
 
+    function toggle(open) {
+        burger.classList.toggle('open', open);
+        mobileNav.classList.toggle('open', open);
+        burger.setAttribute('aria-expanded', String(open));
+        mobileNav.setAttribute('aria-hidden', String(!open));
+    }
+
     burger.addEventListener('click', function () {
-        burger.classList.toggle('open');
-        mobileNav.classList.toggle('open');
+        toggle(!burger.classList.contains('open'));
     });
 
-    mobileNav.querySelectorAll('a').forEach(function (a) {
-        a.addEventListener('click', function () {
-            burger.classList.remove('open');
-            mobileNav.classList.remove('open');
-        });
+    $$('a', mobileNav).forEach(function (a) {
+        a.addEventListener('click', function () { toggle(false); });
     });
 
     document.addEventListener('click', function (e) {
         if (!burger.contains(e.target) && !mobileNav.contains(e.target)) {
-            burger.classList.remove('open');
-            mobileNav.classList.remove('open');
+            toggle(false);
         }
     });
 
-    // Swipe to close on mobile
-    var startY = 0;
-    mobileNav.addEventListener('touchstart', function (e) {
+    // Keyboard: Escape closes menu
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') toggle(false);
+    });
+})();
+
+/* ══ 6. SWIPE GESTURES (Mobile) ══════════════════════════════ */
+(function () {
+    var mobileNav = $('#mobileNav');
+    var burger = $('#burger');
+    if (!mobileNav || !burger) return;
+
+    var startX = 0, startY = 0;
+    var SWIPE_THRESHOLD = 70;
+
+    document.addEventListener('touchstart', function (e) {
+        startX = e.touches[0].clientX;
         startY = e.touches[0].clientY;
     }, { passive: true });
-    mobileNav.addEventListener('touchmove', function (e) {
-        if (e.touches[0].clientY - startY < -30) {
+
+    document.addEventListener('touchend', function (e) {
+        var dx = e.changedTouches[0].clientX - startX;
+        var dy = e.changedTouches[0].clientY - startY;
+        // Only horizontal swipes (dy must be smaller)
+        if (Math.abs(dx) < Math.abs(dy)) return;
+        if (dx > SWIPE_THRESHOLD && startX < 32 && !mobileNav.classList.contains('open')) {
+            burger.classList.add('open');
+            mobileNav.classList.add('open');
+            burger.setAttribute('aria-expanded', 'true');
+        }
+        if (dx < -SWIPE_THRESHOLD && mobileNav.classList.contains('open')) {
             burger.classList.remove('open');
             mobileNav.classList.remove('open');
+            burger.setAttribute('aria-expanded', 'false');
         }
     }, { passive: true });
 })();
 
 /* ══ 7. SMOOTH SCROLL ════════════════════════════════════════ */
-document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-        var href = this.getAttribute('href');
-        if (!href || href === '#') return;
-        var target = document.querySelector(href);
-        if (!target) return;
-        e.preventDefault();
-        var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav')) || 60;
-        var top = target.getBoundingClientRect().top + window.scrollY - navH;
-        window.scrollTo({ top: top, behavior: 'smooth' });
-    });
-});
-
-/* ══ 8. REVEAL ON SCROLL + STAGGER ══════════════════════════ */
 (function () {
-    var els = document.querySelectorAll('.reveal');
+    var navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav')) || 62;
+
+    $$('a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function (e) {
+            var href = a.getAttribute('href');
+            if (!href || href === '#') return;
+            var target = document.getElementById(href.slice(1));
+            if (!target) return;
+            e.preventDefault();
+            var top = target.getBoundingClientRect().top + (window.scrollY || window.pageYOffset) - navH;
+            window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+        });
+    });
+})();
+
+/* ══ 8. INTERSECTION OBSERVER — REVEAL ON SCROLL ════════════ */
+(function () {
+    var els = $$('.reveal');
     if (!els.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
+    var supportsIO = 'IntersectionObserver' in window;
+    if (!supportsIO) {
+        // Fallback: just show everything
+        els.forEach(function (el) { el.classList.add('in'); });
+        return;
+    }
+
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 entry.target.classList.add('in');
-                observer.unobserve(entry.target);
+                io.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-    els.forEach(function (el) { observer.observe(el); });
+    els.forEach(function (el) { io.observe(el); });
 })();
 
 /* ══ 9. COUNTER ANIMATION ════════════════════════════════════ */
 (function () {
-    var nums = document.querySelectorAll('.stat-n[data-to]');
+    var nums = $$('.stat-n[data-to]');
     if (!nums.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
             var el = entry.target;
             var target = parseInt(el.dataset.to, 10);
-            var suffix = el.dataset.suffix || (target === 100 ? '%' : '+');
-            var start = 0;
-            var dur = 1400;
-            var step = Math.max(1, Math.ceil(target / 60));
+            var suffix = target === 100 ? '%' : '+';
+            var dur = 1500;
             var startTime = null;
 
-            function animate(timestamp) {
-                if (!startTime) startTime = timestamp;
-                var elapsed = timestamp - startTime;
+            function animate(ts) {
+                if (!startTime) startTime = ts;
+                var elapsed = ts - startTime;
                 var progress = Math.min(elapsed / dur, 1);
                 // Ease out cubic
                 var eased = 1 - Math.pow(1 - progress, 3);
-                var current = Math.round(eased * target);
-                el.textContent = current + suffix;
-                if (progress < 1) {
-                    requestAnimationFrame(animate);
-                }
+                el.textContent = Math.round(eased * target) + suffix;
+                if (progress < 1) raf(animate);
             }
-
-            requestAnimationFrame(animate);
-            observer.unobserve(el);
+            raf(animate);
+            io.unobserve(el);
         });
-    }, { threshold: 0.6 });
+    }, { threshold: 0.5 });
 
-    nums.forEach(function (n) { observer.observe(n); });
+    nums.forEach(function (n) { io.observe(n); });
 })();
 
 /* ══ 10. SKILL BAR ANIMATION ═════════════════════════════════ */
 (function () {
-    var bars = document.querySelectorAll('.bar-fill[data-w]');
+    var bars = $$('.bar-fill[data-w]');
     if (!bars.length) return;
 
-    var observer = new IntersectionObserver(function (entries) {
+    var io = new IntersectionObserver(function (entries) {
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
-            entry.target.style.width = entry.target.dataset.w + '%';
-            observer.unobserve(entry.target);
+            var el = entry.target;
+            // Small delay so transition fires
+            setTimeout(function () {
+                el.style.width = el.dataset.w + '%';
+            }, 60);
+            io.unobserve(el);
         });
     }, { threshold: 0.3 });
 
-    bars.forEach(function (b) { observer.observe(b); });
+    bars.forEach(function (b) { io.observe(b); });
 })();
 
 /* ══ 11. TYPEWRITER EFFECT ════════════════════════════════════ */
 (function () {
-    var el = document.getElementById('typed');
+    var el = $('#typed');
     if (!el) return;
 
     var roles = [
         'Software Engineer',
         'Flutter Developer',
-        'Android Hacker',
-        'AI Enthusiast',
+        'Android Enthusiast',
+        'AI Integrator',
         'Web Developer'
     ];
-    var ri = 0, ci = 0, del = false;
-    var SPEED_TYPE = 80, SPEED_DEL = 42, PAUSE = 1800;
+    var ri = 0, ci = 0, deleting = false;
+    var TYPE_MS = 82, DEL_MS = 40, PAUSE_MS = 2000;
+    var timer;
 
     function tick() {
-        var cur = roles[ri];
-        if (!del) {
+        var word = roles[ri];
+        if (!deleting) {
             ci++;
-            el.textContent = cur.slice(0, ci);
-            if (ci === cur.length) {
-                del = true;
-                setTimeout(tick, PAUSE);
+            el.textContent = word.slice(0, ci);
+            if (ci === word.length) {
+                deleting = true;
+                timer = setTimeout(tick, PAUSE_MS);
                 return;
             }
-            setTimeout(tick, SPEED_TYPE);
+            timer = setTimeout(tick, TYPE_MS);
         } else {
             ci--;
-            el.textContent = cur.slice(0, ci);
+            el.textContent = word.slice(0, ci);
             if (ci === 0) {
-                del = false;
+                deleting = false;
                 ri = (ri + 1) % roles.length;
             }
-            setTimeout(tick, SPEED_DEL);
+            timer = setTimeout(tick, DEL_MS);
         }
     }
     tick();
-})();
 
-/* ══ 12. TEXT SCRAMBLE EFFECT ON HEADINGS ═════════════════════ */
-(function () {
-    var headings = document.querySelectorAll('.scramble-text');
-    if (!headings.length) return;
-
-    var chars = '!<>-_\\/[]{}—=+*^?#________';
-
-    function scramble(el) {
-        var original = el.textContent;
-        var iterations = 0;
-        var maxIterations = original.length * 3;
-
-        var interval = setInterval(function () {
-            el.textContent = original.split('').map(function (char, index) {
-                if (index < iterations / 3) return original[index];
-                return chars[Math.floor(Math.random() * chars.length)];
-            }).join('');
-
-            iterations++;
-            if (iterations > maxIterations) {
-                clearInterval(interval);
-                el.textContent = original;
-            }
-        }, 30);
-    }
-
-    var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-            if (!entry.isIntersecting) return;
-            scramble(entry.target);
-            observer.unobserve(entry.target);
-        });
-    }, { threshold: 0.5 });
-
-    headings.forEach(function (h) { observer.observe(h); });
-})();
-
-/* ══ 13. GLITCH EFFECT ON NAME ═══════════════════════════════ */
-(function () {
-    var name = document.getElementById('heroName');
-    if (!name) return;
-    setInterval(function () {
-        name.classList.add('glitch');
-        setTimeout(function () { name.classList.remove('glitch'); }, 200);
-    }, 4500);
-})();
-
-/* ══ 14. PARALLAX ON HERO GRID ══════════════════════════════ */
-(function () {
-    var grid = document.getElementById('heroGrid');
-    if (!grid) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                var scrolled = window.scrollY;
-                if (scrolled < window.innerHeight * 1.5) {
-                    grid.style.transform = 'translateY(' + (scrolled * 0.15) + 'px)';
-                }
-                ticking = false;
-            });
-            ticking = true;
+    // Pause if tab hidden (save CPU)
+    document.addEventListener('visibilitychange', function () {
+        if (document.hidden) {
+            clearTimeout(timer);
+        } else {
+            tick();
         }
-    }, { passive: true });
-})();
-
-/* ══ 15. MAGNETIC BUTTONS ════════════════════════════════════ */
-(function () {
-    if (window.innerWidth <= 768) return;
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-    document.querySelectorAll('.magnetic-btn').forEach(function (btn) {
-        btn.addEventListener('mousemove', function (e) {
-            var rect = btn.getBoundingClientRect();
-            var x = e.clientX - rect.left - rect.width / 2;
-            var y = e.clientY - rect.top - rect.height / 2;
-            btn.style.transform = 'translate(' + (x * 0.15) + 'px, ' + (y * 0.15) + 'px)';
-        });
-        btn.addEventListener('mouseleave', function () {
-            btn.style.transform = '';
-        });
     });
 })();
 
-/* ══ 16. CARD TILT (desktop only) ════════════════════════════ */
+/* ══ 12. TEXT SCRAMBLE ON SECTION HEADINGS ═══════════════════ */
 (function () {
-    if (window.innerWidth <= 768) return;
+    var headings = $$('.scramble-text');
+    if (!headings.length) return;
+
+    var CHARS = '!<>-_\/[]{}—=+*^?#@$';
+
+    function scramble(el) {
+        var original = el.textContent;
+        var len = original.length;
+        var iterations = 0;
+        var maxIter = len * 3;
+
+        var iv = setInterval(function () {
+            el.textContent = original.split('').map(function (char, idx) {
+                if (char === ' ') return ' ';
+                if (idx < Math.floor(iterations / 3)) return original[idx];
+                return CHARS[Math.floor(Math.random() * CHARS.length)];
+            }).join('');
+            iterations++;
+            if (iterations > maxIter) {
+                clearInterval(iv);
+                el.textContent = original;
+            }
+        }, 28);
+    }
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            scramble(entry.target);
+            io.unobserve(entry.target);
+        });
+    }, { threshold: 0.5 });
+
+    headings.forEach(function (h) { io.observe(h); });
+})();
+
+/* ══ 13. GLITCH EFFECT ON HERO NAME ═════════════════════════ */
+(function () {
+    var name = $('#heroName');
+    if (!name) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    var cards = document.querySelectorAll('.proj-card, .exp-card, .stat-box');
+    var glitchInterval = setInterval(function () {
+        if (document.hidden) return;
+        name.classList.add('glitch');
+        setTimeout(function () { name.classList.remove('glitch'); }, 220);
+    }, 5000);
+
+    // Clear when off screen
+    var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) {
+            clearInterval(glitchInterval);
+        }
+    }, { threshold: 0 });
+    io.observe(name);
+})();
+
+/* ══ 14. PARALLAX — HERO GRID ════════════════════════════════ */
+(function () {
+    var grid = $('#heroGrid');
+    if (!grid) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (window.innerWidth < 768) return; // Skip on mobile (performance)
+
+    var ticking = false;
+    var maxH = window.innerHeight * 1.5;
+
+    window.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        raf(function () {
+            var scrolled = window.scrollY || window.pageYOffset;
+            if (scrolled < maxH) {
+                grid.style.transform = 'translate3d(0,' + (scrolled * 0.12) + 'px,0)';
+            }
+            ticking = false;
+        });
+    }, { passive: true });
+})();
+
+/* ══ 15. CARD 3D TILT (Desktop only) ════════════════════════ */
+(function () {
+    if (window.innerWidth <= 1024) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(hover: hover)').matches) return;
+
+    var cards = $$('.proj-card, .exp-card, .stat-box, .tl-body');
     cards.forEach(function (card) {
         card.addEventListener('mousemove', function (e) {
             var r = card.getBoundingClientRect();
             var x = (e.clientX - r.left) / r.width - 0.5;
             var y = (e.clientY - r.top) / r.height - 0.5;
             card.style.transform = [
-                'perspective(500px)',
-                'rotateX(' + (-y * 5) + 'deg)',
-                'rotateY(' + (x * 5) + 'deg)',
-                'translateY(-4px)'
+                'perspective(600px)',
+                'rotateX(' + (-y * 4) + 'deg)',
+                'rotateY(' + (x * 4) + 'deg)',
+                'translateY(-5px)'
             ].join(' ');
-        });
+        }, { passive: true });
         card.addEventListener('mouseleave', function () {
             card.style.transform = '';
-        });
+        }, { passive: true });
+    });
+})();
+
+/* ══ 16. MAGNETIC BUTTONS (Desktop only) ════════════════════ */
+(function () {
+    if (window.innerWidth <= 768) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!window.matchMedia('(hover: hover)').matches) return;
+
+    $$('.btn-solid, .btn-ghost, .btn-submit').forEach(function (btn) {
+        btn.addEventListener('mousemove', function (e) {
+            var r = btn.getBoundingClientRect();
+            var x = (e.clientX - r.left - r.width / 2) * 0.12;
+            var y = (e.clientY - r.top - r.height / 2) * 0.12;
+            btn.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+        }, { passive: true });
+        btn.addEventListener('mouseleave', function () {
+            btn.style.transform = '';
+        }, { passive: true });
     });
 })();
 
 /* ══ 17. PROFILE IMAGE FALLBACK ══════════════════════════════ */
 (function () {
-    var img = document.getElementById('profileImg');
+    var img = $('#profileImg');
     if (!img) return;
 
     var retried = false;
+
     img.addEventListener('error', function () {
         if (!retried) {
             retried = true;
-            img.src = './profile.jpg?' + Date.now();
+            img.src = './profile.jpg?v=' + Date.now();
             return;
         }
+        // Show text fallback
         var wrap = img.parentElement;
         img.style.display = 'none';
         var fb = document.createElement('div');
-        fb.style.cssText = [
-            'width:100%', 'height:100%',
-            'display:flex', 'align-items:center', 'justify-content:center',
-            'font-family:Consolas,monospace', 'font-size:3.5rem',
-            'font-weight:700', 'color:#00f5d4',
-            'background:#141920', 'border-radius:50%'
-        ].join(';');
+        Object.assign(fb.style, {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontFamily: 'JetBrains Mono, Consolas, monospace',
+            fontSize: '3.2rem',
+            fontWeight: '700',
+            color: '#00f5d4',
+            background: '#141920',
+            borderRadius: '50%',
+            letterSpacing: '-0.05em'
+        });
         fb.textContent = 'Ju';
         wrap.appendChild(fb);
     });
 
     img.addEventListener('load', function () {
-        img.style.display = 'block';
         img.style.opacity = '1';
     });
 
     if (img.complete && img.naturalWidth > 0) {
-        img.style.display = 'block';
         img.style.opacity = '1';
     }
 })();
 
-/* ══ 18. BACK TO TOP ═════════════════════════════════════════ */
+/* ══ 18. BACK TO TOP BUTTON ══════════════════════════════════ */
 (function () {
-    var btn = document.getElementById('backTop');
+    var btn = $('#backTop');
     if (!btn) return;
 
     var ticking = false;
     window.addEventListener('scroll', function () {
-        if (!ticking) {
-            requestAnimationFrame(function () {
-                btn.classList.toggle('show', window.scrollY > 380);
-                ticking = false;
-            });
-            ticking = true;
-        }
+        if (ticking) return;
+        ticking = true;
+        raf(function () {
+            btn.classList.toggle('show', (window.scrollY || window.pageYOffset) > 400);
+            ticking = false;
+        });
     }, { passive: true });
 
     btn.addEventListener('click', function () {
@@ -574,112 +628,232 @@ document.querySelectorAll('a[href^="#"]').forEach(function (a) {
 
 /* ══ 19. FLOATING ACTION BUTTON ══════════════════════════════ */
 (function () {
-    var fab = document.getElementById('fab');
-    var toggle = document.getElementById('fabToggle');
+    var fab = $('#fab');
+    var toggle = $('#fabToggle');
+    var menu = $('#fabMenu');
     if (!fab || !toggle) return;
 
-    toggle.addEventListener('click', function () {
-        fab.classList.toggle('open');
+    function setOpen(open) {
+        fab.classList.toggle('open', open);
+        toggle.setAttribute('aria-expanded', String(open));
+        if (menu) menu.setAttribute('aria-hidden', String(!open));
+    }
+
+    toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(!fab.classList.contains('open'));
     });
 
-    // Close when clicking a fab item
-    fab.querySelectorAll('.fab-item').forEach(function (item) {
-        item.addEventListener('click', function () {
-            fab.classList.remove('open');
-        });
+    $$('.fab-item', fab).forEach(function (item) {
+        item.addEventListener('click', function () { setOpen(false); });
     });
 
-    // Close when clicking outside
     document.addEventListener('click', function (e) {
-        if (!fab.contains(e.target)) {
-            fab.classList.remove('open');
-        }
+        if (!fab.contains(e.target)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') setOpen(false);
     });
 })();
 
 /* ══ 20. THEME TOGGLE ════════════════════════════════════════ */
 (function () {
-    var btn = document.getElementById('themeToggle');
+    var btn = $('#themeToggle');
     if (!btn) return;
-
     var icon = btn.querySelector('i');
+
+    // Apply saved theme
     var saved = localStorage.getItem('theme');
     if (saved === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        icon.className = 'fas fa-sun';
+        if (icon) icon.className = 'fas fa-sun';
     }
 
     btn.addEventListener('click', function () {
         var isLight = document.documentElement.getAttribute('data-theme') === 'light';
         if (isLight) {
             document.documentElement.removeAttribute('data-theme');
-            icon.className = 'fas fa-moon';
+            if (icon) icon.className = 'fas fa-moon';
             localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
-            icon.className = 'fas fa-sun';
+            if (icon) icon.className = 'fas fa-sun';
             localStorage.setItem('theme', 'light');
         }
     });
 })();
 
-/* ══ 21. TOAST ═══════════════════════════════════════════════ */
-function showToast(msg, ms) {
-    var t = document.getElementById('toast');
+/* ══ 21. TOAST NOTIFICATION ══════════════════════════════════ */
+function showToast(msg, duration) {
+    var t = $('#toast');
     if (!t) return;
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(function () { t.classList.remove('show'); }, ms || 3200);
+    setTimeout(function () { t.classList.remove('show'); }, duration || 3500);
 }
 
 /* ══ 22. CONTACT FORM ════════════════════════════════════════ */
 (function () {
-    var form = document.getElementById('contactForm');
+    var form = $('#contactForm');
     if (!form) return;
+
+    // Real-time validation
+    $$('input, textarea', form).forEach(function (field) {
+        field.addEventListener('blur', function () {
+            if (field.required && !field.value.trim()) {
+                field.style.borderColor = 'rgba(255,45,120,0.5)';
+            } else if (field.type === 'email' && field.value && !field.value.includes('@')) {
+                field.style.borderColor = 'rgba(255,45,120,0.5)';
+            } else {
+                field.style.borderColor = '';
+            }
+        });
+        field.addEventListener('input', function () {
+            if (field.style.borderColor) field.style.borderColor = '';
+        });
+    });
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
-        var btn = form.querySelector('.btn-submit');
-        var orig = btn.innerHTML;
 
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        var btn = form.querySelector('.btn-submit');
+        var textEl = btn.querySelector('.btn-submit-text');
+        if (!btn || btn.disabled) return;
+
+        // Validate
+        var valid = true;
+        $$('input, textarea', form).forEach(function (f) {
+            if (f.required && !f.value.trim()) {
+                f.style.borderColor = 'rgba(255,45,120,0.5)';
+                valid = false;
+            }
+        });
+        if (!valid) {
+            showToast('⚠️ Vui lòng điền đầy đủ thông tin.', 2500);
+            return;
+        }
+
+        var orig = textEl ? textEl.innerHTML : btn.innerHTML;
+        if (textEl) textEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        else btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
         btn.disabled = true;
 
+        // Simulate send
         setTimeout(function () {
             form.reset();
-            btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
-            showToast('✅ Cảm ơn! Mình sẽ phản hồi sớm nhất có thể.', 3500);
+            if (textEl) textEl.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
+            else btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
+            showToast('✅ Cảm ơn! Mình sẽ phản hồi sớm nhất có thể.', 4000);
+
             setTimeout(function () {
-                btn.innerHTML = orig;
+                if (textEl) textEl.innerHTML = orig;
+                else btn.innerHTML = orig;
                 btn.disabled = false;
-            }, 2500);
-        }, 1300);
+            }, 2800);
+        }, 1400);
     });
 })();
 
-/* ══ 23. MOBILE MENU SWIPE GESTURE ═══════════════════════════ */
+/* ══ 23. PERFORMANCE: CONTENT-VISIBILITY ════════════════════ */
 (function () {
-    var mobileNav = document.getElementById('mobileNav');
-    var burger = document.getElementById('burger');
-    if (!mobileNav || !burger) return;
+    // Apply content-visibility to off-screen sections for better paint performance
+    if (!CSS.supports('content-visibility', 'auto')) return;
+    var sections = $$('#education, #experience, #skills, #projects, #contact');
+    sections.forEach(function (sec) {
+        sec.style.contentVisibility = 'auto';
+        sec.style.containIntrinsicSize = '0 600px';
+    });
+})();
 
-    var startX = 0;
-    document.addEventListener('touchstart', function (e) {
-        startX = e.touches[0].clientX;
+/* ══ 24. HERO ORBIT ANIMATION PAUSE ON HOVER ════════════════ */
+(function () {
+    var avatarWrap = $('.avatar-wrap');
+    if (!avatarWrap) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    var rings = $$('.avatar-ring', avatarWrap);
+    avatarWrap.addEventListener('mouseenter', function () {
+        rings.forEach(function (r) { r.style.animationPlayState = 'paused'; });
     }, { passive: true });
-
-    document.addEventListener('touchend', function (e) {
-        var endX = e.changedTouches[0].clientX;
-        var diff = endX - startX;
-        // Swipe right to open
-        if (diff > 80 && startX < 30 && !mobileNav.classList.contains('open')) {
-            burger.classList.add('open');
-            mobileNav.classList.add('open');
-        }
-        // Swipe left to close
-        if (diff < -80 && mobileNav.classList.contains('open')) {
-            burger.classList.remove('open');
-            mobileNav.classList.remove('open');
-        }
+    avatarWrap.addEventListener('mouseleave', function () {
+        rings.forEach(function (r) { r.style.animationPlayState = 'running'; });
     }, { passive: true });
 })();
+
+/* ══ 25. KEYBOARD NAVIGATION IMPROVEMENTS ════════════════════ */
+(function () {
+    // Add keyboard support for cards (Enter/Space to activate links)
+    $$('.proj-card, .exp-card').forEach(function (card) {
+        var link = card.querySelector('a');
+        if (!link) return;
+        card.setAttribute('tabindex', '0');
+        card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                link.click();
+            }
+        });
+    });
+})();
+
+/* ══ 26. PASSIVE TOUCH SCROLL SMOOTHING ════════════════════ */
+(function () {
+    // iOS momentum scrolling
+    var style = document.createElement('style');
+    style.textContent = [
+        'body { -webkit-overflow-scrolling: touch; }',
+        '.mobile-nav { -webkit-overflow-scrolling: touch; }',
+        '.contact-form { -webkit-overflow-scrolling: touch; }'
+    ].join('\n');
+    document.head.appendChild(style);
+})();
+
+/* ══ 27. RESIZE OBSERVER FOR DYNAMIC LAYOUT ═════════════════ */
+(function () {
+    if (!window.ResizeObserver) return;
+    var hero = $('.hero-content');
+    if (!hero) return;
+
+    var ro = new ResizeObserver(function (entries) {
+        entries.forEach(function (entry) {
+            var w = entry.contentRect.width;
+            // Trigger layout recalcs on content width changes
+            if (w < 640) {
+                document.documentElement.classList.add('narrow');
+            } else {
+                document.documentElement.classList.remove('narrow');
+            }
+        });
+    });
+    ro.observe(hero);
+})();
+
+/* ══ 28. IMAGE LAZY LOADING POLYFILL ════════════════════════ */
+(function () {
+    if ('loading' in HTMLImageElement.prototype) return;
+    // Basic lazy loading for browsers that don't support native
+    var lazyImages = $$('img[loading="lazy"]');
+    if (!lazyImages.length) return;
+
+    var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                var img = entry.target;
+                if (img.dataset.src) img.src = img.dataset.src;
+                io.unobserve(img);
+            }
+        });
+    });
+    lazyImages.forEach(function (img) { io.observe(img); });
+})();
+
+/* ══ INIT COMPLETE ═══════════════════════════════════════════ */
+rIdle(function () {
+    // Non-critical: preload next likely sections after load
+    var links = [
+        '#about', '#education', '#experience', '#skills', '#projects', '#contact'
+    ];
+    // Nothing to prefetch here but hook is ready for future expansion
+    console.log('%c<Ju/> Portfolio v2.0 loaded', 'color:#00f5d4;font-family:monospace;font-weight:700');
+});
