@@ -1,7 +1,6 @@
 /* ═══════════════════════════════════════════════
    PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   script.js — Optimized v2.0
-   No custom cursor · Performance-first · Smooth on all devices
+   script.js — Optimized v2.1
    ═══════════════════════════════════════════════ */
 
 'use strict';
@@ -14,20 +13,17 @@ function $(sel, ctx) { return (ctx || document).querySelector(sel); }
 function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
 
 /* ══ 0. PERFORMANCE HINTS ════════════════════════════════════ */
-// Mark elements for GPU compositing where needed
 (function () {
     var gpu = $$('.avatar-img, .code-snippet, .proj-card, .exp-card, .tl-body');
     gpu.forEach(function (el) {
         el.style.willChange = 'transform';
         el.addEventListener('transitionend', function () {
-            // Release will-change after animation to free memory
             el.style.willChange = 'auto';
         }, { once: true, passive: true });
         el.addEventListener('mouseenter', function () {
             el.style.willChange = 'transform, box-shadow';
         }, { passive: true });
         el.addEventListener('mouseleave', function () {
-            // Delay release to avoid thrashing
             setTimeout(function () { el.style.willChange = 'auto'; }, 300);
         }, { passive: true });
     });
@@ -39,7 +35,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     var fill = $('#loaderFill');
     if (!loader) return;
 
-    // Simulate progress
     var progress = 0;
     var fillInterval = setInterval(function () {
         progress = Math.min(progress + Math.random() * 18, 90);
@@ -61,12 +56,11 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
         window.addEventListener('load', function () {
             setTimeout(hideLoader, 400);
         });
-        // Safety timeout
-        setTimeout(hideLoader, 3500);
+        setTimeout(hideLoader, 3500); // Safety
     }
 })();
 
-/* ══ 2. BACKGROUND CANVAS (Particle & Matrix) ════════════════ */
+/* ══ 2. BACKGROUND CANVAS (Particle & Matrix Optimized) ════════ */
 (function () {
     var canvas = $('#bgCanvas');
     if (!canvas) return;
@@ -75,32 +69,32 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     var W, H, cols, drops;
     var CHARS = '01アイウエカキクコサシスセソタチ';
     var particles = [];
-    var PARTICLE_COUNT = window.innerWidth < 768 ? 20 : 38;
+    var PARTICLE_COUNT = window.innerWidth < 768 ? 15 : 30; // Giảm bớt số hạt trên mobile để chống lag
     var lastTime = 0;
-    var MATRIX_FPS = 12; // Keep matrix slow for performance
+    var MATRIX_FPS = window.innerWidth < 768 ? 8 : 12; // Matrix chậm hơn chút trên mobile
     var matrixInterval = 1000 / MATRIX_FPS;
     var matrixOpacity = 0.045;
 
     function resize() {
         W = canvas.width = window.innerWidth;
         H = canvas.height = window.innerHeight;
-        cols = Math.floor(W / 20);
+        cols = Math.floor(W / 24); // Rộng hơn 1 chút cho đỡ tốn tài nguyên vẽ
         drops = new Array(cols).fill(0).map(function () {
             return Math.random() * (H / 18);
         });
-        // Re-init particles on resize
         initParticles();
     }
 
     function initParticles() {
         particles = [];
+        PARTICLE_COUNT = window.innerWidth < 768 ? 15 : 30;
         for (var i = 0; i < PARTICLE_COUNT; i++) {
             particles.push({
                 x: Math.random() * W,
                 y: Math.random() * H,
                 size: Math.random() * 1.5 + 0.5,
-                vx: (Math.random() - 0.5) * 0.25,
-                vy: (Math.random() - 0.5) * 0.25,
+                vx: (Math.random() - 0.5) * 0.2,
+                vy: (Math.random() - 0.5) * 0.2,
                 alpha: Math.random() * 0.4 + 0.08
             });
         }
@@ -115,7 +109,7 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
         ctx.font = '12px Consolas, monospace';
         for (var i = 0; i < cols; i++) {
             var char = CHARS[Math.floor(Math.random() * CHARS.length)];
-            ctx.fillText(char, i * 20, drops[i] * 18);
+            ctx.fillText(char, i * 24, drops[i] * 18);
             if (drops[i] * 18 > H && Math.random() > 0.978) drops[i] = 0;
             drops[i]++;
         }
@@ -136,19 +130,18 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
             ctx.fill();
         }
 
-        // Draw connections (limit iterations on mobile)
-        var limit = window.innerWidth < 768 ? particles.length * 0.6 : particles.length;
+        var limit = particles.length;
         for (var i = 0; i < limit; i++) {
             for (var j = i + 1; j < limit; j++) {
                 var dx = particles[i].x - particles[j].x;
                 var dy = particles[i].y - particles[j].y;
-                var dist = dx * dx + dy * dy; // Skip sqrt — compare squared
-                if (dist < 14400) { // 120^2
+                var dist = dx * dx + dy * dy;
+                if (dist < 10000) { // 100^2, giảm khoảng cách để tính toán ít line hơn
                     var d = Math.sqrt(dist);
                     ctx.beginPath();
                     ctx.moveTo(particles[i].x, particles[i].y);
                     ctx.lineTo(particles[j].x, particles[j].y);
-                    ctx.strokeStyle = 'rgba(0,245,212,' + (0.07 * (1 - d / 120)) + ')';
+                    ctx.strokeStyle = 'rgba(0,245,212,' + (0.07 * (1 - d / 100)) + ')';
                     ctx.lineWidth = 0.5;
                     ctx.stroke();
                 }
@@ -166,14 +159,12 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     }
 
     resize();
-    // Debounced resize
     var resizeTimer;
     window.addEventListener('resize', function () {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(resize, 180);
     }, { passive: true });
 
-    // Pause when tab is hidden to save resources
     document.addEventListener('visibilitychange', function () {
         animating = !document.hidden;
         if (animating) raf(loop);
@@ -257,7 +248,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
         }
     });
 
-    // Keyboard: Escape closes menu
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') toggle(false);
     });
@@ -280,7 +270,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     document.addEventListener('touchend', function (e) {
         var dx = e.changedTouches[0].clientX - startX;
         var dy = e.changedTouches[0].clientY - startY;
-        // Only horizontal swipes (dy must be smaller)
         if (Math.abs(dx) < Math.abs(dy)) return;
         if (dx > SWIPE_THRESHOLD && startX < 32 && !mobileNav.classList.contains('open')) {
             burger.classList.add('open');
@@ -319,7 +308,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
 
     var supportsIO = 'IntersectionObserver' in window;
     if (!supportsIO) {
-        // Fallback: just show everything
         els.forEach(function (el) { el.classList.add('in'); });
         return;
     }
@@ -354,7 +342,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
                 if (!startTime) startTime = ts;
                 var elapsed = ts - startTime;
                 var progress = Math.min(elapsed / dur, 1);
-                // Ease out cubic
                 var eased = 1 - Math.pow(1 - progress, 3);
                 el.textContent = Math.round(eased * target) + suffix;
                 if (progress < 1) raf(animate);
@@ -376,7 +363,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
         entries.forEach(function (entry) {
             if (!entry.isIntersecting) return;
             var el = entry.target;
-            // Small delay so transition fires
             setTimeout(function () {
                 el.style.width = el.dataset.w + '%';
             }, 60);
@@ -426,7 +412,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     }
     tick();
 
-    // Pause if tab hidden (save CPU)
     document.addEventListener('visibilitychange', function () {
         if (document.hidden) {
             clearTimeout(timer);
@@ -486,7 +471,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
         setTimeout(function () { name.classList.remove('glitch'); }, 220);
     }, 5000);
 
-    // Clear when off screen
     var io = new IntersectionObserver(function (entries) {
         if (!entries[0].isIntersecting) {
             clearInterval(glitchInterval);
@@ -500,7 +484,7 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     var grid = $('#heroGrid');
     if (!grid) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    if (window.innerWidth < 768) return; // Skip on mobile (performance)
+    if (window.innerWidth < 768) return; 
 
     var ticking = false;
     var maxH = window.innerHeight * 1.5;
@@ -575,7 +559,6 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
             img.src = './profile.jpg?v=' + Date.now();
             return;
         }
-        // Show text fallback
         var wrap = img.parentElement;
         img.style.display = 'none';
         var fb = document.createElement('div');
@@ -663,22 +646,21 @@ function $$(sel, ctx) { return (ctx || document).querySelectorAll(sel); }
     if (!btn) return;
     var icon = btn.querySelector('i');
 
-    // Apply saved theme
     var saved = localStorage.getItem('theme');
     if (saved === 'light') {
         document.documentElement.setAttribute('data-theme', 'light');
-        if (icon) icon.className = 'fas fa-sun';
+        if (icon) icon.className = 'fa-solid fa-sun';
     }
 
     btn.addEventListener('click', function () {
         var isLight = document.documentElement.getAttribute('data-theme') === 'light';
         if (isLight) {
             document.documentElement.removeAttribute('data-theme');
-            if (icon) icon.className = 'fas fa-moon';
+            if (icon) icon.className = 'fa-solid fa-moon';
             localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.setAttribute('data-theme', 'light');
-            if (icon) icon.className = 'fas fa-sun';
+            if (icon) icon.className = 'fa-solid fa-sun';
             localStorage.setItem('theme', 'light');
         }
     });
@@ -698,7 +680,6 @@ function showToast(msg, duration) {
     var form = $('#contactForm');
     if (!form) return;
 
-    // Real-time validation
     $$('input, textarea', form).forEach(function (field) {
         field.addEventListener('blur', function () {
             if (field.required && !field.value.trim()) {
@@ -721,7 +702,6 @@ function showToast(msg, duration) {
         var textEl = btn.querySelector('.btn-submit-text');
         if (!btn || btn.disabled) return;
 
-        // Validate
         var valid = true;
         $$('input, textarea', form).forEach(function (f) {
             if (f.required && !f.value.trim()) {
@@ -735,15 +715,14 @@ function showToast(msg, duration) {
         }
 
         var orig = textEl ? textEl.innerHTML : btn.innerHTML;
-        if (textEl) textEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
-        else btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+        if (textEl) textEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+        else btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
         btn.disabled = true;
 
-        // Simulate send
         setTimeout(function () {
             form.reset();
-            if (textEl) textEl.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
-            else btn.innerHTML = '<i class="fas fa-check"></i> Đã gửi!';
+            if (textEl) textEl.innerHTML = '<i class="fa-solid fa-check"></i> Đã gửi!';
+            else btn.innerHTML = '<i class="fa-solid fa-check"></i> Đã gửi!';
             showToast('✅ Cảm ơn! Mình sẽ phản hồi sớm nhất có thể.', 4000);
 
             setTimeout(function () {
@@ -757,7 +736,6 @@ function showToast(msg, duration) {
 
 /* ══ 23. PERFORMANCE: CONTENT-VISIBILITY ════════════════════ */
 (function () {
-    // Apply content-visibility to off-screen sections for better paint performance
     if (!CSS.supports('content-visibility', 'auto')) return;
     var sections = $$('#education, #experience, #skills, #projects, #contact');
     sections.forEach(function (sec) {
@@ -783,7 +761,6 @@ function showToast(msg, duration) {
 
 /* ══ 25. KEYBOARD NAVIGATION IMPROVEMENTS ════════════════════ */
 (function () {
-    // Add keyboard support for cards (Enter/Space to activate links)
     $$('.proj-card, .exp-card').forEach(function (card) {
         var link = card.querySelector('a');
         if (!link) return;
@@ -799,7 +776,6 @@ function showToast(msg, duration) {
 
 /* ══ 26. PASSIVE TOUCH SCROLL SMOOTHING ════════════════════ */
 (function () {
-    // iOS momentum scrolling
     var style = document.createElement('style');
     style.textContent = [
         'body { -webkit-overflow-scrolling: touch; }',
@@ -818,7 +794,6 @@ function showToast(msg, duration) {
     var ro = new ResizeObserver(function (entries) {
         entries.forEach(function (entry) {
             var w = entry.contentRect.width;
-            // Trigger layout recalcs on content width changes
             if (w < 640) {
                 document.documentElement.classList.add('narrow');
             } else {
@@ -832,7 +807,6 @@ function showToast(msg, duration) {
 /* ══ 28. IMAGE LAZY LOADING POLYFILL ════════════════════════ */
 (function () {
     if ('loading' in HTMLImageElement.prototype) return;
-    // Basic lazy loading for browsers that don't support native
     var lazyImages = $$('img[loading="lazy"]');
     if (!lazyImages.length) return;
 
@@ -850,10 +824,8 @@ function showToast(msg, duration) {
 
 /* ══ INIT COMPLETE ═══════════════════════════════════════════ */
 rIdle(function () {
-    // Non-critical: preload next likely sections after load
     var links = [
         '#about', '#education', '#experience', '#skills', '#projects', '#contact'
     ];
-    // Nothing to prefetch here but hook is ready for future expansion
-    console.log('%c<Ju/> Portfolio v2.0 loaded', 'color:#00f5d4;font-family:monospace;font-weight:700');
+    console.log('%c<Ju/> Portfolio v2.1 loaded - Ready for action!', 'color:#00f5d4;font-family:monospace;font-weight:700');
 });
