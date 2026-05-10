@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════
    PORTFOLIO — NGUYỄN HOÀNG ANH (Ju)
-   script.js — Optimized v2.1
+   script.js — Optimized v2.2
    ═══════════════════════════════════════════════ */
 
 'use strict';
@@ -827,5 +827,5 @@ rIdle(function () {
     var links = [
         '#about', '#education', '#experience', '#skills', '#projects', '#contact'
     ];
-    console.log('%c<Ju/> Portfolio v2.1 loaded - Ready for action!', 'color:#00f5d4;font-family:monospace;font-weight:700');
+    console.log('%c<Ju/> Portfolio v2.2 loaded - SVG Fixed!', 'color:#00f5d4;font-family:monospace;font-weight:700');
 });
